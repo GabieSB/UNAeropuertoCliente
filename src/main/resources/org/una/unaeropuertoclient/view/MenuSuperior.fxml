@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" minWidth="200.0" prefHeight="75.0" prefWidth="1024.0" style="-fx-background-color: #788FDE;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.MenuSuperiorController">
+   <children>
+      <JFXButton layoutX="14.0" layoutY="25.0" onAction="#OnActionGoBack" style="-fx-background-color: #ddd;" text="Atrás" AnchorPane.bottomAnchor="24.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="25.0" />
+      <Label layoutX="89.0" layoutY="25.0" text="UNAeropuerto" textFill="#615b5b" AnchorPane.bottomAnchor="24.0" AnchorPane.leftAnchor="89.0" AnchorPane.topAnchor="25.0">
+         <font>
+            <Font name="System Bold" size="21.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblUsuarioLogeado" layoutX="926.0" layoutY="30.0" text="UserLogged" AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="30.0" />
+   </children>
+</AnchorPane>

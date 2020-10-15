@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="514.0" prefWidth="505.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorServiciosController">
+   <children>
+      <Label alignment="CENTER" layoutX="122.0" layoutY="32.0" prefHeight="52.0" prefWidth="280.0" text="REGISTRAR SERVICIO">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+      <JFXComboBox fx:id="comboxTipos" layoutX="237.0" layoutY="182.0" prefHeight="27.0" prefWidth="204.0" unFocusColor="#1d10cf" />
+      <JFXTextField fx:id="txtNumeroFactura" layoutX="240.0" layoutY="130.0" prefHeight="24.0" prefWidth="197.0" unFocusColor="#4d4d4d" />
+      <JFXTextField fx:id="txtAvion" layoutX="237.0" layoutY="362.0" prefHeight="24.0" prefWidth="197.0" />
+      <JFXButton alignment="CENTER" layoutX="206.0" layoutY="426.0" onAction="#registrarServicio" prefHeight="34.0" prefWidth="105.0" text="REGISTRAR" />
+      <Label layoutX="54.0" layoutY="137.0" prefHeight="34.0" prefWidth="136.0" text="NÚMERO DE FACTURA" />
+      <Label layoutX="54.0" layoutY="192.0" prefHeight="34.0" prefWidth="136.0" text="TIPO DE SERVICIO" />
+      <Label layoutX="64.0" layoutY="369.0" prefHeight="34.0" prefWidth="136.0" text="AVIÓN" />
+      <JFXToggleButton fx:id="btonFinalizado" layoutX="60.0" layoutY="297.0" text="FINALIZADO" />
+      <JFXToggleButton fx:id="btnEstadoPago" layoutX="58.0" layoutY="244.0" text="ESTADO DE PAGO" />
+      <DatePicker layoutX="244.0" layoutY="107.0" prefHeight="18.0" prefWidth="198.0" />
+   </children>
+</AnchorPane>

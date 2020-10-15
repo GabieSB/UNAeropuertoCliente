@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.LoginController">
+   <children>
+      <VBox alignment="CENTER_LEFT" layoutX="182.0" layoutY="56.0" prefHeight="200.0" prefWidth="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <JFXTextField fx:id="txtCedula" labelFloat="true" maxWidth="250.0" promptText="Cédula" />
+            <JFXPasswordField fx:id="txtContrasenna" labelFloat="true" maxWidth="250.0" promptText="Contraseña" />
+            <HBox alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="460.0" spacing="20.0">
+               <children>
+                  <JFXButton onAction="#onActionSalir" style="-fx-background-color: #ddd;" text="Salir" />
+                  <JFXButton onAction="#onActionIngresar" style="-fx-background-color: #ddd;" text="Ingrear" />
+               </children>
+               <padding>
+                  <Insets left="110.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

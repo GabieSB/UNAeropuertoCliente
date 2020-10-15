@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="514.0" prefWidth="505.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorServiciosController">
+   <children>
+      <Label alignment="CENTER" layoutX="122.0" layoutY="32.0" prefHeight="52.0" prefWidth="280.0" text="REGISTRAR SERVICIO">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
+      <JFXComboBox fx:id="comboxTipos" layoutX="241.0" layoutY="234.0" prefHeight="27.0" prefWidth="204.0" unFocusColor="#1d10cf" />
+      <JFXTextField fx:id="txtNumeroFactura" layoutX="238.0" layoutY="184.0" prefHeight="24.0" prefWidth="197.0" unFocusColor="#4d4d4d" />
+      <JFXTextField fx:id="txtAvion" layoutX="240.0" layoutY="391.0" prefHeight="24.0" prefWidth="197.0" />
+      <JFXButton alignment="CENTER" layoutX="191.0" layoutY="454.0" onAction="#registrarServicio" prefHeight="34.0" prefWidth="105.0" text="REGISTRAR" />
+      <Label layoutX="46.0" layoutY="184.0" prefHeight="34.0" prefWidth="136.0" text="NÚMERO DE FACTURA" />
+      <Label layoutX="54.0" layoutY="243.0" prefHeight="34.0" prefWidth="136.0" text="TIPO DE SERVICIO" />
+      <Label layoutX="66.0" layoutY="398.0" prefHeight="34.0" prefWidth="136.0" text="AVIÓN" />
+      <JFXToggleButton fx:id="btonFinalizado" layoutX="262.0" layoutY="293.0" text="SERVICIO FINALIZADO" />
+      <JFXToggleButton fx:id="btnEstadoPago" layoutX="46.0" layoutY="293.0" text="ESTADO DE PAGO" />
+      <DatePicker fx:id="dateServicio" layoutX="243.0" layoutY="137.0" prefHeight="18.0" prefWidth="198.0" />
+      <Label layoutX="46.0" layoutY="138.0" text="FECHA DEL SERVICIO" />
+   </children>
+</AnchorPane>
