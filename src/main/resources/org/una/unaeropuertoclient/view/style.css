@@ -1,0 +1,32 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15 oct. 2020, 17:05:10
+    Author     : LordLalo
+*/
+
+.jfx-button{
+    -fx-background-color: #0cad55;
+    -fx-font-size: 12px;
+    -fx-border-radius: 0.2;
+    -fx-effect: dropshadow(gaussian, black, 8, 0.5, 2, 2); 
+    -fx-text-fill:  #E0E0E0;
+}
+
+.jfx-button:hover{
+    -fx-background-color: linear-gradient(#212121 0%, #37474F 100%);
+}
+.jfx-text-field,
+.jfx-password-field,
+.jfx-text-area{
+    -fx-prompt-text-fill: #07341b;
+    -jfx-focus-color: #0e64b7;
+    -jfx-unfocus-color: #0e64b7;
+    -fx-text-fill:  #07341b;
+}
+.label{
+    -fx-text-fill: #0cad55;
+}

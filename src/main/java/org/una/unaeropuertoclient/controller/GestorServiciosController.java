@@ -9,7 +9,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.DatePicker;
+import javafx.util.converter.LocalDateStringConverter;
 import org.una.unaeropuertoclient.model.AvionDto;
+import org.una.unaeropuertoclient.model.CobroDto;
 import org.una.unaeropuertoclient.model.ServicioMantenimientoDto;
 import org.una.unaeropuertoclient.model.TipoServicioDto;
 import org.una.unaeropuertoclient.service.AvionService;
@@ -19,6 +21,7 @@ import org.una.unaeropuertoclient.utils.Respuesta;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -33,26 +36,28 @@ public class GestorServiciosController extends Controller implements Initializab
     public JFXToggleButton btonFinalizado;
     public JFXToggleButton btnEstadoPago;
     public DatePicker dateServicio;
+    public JFXTextField txtCobro;
     List<TipoServicioDto> tiposServicios;
     TipoServicioService tipoServicioService = new TipoServicioService();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+      iniciarComponetes();
+
+    }
+    private void iniciarComponetes(){
         Respuesta respuesta = tipoServicioService.getAll();
         if( respuesta.getEstado()){
             tiposServicios = (List<TipoServicioDto>) respuesta.getResultado("data");
             llenarComboBoxTipos();
         }
 
+        dateServicio.setValue(LocalDate.now());
+        dateServicio.setConverter(new LocalDateStringConverter(FormatStyle.FULL));
     }
-    private void iniciarComponetes(){
+    private void llenarComboBoxTipos(){
         ObservableList<String> items = FXCollections.observableArrayList();
         tiposServicios.forEach(k-> items.add(k.getNombre()));
         comboxTipos.getItems().addAll(items);
-        dateServicio.setValue(LocalDate.now());
-        dateServicio.
-
-    }
-    private void llenarComboBoxTipos(){
 
 
     }
@@ -66,8 +71,11 @@ public class GestorServiciosController extends Controller implements Initializab
         AvionService avionService = new AvionService();
         Respuesta respuesta =  avionService.getById(txtAvion.getText());
         AvionDto avion  = null;
+        CobroDto cobroDto = new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
         if(respuesta.getEstado()) avion = (AvionDto) respuesta.getResultado("data");
-        ServicioMantenimientoDto servicioMantenimiento = new ServicioMantenimientoDto(Long.parseLong(txtNumeroFactura.getText()), btnEstadoPago.isSelected(), btonFinalizado.isSelected(),avion, optTipo.get() );
+        ServicioMantenimientoDto servicioMantenimiento = new ServicioMantenimientoDto(dateServicio.getValue(),Long.parseLong(txtNumeroFactura.getText()), btnEstadoPago.isSelected(), btonFinalizado.isSelected(),avion, optTipo.get() );
+
+        servicioMantenimiento.getCobroList().add(cobroDto);
         return  servicioMantenimiento;
     }
 
