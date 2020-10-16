@@ -11,4 +11,9 @@ public class CobroDto {
     private String detalleCobro;
     private Boolean activo;
     private ServicioMantenimientoDto serviciosMantenimientoId;
+
+    public CobroDto(Float monto, String detalleCobro) {
+        this.monto = monto;
+        this.detalleCobro = detalleCobro;
+    }
 }
