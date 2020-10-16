@@ -7,6 +7,9 @@
 
 package org.una.unaeropuertoclient.model;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -94,14 +97,14 @@ public class ServicioMantenimientoDto {
         this.cobroList = cobroList;
     }
 
-    public ServicioMantenimientoDto( Long numeroFactura, Boolean estadoPago, Boolean estaFinalizacion, AvionDto avionesId, TipoServicioDto tiposServiciosId) {
-        this.fechaServicio = new Date();
+    public ServicioMantenimientoDto(LocalDate fechaServicio, Long numeroFactura, Boolean estadoPago, Boolean estaFinalizacion, AvionDto avionesId, TipoServicioDto tiposServiciosId) {
+        this.fechaServicio =  Date.from(fechaServicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
         this.numeroFactura = numeroFactura;
         this.estadoPago = estadoPago;
         this.estaFinalizacion = estaFinalizacion;
         this.activo = true;
         this.avionesId = avionesId;
         this.tiposServiciosId = tiposServiciosId;
-        this.cobroList = null;
+        this.cobroList = new ArrayList<>();
     }
 }
