@@ -39,6 +39,7 @@ public class LoginController extends Controller implements Initializable {
      * @param rb
      */
     UsuarioService usuarioService = new UsuarioService();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
@@ -56,22 +57,18 @@ public class LoginController extends Controller implements Initializable {
     @FXML
     public void onActionIngresar(ActionEvent event) {
 
-        Respuesta resp=  usuarioService.logIn(txtCedula.getText(), txtContrasenna.getText());
+        Respuesta resp = usuarioService.logIn(txtCedula.getText(), txtContrasenna.getText());
 
-        if(resp.getEstado()){
-
+        if (resp.getEstado()) {
 
             FlowController.getInstance().goMain();
-            FlowController.getInstance().goView("GestorServicios");
-           // FlowController.getInstance().goView("MenuSuperior", "Top", null);
+            FlowController.getInstance().goView("MenuPrincipal");
+            FlowController.getInstance().goView("MenuSuperior", "Top", null);
             this.getStage().close();
 
-        }else{
+        } else {
             new Mensaje().showModal(Alert.AlertType.WARNING, "Algo ha ocurrido", this.getStage(), resp.getMensaje());
         }
-
-
-
 
     }
 

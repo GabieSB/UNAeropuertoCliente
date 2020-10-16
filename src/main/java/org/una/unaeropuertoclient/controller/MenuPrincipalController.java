@@ -12,11 +12,15 @@ import java.util.ResourceBundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jfoenix.controls.JFXButton;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
 import org.una.unaeropuertoclient.model.BitacoraDto;
 import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.FlowController;
 
 /**
  * FXML Controller class
@@ -24,6 +28,11 @@ import org.una.unaeropuertoclient.utils.AppContext;
  * @author roberth :)
  */
 public class MenuPrincipalController extends Controller implements Initializable {
+
+    @FXML
+    public JFXButton btnRegistrarUsuario;
+    @FXML
+    public JFXButton btnGestorServicios;
 
     /**
      * Initializes the controller class.
@@ -39,6 +48,16 @@ public class MenuPrincipalController extends Controller implements Initializable
 
     @Override
     public void initialize() {
+    }
+
+    @FXML
+    public void goRegistrarUsuario(ActionEvent event) {
+        FlowController.getInstance().goView("CrearUsuario");
+    }
+
+    @FXML
+    public void goGestorServicio(ActionEvent event) {
+        FlowController.getInstance().goView("GestorServicios");
     }
 
 }

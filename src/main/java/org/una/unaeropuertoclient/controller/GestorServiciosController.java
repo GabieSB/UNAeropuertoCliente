@@ -49,7 +49,7 @@ public class GestorServiciosController extends Controller implements Initializab
         tiposServicios.forEach(k-> items.add(k.getNombre()));
         comboxTipos.getItems().addAll(items);
         dateServicio.setValue(LocalDate.now());
-        dateServicio.
+     //   dateServicio.
 
     }
     private void llenarComboBoxTipos(){

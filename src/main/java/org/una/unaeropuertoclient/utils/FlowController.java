@@ -27,7 +27,7 @@ import javafx.scene.layout.AnchorPane;
  * @author esanchez
  */
 public class FlowController {
-
+    
     @SuppressWarnings("FieldMayBeFinal")
     private static Stack<String> viewed = new Stack();
     private static FlowController INSTANCE = null;
@@ -35,10 +35,10 @@ public class FlowController {
     private static ResourceBundle idioma;
     @SuppressWarnings("FieldMayBeFinal")
     private static HashMap<String, FXMLLoader> loaders = new HashMap<>();
-
+    
     private FlowController() {
     }
-
+    
     @SuppressWarnings("DoubleCheckedLocking")
     private static void createInstance() {
         if (INSTANCE == null) {
@@ -49,30 +49,30 @@ public class FlowController {
             }
         }
     }
-
+    
     public void loadLanguage(ResourceBundle lenguaje) {
         FlowController.idioma = lenguaje;
         loaders.clear();
         //goMain();
     }
-
+    
     public ResourceBundle getLanguage() {
         return FlowController.idioma;
     }
-
+    
     public static FlowController getInstance() {
         if (INSTANCE == null) {
             createInstance();
         }
         return INSTANCE;
     }
-
+    
     @Override
     @SuppressWarnings("CloneDoesntCallSuperClone")
     public Object clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
-
+    
     @SuppressWarnings("static-access")
     public void InitializeFlow(Stage stage, ResourceBundle idioma) {
         getInstance();
@@ -80,7 +80,7 @@ public class FlowController {
         this.idioma = idioma;
         mainStage.setMinWidth(633d);
     }
-
+    
     @SuppressWarnings({"DoubleCheckedLocking", "static-access", "UseSpecificCatch"})
     private FXMLLoader getLoader(String name) {
         FXMLLoader loader = loaders.get(name);
@@ -100,35 +100,37 @@ public class FlowController {
         }
         return loader;
     }
-
+    
     @SuppressWarnings("static-access")
     public void goMain() {
         try {
             this.mainStage.setScene(new Scene(FXMLLoader.load(App.class.getResource("view/Base.fxml"), this.idioma)));
             this.mainStage.show();
+            this.mainStage.setHeight(690);
+            this.mainStage.setWidth(1000);
             //this.mainStage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
             this.mainStage.setTitle("UNAeropuerto");
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(FlowController.class.getName()).log(Level.SEVERE, "Error inicializando la vista base.", ex);
         }
     }
-
+    
     public Boolean isMainMaximized() {
         return FlowController.mainStage.isMaximized();
     }
-
+    
     public void maximizeMain() {
         FlowController.mainStage.setMaximized(true);
     }
-
+    
     public void goView(String viewName) {
         goView(viewName, "Center", null);
     }
-
+    
     public void goView(String viewName, String accion) {
         goView(viewName, "Center", accion);
     }
-
+    
     @SuppressWarnings("static-access")
     public void goView(String viewName, String location, String accion) {
         FXMLLoader loader = getLoader(viewName);
@@ -172,14 +174,14 @@ public class FlowController {
         AnchorPane.setRightAnchor(loader.getRoot(), 0d);
         AnchorPane.setLeftAnchor(loader.getRoot(), 0d);
     }
-
+    
     public void goViewInStage(String viewName, Stage stage) {
         FXMLLoader loader = getLoader(viewName);
         Controller controller = loader.getController();
         controller.setStage(stage);
         stage.getScene().setRoot(loader.getRoot());
     }
-
+    
     public void goViewInWindow(String viewName) {
         FXMLLoader loader = getLoader(viewName);
         Controller controller = loader.getController();
@@ -197,9 +199,9 @@ public class FlowController {
         stage.setScene(scene);
         stage.centerOnScreen();
         stage.show();
-
+        
     }
-
+    
     public void goViewInWindow(String viewName, Boolean resizable) {
         FXMLLoader loader = getLoader(viewName);
         Controller controller = loader.getController();
@@ -220,7 +222,7 @@ public class FlowController {
         stage.centerOnScreen();
         stage.show();
     }
-
+    
     public void goViewInWindowModal(String viewName, Stage parentStage, Boolean resizable) {
         FXMLLoader loader = getLoader(viewName);
         Controller controller = loader.getController();
@@ -242,36 +244,36 @@ public class FlowController {
         stage.centerOnScreen();
         stage.showAndWait();
     }
-
+    
     public Controller getController(String viewName) {
         return getLoader(viewName).getController();
     }
-
+    
     public static void setIdioma(ResourceBundle idioma) {
         FlowController.idioma = idioma;
     }
-
+    
     @SuppressWarnings("static-access")
     public void initialize() {
         this.loaders.clear();
     }
-
+    
     @SuppressWarnings("static-access")
     public void salir() {
         this.mainStage.close();
     }
-
+    
     public void eliminarDeCache(String viewName) {
         loaders.put(viewName, null);
     }
-
+    
     public void goBack() {
         if (viewed.size() > 1) {
             viewed.pop();
             goView(viewed.peek());
         }
     }
-
+    
     public boolean deleteHistoryTo(String viewName) {
         int pos = viewed.search(viewName);
         boolean existe = pos != -1;
@@ -283,7 +285,7 @@ public class FlowController {
         }
         return false;
     }
-
+    
     public void limpiarCache() {
         loaders.clear();
     }
