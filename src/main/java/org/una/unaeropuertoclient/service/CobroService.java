@@ -19,13 +19,14 @@ public class CobroService {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.post("cobros/create", gson.toJson(cobro));
+            System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
                 if (respuesta.statusCode() == 500) {
                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }
-            System.out.println(respuesta.body().toString());
+
             //List<AuthenticationResponse> users = new Gson().fromJson(respuesta.body().toString(), new TypeToken<>() {}.getType());
             CobroDto servicioMantenimientoDto = gson.fromJson(respuesta.body().toString(), CobroDto.class);
 

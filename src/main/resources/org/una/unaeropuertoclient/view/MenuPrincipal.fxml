@@ -19,7 +19,7 @@
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" text="Gestor Servicio" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton onAction="#btnconsultarServicios" prefHeight="70.0" prefWidth="139.0" text="Consultar Servicios" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
