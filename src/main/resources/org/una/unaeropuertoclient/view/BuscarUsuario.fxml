@@ -23,8 +23,8 @@
             </HBox>
             <VBox prefHeight="200.0" prefWidth="100.0" spacing="14.0">
                <children>
-                  <JFXTextField fx:id="txtNombre" promptText="Nombre" />
-                  <JFXTextField fx:id="txtApellido" promptText="Apellido" />
+                  <JFXTextField fx:id="txtNombre" labelFloat="true" promptText="Nombre" />
+                  <JFXTextField fx:id="txtApellido" labelFloat="true" promptText="Apellido" />
                   <JFXTextField fx:id="txtCedula" labelFloat="true" promptText="Cédula" />
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                      <children>
@@ -47,7 +47,7 @@
                   <Insets left="100.0" right="100.0" />
                </VBox.margin>
             </VBox>
-            <TableView prefHeight="205.0" prefWidth="655.0">
+            <TableView fx:id="tblUsuarios" prefHeight="205.0" prefWidth="655.0">
               <columns>
                 <TableColumn fx:id="tbcId" prefWidth="38.0" text="ID" />
                   <TableColumn fx:id="tblCedula" prefWidth="62.0" text="Cédula" />

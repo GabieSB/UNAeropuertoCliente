@@ -2,15 +2,10 @@ package org.una.unaeropuertoclient.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import org.una.unaeropuertoclient.model.AuthenticationResponse;
 import org.una.unaeropuertoclient.model.AvionDto;
-import org.una.unaeropuertoclient.model.TipoServicioDto;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
 import org.una.unaeropuertoclient.utils.Respuesta;
-
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
