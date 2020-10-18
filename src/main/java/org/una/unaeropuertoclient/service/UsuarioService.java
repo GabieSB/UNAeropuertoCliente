@@ -25,40 +25,37 @@ import org.una.unaeropuertoclient.utils.Respuesta;
  */
 public class UsuarioService {
 
-
-
     Gson g = new GsonBuilder()
             .setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
-     public Respuesta logIn(String cedula, String password) {
 
+    public Respuesta logIn(String cedula, String password) {
 
-         AuthenticationRequest autRiq = new AuthenticationRequest(cedula, password);
-         try {
-             RequestHTTP requestHTTP = new RequestHTTP();
-             HttpResponse respuesta = requestHTTP.post("autenticacion/login", g.toJson(autRiq));
-             if (requestHTTP.getStatus()!=200) {
-                 if (respuesta.statusCode() == 500) {
-                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
-                 }
-                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
-             }
-             System.out.println(respuesta.body().toString());
-             //List<AuthenticationResponse> users = new Gson().fromJson(respuesta.body().toString(), new TypeToken<>() {}.getType());
-             AuthenticationResponse authenticationResponse = g.fromJson(respuesta.body().toString(), AuthenticationResponse.class);
+        AuthenticationRequest autRiq = new AuthenticationRequest(cedula, password);
+        try {
+            RequestHTTP requestHTTP = new RequestHTTP();
+            HttpResponse respuesta = requestHTTP.post("autenticacion/login", g.toJson(autRiq));
+            if (requestHTTP.getStatus() != 200) {
+                if (respuesta.statusCode() == 500) {
+                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                }
+                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
+            }
+            System.out.println(respuesta.body().toString());
+            //List<AuthenticationResponse> users = new Gson().fromJson(respuesta.body().toString(), new TypeToken<>() {}.getType());
+            AuthenticationResponse authenticationResponse = g.fromJson(respuesta.body().toString(), AuthenticationResponse.class);
 
+            for (RolUsuarioDto usuarioDTO : authenticationResponse.getRolUsuario()) {
+                System.out.println(usuarioDTO.toString());
+            }
 
-             for(RolUsuarioDto usuarioDTO: authenticationResponse.getRolUsuario()){
-                 System.out.println(usuarioDTO.toString());
-             }
+            AppContext.getInstance().set("token", authenticationResponse);
 
-             AppContext.getInstance().set("token", authenticationResponse);
+            return new Respuesta(true, "", "", "data", authenticationResponse);
 
-             return new Respuesta(true, "", "", "data", authenticationResponse);
-
-         } catch (Exception ex) {
-             Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
-             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
-         }
+        } catch (Exception ex) {
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
+        }
 
     }
 

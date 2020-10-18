@@ -11,20 +11,19 @@ and open the template in the editor.
 /*start --------------------------+Paleta general de colores+---------------------------------- start*/
 *{
     -fx-backGraundColor: linear-gradient(from 25% 25% to 100% 100%, #ffffff, #A5D6A7);
+    -fx-menu-superior-backGraundColor: linear-gradient(from 25% 25% to 30% 100%, #ffffff, #C5E1A5);
     -fx-goodButton-color: #1565C0;
     -fx-dangerousButton-color: #b71c1c;
     -fx-dangerousButton-hover-color:#701006;
     -fx-tittle-color: #2E7D32;
     -fx-semitrasparent-glass-color:#75757550;
     -fx-fly-module-separator-color:#42424270;
-
 }
 /*end ----------------------------*Paleta general de colores*----------------------------------- end*/
 
 #dangerous-button-efect{
     -fx-background-color: -fx-dangerousButton-color;
 }
-
 #dangerous-button-efect:hover{
     -fx-background-color: -fx-dangerousButton-hover-color;
 }
@@ -52,11 +51,34 @@ and open the template in the editor.
     -fx-text-fill: #388E3C;
 }
 
+/*start *********************************+MENÚ SUPERIOR+*************************************** start*/
+.menu-superior{
+    -fx-background-color: -fx-menu-superior-backGraundColor;
+    -fx-effect: dropshadow(three-pass-box, #37474F, 23, 0, 0, 0);
+}
+
+.menu-superior-userIcon{
+    -fx-background-image:url("../pics/userIcon.png");    /*Verificar porque no funciona*/
+}
+
+.menu-superior-tittle{
+    -fx-text-fill: -fx-tittle-color;
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+}
+
+.menu-superior-subtittle{
+    -fx-text-fill: -fx-tittle-color;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+/*end *********************************-MENÚ SUPERIOR-**************************************** end*/
+
+
 
 
 
 /*start *********************************+MOODULO DE VUELOS+*************************************** start*/
-
 .air-module-tittle{
     -fx-text-fill: -fx-tittle-color;
     -fx-font-size: 18px;
@@ -83,5 +105,4 @@ and open the template in the editor.
     -fx-border-style: solid;
     -fx-border-width: 1px;
 }
-
 /*end *********************************-MOODULO DE VUELOS-**************************************** end*/

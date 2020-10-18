@@ -2,17 +2,28 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" minWidth="200.0" prefHeight="75.0" prefWidth="1024.0" style="-fx-background-color: #788FDE;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.MenuSuperiorController">
+<AnchorPane id="AnchorPane" minWidth="200.0" prefHeight="75.0" prefWidth="1024.0" styleClass="menu-superior" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.MenuSuperiorController">
    <children>
-      <JFXButton layoutX="14.0" layoutY="25.0" onAction="#OnActionGoBack" style="-fx-background-color: #ddd;" text="Atrás" AnchorPane.bottomAnchor="24.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="25.0" />
-      <Label layoutX="89.0" layoutY="25.0" text="UNAeropuerto" textFill="#615b5b" AnchorPane.bottomAnchor="24.0" AnchorPane.leftAnchor="89.0" AnchorPane.topAnchor="25.0">
+      <Label layoutX="89.0" layoutY="7.0" prefWidth="146.0" styleClass="menu-superior-tittle" text="UNAeropuerto" textFill="#615b5b" AnchorPane.leftAnchor="89.0" AnchorPane.topAnchor="10.0">
          <font>
             <Font name="System Bold" size="21.0" />
          </font>
       </Label>
-      <Label fx:id="lblUsuarioLogeado" layoutX="926.0" layoutY="30.0" text="UserLogged" AnchorPane.bottomAnchor="29.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="30.0" />
+      <JFXButton layoutX="14.0" layoutY="28.0" onAction="#OnActionGoBack" text="Atrás" />
+      <HBox alignment="CENTER" layoutX="824.0" layoutY="12.0" maxWidth="230.0" prefHeight="58.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label fx:id="lblUsuarioLogeado" text="userName">
+               <graphic>
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="menu-superior-userIcon" />
+               </graphic>
+            </Label>
+         </children>
+      </HBox>
+      <Label fx:id="lblPantallaActual" layoutX="162.0" layoutY="45.0" styleClass="menu-superior-subtittle" text="Pantalla actual" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="162.0" />
    </children>
 </AnchorPane>

@@ -14,12 +14,12 @@
 
 <AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="720.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorVuelosController">
    <children>
-      <Label layoutX="14.0" layoutY="14.0" styleClass="air-module-tittle" text="Módulo de vuelos" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <Label layoutX="14.0" layoutY="14.0" styleClass="air-module-tittle" text="Panel de búsquedas" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
       <VBox alignment="BOTTOM_LEFT" layoutX="267.0" layoutY="245.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="air-glass-efect-color">
                <children>
-                  <HBox alignment="CENTER" layoutX="14.0" layoutY="38.0" prefHeight="170.0" prefWidth="577.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="0.0">
+                  <HBox alignment="CENTER" layoutX="14.0" layoutY="38.0" prefHeight="170.0" prefWidth="577.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" HBox.hgrow="ALWAYS">
                            <children>
@@ -39,19 +39,19 @@
                                  </children>
                               </HBox>
                            </children></VBox>
+                        <VBox alignment="CENTER" maxWidth="140.0" prefHeight="200.0" prefWidth="130.0" spacing="10.0" HBox.hgrow="SOMETIMES">
+                           <children>
+                              <JFXButton onAction="#onActionNuevo" prefWidth="80.0" text="Nuevo" />
+                              <JFXButton onAction="#onActionBuscar" prefWidth="80.0" text="Buscar" />
+                              <JFXButton onAction="#onActionLimpiar" prefWidth="80.0" text="Limpiar" />
+                              <JFXButton id="dangerous-button-efect" fx:id="btnEliminar" onAction="#onActionEliminar" prefWidth="80.0" styleClass="dangerous-button-efect" text="Eliminar" />
+                           </children>
+                           <padding>
+                              <Insets left="10.0" right="10.0" />
+                           </padding>
+                        </VBox>
                      </children>
                   </HBox>
-                  <VBox alignment="TOP_CENTER" layoutX="620.0" layoutY="26.0" prefHeight="200.0" prefWidth="130.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <JFXButton onAction="#onActionNuevo" prefWidth="56.0" text="Nuevo" />
-                        <JFXButton onAction="#onActionBuscar" prefWidth="56.0" text="Buscar" />
-                        <JFXButton onAction="#onActionLimpiar" text="Limpiar" />
-                        <JFXButton id="dangerous-button-efect" fx:id="btnEliminar" onAction="#onActionEliminar" styleClass="dangerous-button-efect" text="Eliminar" />
-                     </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                  </VBox>
                </children>
                <padding>
                   <Insets top="5.0" />
@@ -64,11 +64,12 @@
             </Label>
             <TableView fx:id="tbVuelos" prefHeight="291.0" prefWidth="720.0" VBox.vgrow="ALWAYS">
               <columns>
+                  <TableColumn fx:id="clEstado" prefWidth="60.0" text="Estado" />
                 <TableColumn fx:id="clNombre" prefWidth="105.0" text="Nombre" />
                 <TableColumn fx:id="clAerolinea" prefWidth="105.0" text="Aerolinea" />
-                  <TableColumn fx:id="clAvion" prefWidth="90.0" text="Avión" />
-                  <TableColumn fx:id="clSalida" prefWidth="210.0" text="Salida" />
-                  <TableColumn fx:id="clLlegada" prefWidth="210.0" text="Llegada" />
+                  <TableColumn fx:id="clAvion" prefWidth="105.0" text="Avión" />
+                  <TableColumn fx:id="clSalida" prefWidth="168.0" text="Salida" />
+                  <TableColumn fx:id="clLlegada" prefWidth="168.0" text="Llegada" />
               </columns>
             </TableView>
          </children>
