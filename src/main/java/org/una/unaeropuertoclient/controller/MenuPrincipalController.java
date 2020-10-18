@@ -60,4 +60,9 @@ public class MenuPrincipalController extends Controller implements Initializable
         FlowController.getInstance().goView("GestorServicios");
     }
 
+    @FXML
+    public void OnClickAirModule(ActionEvent event) {
+        FlowController.getInstance().goView("GestorVuelos");
+    }
+
 }

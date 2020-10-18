@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="720.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorVuelosController">
+   <children>
+      <Label layoutX="14.0" layoutY="14.0" styleClass="air-module-tittle" text="Módulo de vuelos" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <VBox alignment="BOTTOM_LEFT" layoutX="267.0" layoutY="245.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+         <children>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="air-glass-efect-color">
+               <children>
+                  <HBox alignment="CENTER" layoutX="14.0" layoutY="38.0" prefHeight="170.0" prefWidth="577.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <JFXTextField fx:id="txtFlyName" labelFloat="true" maxWidth="230.0" promptText="Nombre de vuelo" />
+                              <JFXTextField fx:id="txtAerolinea" labelFloat="true" maxWidth="230.0" promptText="Aerolinea" />
+                              <JFXTextField fx:id="txtMatriculaAvion" labelFloat="true" maxWidth="230.0" promptText="Matrícula de avión" />
+                           </children></VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" styleClass="air-searchSeparator" />
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <JFXTextField fx:id="txtSalida" labelFloat="true" maxWidth="230.0" promptText="Sitio salida" />
+                              <JFXTextField fx:id="txtLlegada" labelFloat="true" maxWidth="230.0" promptText="Sitio llegada" />
+                              <HBox alignment="CENTER" prefHeight="36.0" prefWidth="294.0" spacing="10.0">
+                                 <children>
+                                    <DatePicker fx:id="dpDesde" prefWidth="110.0" promptText="Desde" />
+                                    <DatePicker fx:id="dpHasta" prefWidth="110.0" promptText="Hasta" />
+                                 </children>
+                              </HBox>
+                           </children></VBox>
+                     </children>
+                  </HBox>
+                  <VBox alignment="TOP_CENTER" layoutX="620.0" layoutY="26.0" prefHeight="200.0" prefWidth="130.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <JFXButton onAction="#onActionNuevo" prefWidth="56.0" text="Nuevo" />
+                        <JFXButton onAction="#onActionBuscar" prefWidth="56.0" text="Buscar" />
+                        <JFXButton onAction="#onActionLimpiar" text="Limpiar" />
+                        <JFXButton id="dangerous-button-efect" fx:id="btnEliminar" onAction="#onActionEliminar" styleClass="dangerous-button-efect" text="Eliminar" />
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </AnchorPane>
+            <Label fx:id="txtVuelosDe" styleClass="air-module-subtittle" text="Vuelos de: ">
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin>
+            </Label>
+            <TableView fx:id="tbVuelos" prefHeight="291.0" prefWidth="720.0" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="clNombre" prefWidth="105.0" text="Nombre" />
+                <TableColumn fx:id="clAerolinea" prefWidth="105.0" text="Aerolinea" />
+                  <TableColumn fx:id="clAvion" prefWidth="90.0" text="Avión" />
+                  <TableColumn fx:id="clSalida" prefWidth="210.0" text="Salida" />
+                  <TableColumn fx:id="clLlegada" prefWidth="210.0" text="Llegada" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

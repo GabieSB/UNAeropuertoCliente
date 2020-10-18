@@ -79,6 +79,7 @@ public class FlowController {
         this.mainStage = stage;
         this.idioma = idioma;
         mainStage.setMinWidth(633d);
+        mainStage.setMinHeight(500d);
     }
     
     @SuppressWarnings({"DoubleCheckedLocking", "static-access", "UseSpecificCatch"})
