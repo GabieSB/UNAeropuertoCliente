@@ -61,11 +61,11 @@ public class EditorVuelosController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        cargarFuncionalidadesVentana();
     }
 
     @Override
     public void initialize() {
+        cargarFuncionalidadesVentana();
     }
 
     @FXML
