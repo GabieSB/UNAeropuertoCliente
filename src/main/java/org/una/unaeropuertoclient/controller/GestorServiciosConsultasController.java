@@ -14,6 +14,8 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.ServicioMantenimientoDto;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
+import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -37,12 +39,11 @@ public class GestorServiciosConsultasController  extends Controller implements I
     public TableColumn<ServicioMantenimientoDto, String> columAvion;
     public TableColumn<ServicioMantenimientoDto, String> columEstadoServicio;
     public TableColumn<ServicioMantenimientoDto, Void> columAcciones;
+    public TableColumn<ServicioMantenimientoDto, String> columMonto;
 
     public DatePicker dateInicio;
     public DatePicker dateFin;
 
-
-    //TableColumn<ServicioMantenimientoDto, Void> columAcciones;
     private List<ServicioMantenimientoDto> serviciosResultados = new ArrayList<>();
     ServicioMantenimientoService service = new ServicioMantenimientoService();
     Mensaje mensaje = new Mensaje();
@@ -55,15 +56,16 @@ public class GestorServiciosConsultasController  extends Controller implements I
             public TableCell<ServicioMantenimientoDto, Void> call(final TableColumn<ServicioMantenimientoDto, Void> param) {
                 final TableCell<ServicioMantenimientoDto, Void> cell = new TableCell<>() {
 
-                    private final Button btn = new Button("Modificar");
+                    private final JFXButton btn = new JFXButton("Modificar");
 
                     {
                         btn.setOnAction((ActionEvent event) -> {
-                            ServicioMantenimientoDto ServicioMantenimientoDto = getTableView().getItems().get(getIndex());
-                            System.out.println("selectedServicioMantenimientoDto: " + ServicioMantenimientoDto.getId());
+                            ServicioMantenimientoDto servicioMantenimientoDto = getTableView().getItems().get(getIndex());
+                            AppContext.getInstance().set("servicioSeleccionado", servicioMantenimientoDto);
+                            FlowController.getInstance().goView("GestorServicios");
                         });
                     }
-                    private final Button btn2 = new Button("Anular");
+                    private final JFXButton btn2 = new JFXButton("Anular");
                     {
                         btn2.setOnAction((ActionEvent event) -> {
                             ServicioMantenimientoDto ServicioMantenimientoDto = getTableView().getItems().get(getIndex());
@@ -88,8 +90,6 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
         columAcciones.setCellFactory(cellFactory);
 
-       // tableResultados.getColumns().add(columAcciones);
-
     }
 
     private void  llenarComboBox(){
@@ -113,11 +113,14 @@ public class GestorServiciosConsultasController  extends Controller implements I
         llenarComboBox();
         columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
         columFactura.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroFactura().toString()));
+        columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicio().toString()));
         columServicioFinalizado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstaFinalizacion().toString()));
         columEstadoServicio.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getActivo().toString()));
         columEstadoPago.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstadoPago().toString()));
         columAvion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAvionesId().getMatricula()));
         columTipoServicio.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTiposServiciosId().getNombre()));
+        columMonto.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getCobroList().get(0).getMonto().toString()));
+
     }
 
     @Override
@@ -147,7 +150,9 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
         Respuesta respuesta = null;
         switch (selectedItem) {
-            case 0:  respuesta = service.buscarPorID(valor); break;
+            case 0: {
+                respuesta = service.buscarPorID(valor); break;
+            }
             case 1:  respuesta = service.buscarPorNumeroFactura(Long.parseLong(valor)); break;
             case 2:
             {
@@ -190,7 +195,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
             llenarTabla();
         }else{
-            mensaje.show(Alert.AlertType.ERROR, "ERROR", "Algo salío mal :c");
+            mensaje.show(Alert.AlertType.ERROR, "Información", "No se encontraron resultados :c");
         }
 
     }
@@ -206,6 +211,6 @@ public class GestorServiciosConsultasController  extends Controller implements I
             mensaje.show(Alert.AlertType.INFORMATION,"ERROR DE DATOS", "Debe seleccionar el parámetro e ingresar un valor a consultar");
         }
 
-
     }
+
 }
