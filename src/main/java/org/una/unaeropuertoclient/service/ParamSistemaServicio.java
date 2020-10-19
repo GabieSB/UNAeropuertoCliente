@@ -1,35 +1,44 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package org.una.unaeropuertoclient.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.una.unaeropuertoclient.model.AvionDto;
-import org.una.unaeropuertoclient.utils.RequestHTTP;
-import org.una.unaeropuertoclient.utils.Respuesta;
+import com.google.gson.reflect.TypeToken;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.una.unaeropuertoclient.model.ParamSistemaDto;
+import org.una.unaeropuertoclient.utils.RequestHTTP;
+import org.una.unaeropuertoclient.utils.Respuesta;
 
-public class AvionService {
-
-    Gson g = new GsonBuilder()
+/**
+ *
+ * @author LordLalo
+ */
+public class ParamSistemaServicio {
+    
+    Gson gson = new GsonBuilder()
             .setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
-
-
-    public Respuesta getById(String id){
+      public Respuesta getById(){
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.get("aviones/"+id);
+            HttpResponse respuesta = requestHTTP.get("param_sistema/1");
             if (requestHTTP.getStatus()!=200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Problemas al solicitar datos de parametros", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }
             System.out.println(respuesta.body().toString());
 
-            AvionDto avion = g.fromJson(respuesta.body().toString(), AvionDto.class);
+            ParamSistemaDto paramSistemaDto = gson.fromJson(respuesta.body().toString(), ParamSistemaDto.class);
 
-            return new Respuesta(true, "", "", "data", avion);
+            return new Respuesta(true, "", "", "data", paramSistemaDto);
 
         } catch (Exception ex) {
             Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
