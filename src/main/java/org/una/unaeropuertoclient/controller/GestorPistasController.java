@@ -23,15 +23,15 @@ import org.una.unaeropuertoclient.model.PistaDto;
 public class GestorPistasController extends Controller implements Initializable {
 
     @FXML
-    private JFXTextField txtNumeroPista;
+    public JFXTextField txtNumeroPista;
     @FXML
-    private JFXTextField txtLongitud;
+    public JFXTextField txtLongitud;
     @FXML
-    private TableView<PistaDto> tbAerolineas;
+    public TableView<PistaDto> tbAerolineas;
     @FXML
-    private TableColumn<String, PistaDto> clNombre;
+    public TableColumn<String, PistaDto> clNombre;
     @FXML
-    private TableColumn<String, PistaDto> clEstado;
+    public TableColumn<String, PistaDto> clEstado;
 
     /**
      * Initializes the controller class.
@@ -49,7 +49,11 @@ public class GestorPistasController extends Controller implements Initializable 
     }
 
     @FXML
-    private void onActionBuscar(ActionEvent event) {
+    public void onActionBuscar(ActionEvent event) {
+    }
+
+    @FXML
+    public void OnClickNuevo(ActionEvent event) {
     }
 
 }

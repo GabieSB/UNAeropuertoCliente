@@ -57,4 +57,8 @@ public class GestorAvionesController extends Controller implements Initializable
     public void onActionClear(ActionEvent event) {
     }
 
+    @FXML
+    public void OnClickNuevo(ActionEvent event) {
+    }
+
 }

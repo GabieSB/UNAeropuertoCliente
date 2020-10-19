@@ -5,7 +5,6 @@
  */
 package org.una.unaeropuertoclient.controller;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -49,6 +48,10 @@ public class GestorAerolineasController extends Controller implements Initializa
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
+    }
+
+    @FXML
+    public void OnClickNuevo(ActionEvent event) {
     }
 
 }

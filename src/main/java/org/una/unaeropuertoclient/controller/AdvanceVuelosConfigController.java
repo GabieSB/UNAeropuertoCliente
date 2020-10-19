@@ -45,12 +45,19 @@ public class AdvanceVuelosConfigController extends Controller implements Initial
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        cargarPantallas();
     }
 
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Opciones avanzadas de control aéreo");
+    }
+
+    private void cargarPantallas() {
+        FlowController.getInstance().<AnchorPane>chargeOn(apAviones, "GestorAviones");
+        FlowController.getInstance().<AnchorPane>chargeOn(apAerolineas, "GestorAerolineas");
+        FlowController.getInstance().<AnchorPane>chargeOn(apLugares, "GestorLugares");
+        FlowController.getInstance().<AnchorPane>chargeOn(apPistas, "GestorPistas");
     }
 
 }

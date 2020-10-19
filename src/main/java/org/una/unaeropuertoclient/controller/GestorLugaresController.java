@@ -51,4 +51,8 @@ public class GestorLugaresController extends Controller implements Initializable
     public void onActionBuscar(ActionEvent event) {
     }
 
+    @FXML
+    public void OnClickNuevo(ActionEvent event) {
+    }
+
 }

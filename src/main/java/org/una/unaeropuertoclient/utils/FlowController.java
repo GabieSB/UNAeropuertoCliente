@@ -20,7 +20,9 @@ import javafx.stage.WindowEvent;
 import org.una.unaeropuertoclient.App;
 import org.una.unaeropuertoclient.controller.Controller;
 import java.util.Stack;
+import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import org.una.unaeropuertoclient.controller.MenuSuperiorController;
 
 /**
@@ -294,5 +296,22 @@ public class FlowController {
 
     public static void changeSuperiorTittle(String name) {
         ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeScreenNameTitle(name);
+    }
+
+    public <RootTipe extends Node> void chargeOn(Pane chargeHere, String viewName) {
+        try {
+            FXMLLoader loader = getLoader(viewName);
+            Controller controller = loader.getController();
+            controller.initialize();
+            RootTipe root = ((RootTipe) loader.getRoot());
+            chargeHere.getChildren().clear();
+            chargeHere.getChildren().add(root);
+            AnchorPane.setBottomAnchor(root, 0d);
+            AnchorPane.setTopAnchor(root, 0d);
+            AnchorPane.setRightAnchor(root, 0d);
+            AnchorPane.setLeftAnchor(root, 0d);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(FlowController.class.getName()).log(Level.SEVERE, "Error al cargar ''" + viewName + "'' dentro de otro nodo.", ex);
+        }
     }
 }
