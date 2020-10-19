@@ -21,14 +21,21 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.RolDto;
 import org.una.unaeropuertoclient.model.RolUsuarioDto;
 import org.una.unaeropuertoclient.model.UsuarioDto;
 import org.una.unaeropuertoclient.service.UsuarioService;
+import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -71,6 +78,10 @@ public class BuscarUsuarioController extends Controller implements Initializable
     @FXML
     public TableView<UsuarioDto> tblUsuarios;
     public ObservableList<UsuarioDto> usuariosTabla;
+    @FXML
+    public JFXButton btnLimpiar;
+    @FXML
+    public TableColumn<UsuarioDto, Void> tblEditar;
 
     /**
      * Initializes the controller class.
@@ -78,6 +89,7 @@ public class BuscarUsuarioController extends Controller implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        checkActivo.setSelected(true);
         tbcId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
         tbcNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombre()));
         tbcApellido.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getApellidos()));
@@ -85,6 +97,7 @@ public class BuscarUsuarioController extends Controller implements Initializable
         tbcFechaIngreso.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaIngreso().toString()));
         tbcFechaModificacion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaModificacion().toString()));
         tbcEstado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getActivo().toString()));
+        addButtonToTable();
     }
 
     @Override
@@ -97,7 +110,9 @@ public class BuscarUsuarioController extends Controller implements Initializable
         String pNombre = "none";
         String pApellido = "none";
         String pCedula = "none";
-        boolean pFechaIngresadas=false;
+        String pFechaIni = "";
+        String pFechaFinal = "";
+        boolean pFechaIngresadas = false;
         if (!txtNombre.getText().isBlank()) {
             pNombre = txtNombre.getText();
         }
@@ -107,20 +122,72 @@ public class BuscarUsuarioController extends Controller implements Initializable
         if (!txtCedula.getText().isBlank()) {
             pCedula = txtCedula.getText();
         }
-      //  if(dtpFechaInicial.&&dtpFechaFinal.getValue().toString().isBlank()){
-        pFechaIngresadas=true;
-        
-        
+        if (dtpFechaInicial.getValue() != null && dtpFechaFinal.getValue() != null) {
+            pFechaIni = dtpFechaInicial.getValue().toString();
+            pFechaFinal = dtpFechaFinal.getValue().toString();
+            pFechaIngresadas = true;
+        }
         UsuarioService usuarioService = new UsuarioService();
-        Respuesta respuesta = usuarioService.getById(pNombre, pApellido, pCedula,Timestamp.valueOf(LocalDateTime.of(dtpFechaInicial.getValue(), LocalTime.MIN)).toString(),Timestamp.valueOf(LocalDateTime.of(dtpFechaFinal.getValue(), LocalTime.MIN)).toString(),pFechaIngresadas);
+        Respuesta respuesta = usuarioService.getById(pNombre, pApellido, pCedula, pFechaIni, pFechaFinal, checkActivo.isSelected(), pFechaIngresadas);
+
         if (respuesta.getEstado()) {
             usuarioList = (List<UsuarioDto>) respuesta.getResultado("data");
             usuariosTabla = FXCollections.observableArrayList((List) respuesta.getResultado("data"));
             tblUsuarios.setItems(usuariosTabla);
         } else {
-            new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer areas", this.getStage(), respuesta.getMensaje());
+            new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer los usuarios", this.getStage(), respuesta.getMensaje());
 
         }
     }
 
+    @FXML
+    public void limpiarBtn(ActionEvent event) {
+        dtpFechaFinal.getEditor().clear();
+        dtpFechaInicial.getEditor().clear();
+        txtNombre.setText("");
+        txtCedula.setText("");
+        txtApellido.setText("");
+        checkActivo.setSelected(true);
+        Label la = new Label();
+
+    }
+
+    private void addButtonToTable() {
+
+        Callback<TableColumn<UsuarioDto, Void>, TableCell<UsuarioDto, Void>> cellFactory = new Callback<>() {
+            @Override
+            public TableCell<UsuarioDto, Void> call(final TableColumn<UsuarioDto, Void> param) {
+                final TableCell<UsuarioDto, Void> cell = new TableCell<>() {
+
+                    private final JFXButton btn = new JFXButton("Editar");
+
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            UsuarioDto usuarioDto = getTableView().getItems().get(getIndex());
+                            System.out.println(usuarioDto.getNombre());
+                            AppContext.getInstance().set("usuarioEdit", usuarioDto);
+                            FlowController.getInstance().goBack();
+                            
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                        }
+                    }
+
+                };
+                return cell;
+            }
+        };
+
+        tblEditar.setCellFactory(cellFactory);
+
+        // tableResultados.getColumns().add(columAcciones);
+    }
 }

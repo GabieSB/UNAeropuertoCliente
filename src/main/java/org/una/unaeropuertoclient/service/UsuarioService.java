@@ -76,14 +76,20 @@ public class UsuarioService {
 
     }
 
-    public Respuesta getById(String nombr, String apellido,String cedula,String fechaInicio,String fechaFinal,boolean boolFechas ) {
+    public Respuesta getById(String nombr, String apellido, String cedula, String fechaInicio, String fechaFinal,boolean activo, boolean boolFechas) {
         try {
-            String url="usuarios/busquedaCompleta/" + nombr + "/" + apellido+"/"+cedula;
+//            String b;
+//            if(activo){
+//                b="true";
+//            }else{
+//            b="false";
+//            }
+            String url = "usuarios/busquedaCompleta/" + nombr + "/" + apellido + "/" + cedula+"/"+activo;
 
-            if(boolFechas){
-            url="usuarios/busquedaCompletaConFechas/"+nombr+"/"+apellido+"/"+cedula+"/"+fechaInicio+"/"+fechaFinal;
+            if (boolFechas) {
+                url = "usuarios/busquedaCompletaConFechas/" + nombr + "/" + apellido + "/" + cedula+"/"+activo + "/"+fechaInicio + "/" +fechaFinal;
             }
-                        RequestHTTP requestHTTP = new RequestHTTP();
+            RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.get(url);
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {

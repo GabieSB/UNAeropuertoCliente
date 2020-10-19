@@ -16,6 +16,7 @@ import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.MouseEvent;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
 import org.una.unaeropuertoclient.model.BitacoraDto;
@@ -59,5 +60,14 @@ public class MenuPrincipalController extends Controller implements Initializable
     public void goGestorServicio(ActionEvent event) {
         FlowController.getInstance().goView("GestorServicios");
     }
+
+    
+
+    @FXML
+    public void goParametros(ActionEvent event) {
+          FlowController.getInstance().goView("ParametrosSistema");
+    }
+
+    
 
 }

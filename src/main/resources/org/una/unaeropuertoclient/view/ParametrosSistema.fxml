@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTimePicker?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="588.0" prefWidth="657.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.ParametrosSistemaController">
+   <children>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label text="Parametros Sistema" />
+            <JFXTextField fx:id="txtRepresentante" labelFloat="true" promptText="Representante" />
+            <JFXTextField fx:id="txtCorreo" labelFloat="true" promptText="Correo" />
+            <JFXTextField fx:id="txtTelefono" labelFloat="true" promptText="Telefono" />
+            <HBox prefHeight="166.0" prefWidth="357.0">
+               <children>
+                  <AnchorPane prefHeight="166.0" prefWidth="362.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="100.0" prefWidth="225.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label text="Hora de Apertura" />
+                              <JFXTimePicker fx:id="tpkApertura" />
+                              <Label text="Tiempo Inactivo">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                                 <padding>
+                                    <Insets top="10.0" />
+                                 </padding>
+                              </Label>
+                              <JFXComboBox fx:id="cbxTiempoInactivo" />
+                           </children>
+                           <padding>
+                              <Insets top="5.0" />
+                           </padding>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="166.0" prefWidth="171.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label text="Hora de Cierre" />
+                              <JFXTimePicker fx:id="tpkCierre" />
+                              <Label text="Vuelos por hora">
+                                 <padding>
+                                    <Insets top="10.0" />
+                                 </padding>
+                              </Label>
+                              <JFXComboBox fx:id="cbxVuelos" />
+                           </children>
+                           <padding>
+                              <Insets top="5.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="62.0" prefWidth="357.0">
+               <children>
+                  <JFXButton fx:id="btnEditar" onAction="#editarParametros" text="Editar" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets left="150.0" right="150.0" top="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

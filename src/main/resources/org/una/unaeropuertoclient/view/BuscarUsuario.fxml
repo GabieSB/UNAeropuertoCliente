@@ -28,8 +28,8 @@
                   <JFXTextField fx:id="txtCedula" labelFloat="true" promptText="Cédula" />
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                      <children>
-                        <DatePicker fx:id="dtpFechaInicial" promptText="Fecha de Inicio" />
-                        <DatePicker fx:id="dtpFechaFinal" promptText="Fecha Final">
+                        <DatePicker fx:id="dtpFechaInicial" editable="false" promptText="Fecha de Inicio" />
+                        <DatePicker fx:id="dtpFechaFinal" editable="false" promptText="Fecha Final">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -37,8 +37,9 @@
                         <JFXCheckBox fx:id="checkActivo" text="Activo" />
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="200.0">
                      <children>
+                        <JFXButton fx:id="btnLimpiar" onAction="#limpiarBtn" text="Limpiar" />
                         <JFXButton fx:id="btnBuscar" onAction="#actionBuscarPersona" text="Buscar" />
                      </children>
                   </HBox>
@@ -51,11 +52,12 @@
               <columns>
                 <TableColumn fx:id="tbcId" prefWidth="38.0" text="ID" />
                   <TableColumn fx:id="tblCedula" prefWidth="62.0" text="Cédula" />
-                <TableColumn fx:id="tbcNombre" prefWidth="119.0" text="Nombre" />
-                  <TableColumn fx:id="tbcApellido" prefWidth="126.0" text="Apellidos" />
-                  <TableColumn fx:id="tbcFechaIngreso" prefWidth="160.0" text="Fecha Ingreso" />
-                  <TableColumn fx:id="tbcFechaModificacion" prefWidth="148.0" text="Fecha Modificación" />
-                  <TableColumn fx:id="tbcEstado" prefWidth="116.0" text="Estado" />
+                <TableColumn fx:id="tbcNombre" prefWidth="84.0" text="Nombre" />
+                  <TableColumn fx:id="tbcApellido" prefWidth="94.0" text="Apellidos" />
+                  <TableColumn fx:id="tbcFechaIngreso" prefWidth="123.0" text="Fecha Ingreso" />
+                  <TableColumn fx:id="tbcFechaModificacion" prefWidth="136.0" text="Fecha Modificación" />
+                  <TableColumn fx:id="tbcEstado" prefWidth="92.0" text="Estado" />
+                  <TableColumn fx:id="tblEditar" prefWidth="123.0" text="Editar" />
               </columns>
             </TableView>
          </children>

@@ -31,6 +31,7 @@ import org.una.unaeropuertoclient.model.UsuarioDto;
 import org.una.unaeropuertoclient.service.AreaService;
 import org.una.unaeropuertoclient.service.RolService;
 import org.una.unaeropuertoclient.service.UsuarioService;
+import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -95,10 +96,12 @@ public class CrearUsuarioController extends Controller implements Initializable 
         }
 //        System.out.printl((JFXCheckBox)vbxRoles.getClass());
 //        (JFXCheckBox)vbxRoles.getChildren().get(0).toString();
+
     }
 
     @Override
     public void initialize() {
+DatosEdicion();
     }
 
     @FXML
@@ -132,6 +135,23 @@ public class CrearUsuarioController extends Controller implements Initializable 
         }
         for (AreaDto areaDto : areaList) {
             cbxAreas.getItems().add(areaDto.getNombre());
+        }
+    }
+
+    public void DatosEdicion() {
+        if (AppContext.getInstance().get("usuarioEdit") != null) {
+            UsuarioDto usuarioDto = (UsuarioDto) AppContext.getInstance().get("usuarioEdit");
+            txtNombre.setText(usuarioDto.getNombre());
+            txtCedula.setText(usuarioDto.getCedula());
+            txtApellido.setText(usuarioDto.getApellidos());
+            txtContrasenna.setText(usuarioDto.getContrasenna());
+            txtContrasennaConfirmacion.setText(usuarioDto.getContrasenna());
+             lblFechaModificacion.setText("Fecha Modificacion:"+usuarioDto.getFechaModificacion());
+             txtNombre.setText(usuarioDto.getFechaIngreso().toString());
+             if(usuarioDto.getActivo()){
+              checkActivo.setSelected(true);
+             }
+           
         }
     }
 

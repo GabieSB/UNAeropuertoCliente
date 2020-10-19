@@ -34,8 +34,8 @@
                   </HBox>
                   <HBox alignment="TOP_CENTER" prefHeight="35.0" prefWidth="400.0" spacing="40.0">
                      <children>
-                        <DatePicker fx:id="dtpFechaNacimiento" promptText="Fecha de Nacimiento" />
-                        <DatePicker fx:id="dtpFechaRegistro" promptText="Fecha de Registro" />
+                        <DatePicker fx:id="dtpFechaNacimiento" editable="false" promptText="Fecha de Nacimiento" />
+                        <DatePicker fx:id="dtpFechaRegistro" editable="false" promptText="Fecha de Registro" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="35.0" prefWidth="400.0" spacing="50.0">
