@@ -15,7 +15,8 @@ public class CobroService {
 
     Gson gson = new GsonBuilder()
             .setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
-    public Respuesta create(CobroDto cobro){
+
+    public Respuesta create(CobroDto cobro) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.post("cobros/create", gson.toJson(cobro));
@@ -24,13 +25,11 @@ public class CobroService {
                 if (respuesta.statusCode() == 500) {
                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
                 }
-                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
+                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
 
             //List<AuthenticationResponse> users = new Gson().fromJson(respuesta.body().toString(), new TypeToken<>() {}.getType());
             CobroDto servicioMantenimientoDto = gson.fromJson(respuesta.body().toString(), CobroDto.class);
-
-
 
             return new Respuesta(true, "", "", "data", servicioMantenimientoDto);
 

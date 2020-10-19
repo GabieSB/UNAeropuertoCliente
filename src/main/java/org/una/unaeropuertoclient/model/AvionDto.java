@@ -10,7 +10,6 @@ import java.util.List;
 public class AvionDto {
 
     private Long id;
-
     private String matricula;
     private Boolean activo;
     private List<ServicioMantenimientoDto> servicioMantenimientoList;
