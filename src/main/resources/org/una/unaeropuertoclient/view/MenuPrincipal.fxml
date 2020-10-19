@@ -16,7 +16,7 @@
             <JFXButton onAction="#goParametros" prefHeight="70.0" prefWidth="139.0" text="Parametros Sistema" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton onAction="#OnClickAirModule" prefHeight="70.0" prefWidth="139.0" text="AIRCONTROL" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" text="Gestor Servicio" />
             <JFXButton onAction="#btnconsultarServicios" prefHeight="70.0" prefWidth="139.0" text="Consultar Servicios" />

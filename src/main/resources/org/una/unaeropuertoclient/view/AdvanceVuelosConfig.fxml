@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="720.0" styleClass="air-module-fondo" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.AdvanceVuelosConfigController">
+    <children>
+        <TabPane layoutX="220.0" layoutY="139.0" prefHeight="200.0" prefWidth="200.0" styleClass="air-tab" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <tabs>
+                <Tab fx:id="tabAerolineas" text="Aerolineas">
+                    <content>
+                        <AnchorPane fx:id="apAerolineas" minHeight="0.0" minWidth="0.0" />
+                    </content>
+                </Tab>
+                <Tab fx:id="tabAviones" text="Aviones">
+                    <content>
+                        <AnchorPane fx:id="apAviones" minHeight="0.0" minWidth="0.0" />
+                    </content>
+                </Tab>
+                <Tab fx:id="tabPistas" text="Pistas">
+                    <content>
+                        <AnchorPane fx:id="apPistas" minHeight="0.0" minWidth="0.0" />
+                    </content>
+                </Tab>
+                <Tab fx:id="tabLugares" text="Lugares">
+                    <content>
+                        <AnchorPane fx:id="apLugares" minHeight="0.0" minWidth="0.0" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+    <stylesheets>
+        <URL value="@style.css" />
+        <URL value="@styleAdvanceFlySettings.css" />
+    </stylesheets>
+</AnchorPane>

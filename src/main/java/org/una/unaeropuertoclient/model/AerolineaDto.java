@@ -11,7 +11,6 @@ import java.util.List;
  *
  * @author Roberth :)
  */
-
 public class AerolineaDto {
 
     private Long id;
