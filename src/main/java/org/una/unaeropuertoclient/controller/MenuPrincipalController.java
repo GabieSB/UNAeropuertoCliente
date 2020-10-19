@@ -70,4 +70,7 @@ public class MenuPrincipalController extends Controller implements Initializable
 
     
 
+    public void btnconsultarServicios(ActionEvent actionEvent) {
+        FlowController.getInstance().goView("GestorServiciosConsultas");
+    }
 }

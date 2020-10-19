@@ -97,6 +97,14 @@ public class ServicioMantenimientoDto {
         this.cobroList = cobroList;
     }
 
+    public void agregarCobro(CobroDto cobroDto){
+        if(cobroList == null){
+            cobroList = new ArrayList<>();
+        }else{
+            cobroList.add(cobroDto);
+        }
+    }
+
     public ServicioMantenimientoDto(LocalDate fechaServicio, Long numeroFactura, Boolean estadoPago, Boolean estaFinalizacion, AvionDto avionesId, TipoServicioDto tiposServiciosId) {
         this.fechaServicio =  Date.from(fechaServicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
         this.numeroFactura = numeroFactura;
@@ -105,6 +113,6 @@ public class ServicioMantenimientoDto {
         this.activo = true;
         this.avionesId = avionesId;
         this.tiposServiciosId = tiposServiciosId;
-        this.cobroList = new ArrayList<>();
+        this.cobroList = null;
     }
 }
