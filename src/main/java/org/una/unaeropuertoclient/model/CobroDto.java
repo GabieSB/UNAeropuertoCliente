@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package org.una.unaeropuertoclient.model;
+
 public class CobroDto {
 
     private Long id;
