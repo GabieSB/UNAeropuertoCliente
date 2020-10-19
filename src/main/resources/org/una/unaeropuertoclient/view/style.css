@@ -12,10 +12,12 @@ and open the template in the editor.
 *{
     -fx-backGraundColor: linear-gradient(from 25% 25% to 100% 100%, #ffffff, #A5D6A7);
     -fx-menu-superior-backGraundColor: linear-gradient(from 25% 25% to 30% 100%, #ffffff, #C5E1A5);
-    -fx-goodButton-color: #1565C0;
+    -fx-advance-color: #1565C0;
+    -fx-advance-hover-color: #0D47A1;
     -fx-dangerousButton-color: #b71c1c;
     -fx-dangerousButton-hover-color:#701006;
     -fx-tittle-color: #2E7D32;
+    -fx-tittle-dark-color:#435948;
     -fx-semitrasparent-glass-color:#75757550;
     -fx-fly-module-separator-color:#42424270;
 }
@@ -26,6 +28,13 @@ and open the template in the editor.
 }
 #dangerous-button-efect:hover{
     -fx-background-color: -fx-dangerousButton-hover-color;
+}
+
+#advance-button-efect{
+    -fx-background-color: -fx-advance-color;
+}
+#advance-button-efect:hover{
+    -fx-background-color: -fx-advance-hover-color;
 }
 
 .jfx-button{
@@ -54,7 +63,7 @@ and open the template in the editor.
 /*start *********************************+MENÚ SUPERIOR+*************************************** start*/
 .menu-superior{
     -fx-background-color: -fx-menu-superior-backGraundColor;
-    -fx-effect: dropshadow(three-pass-box, #37474F, 23, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, #37474F, 10, 0, 0, 0);
 }
 
 .menu-superior-userIcon{
@@ -87,6 +96,12 @@ and open the template in the editor.
 
 .air-module-subtittle{
     -fx-text-fill: -fx-tittle-color;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.air-module-dark-subtittle{
+    -fx-text-fill: -fx-tittle-dark-color;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }

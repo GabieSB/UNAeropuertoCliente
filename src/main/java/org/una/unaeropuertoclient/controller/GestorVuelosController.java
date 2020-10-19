@@ -83,6 +83,7 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     @FXML
     public void onActionNuevo(ActionEvent event) {
+        FlowController.getInstance().goViewInWindowModal("EditorVuelos", this.getStage(), false);
     }
 
     @FXML
@@ -117,6 +118,11 @@ public class GestorVuelosController extends Controller implements Initializable 
     
     private void chargeTodayData(){
        // admin1
+    }
+
+    @FXML
+    public void onClickAdvanceSettings(ActionEvent event) {
+        FlowController.getInstance().goView("AdvanceVuelosConfig");
     }
 
 }

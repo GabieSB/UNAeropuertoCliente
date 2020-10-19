@@ -74,5 +74,6 @@
             </TableView>
          </children>
       </VBox>
+      <JFXButton id="advance-button-efect" layoutX="654.0" layoutY="2.0" onAction="#onClickAdvanceSettings" prefHeight="25.0" prefWidth="80.0" text="Avanzado" AnchorPane.rightAnchor="24.0" AnchorPane.topAnchor="10.0" />
    </children>
 </AnchorPane>

@@ -190,7 +190,7 @@ public class FlowController {
         controller.initialize();
         Stage stage = new Stage();
         //stage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
-        stage.setTitle("Lab01");
+        stage.setTitle("UNAeropuerto");
         stage.setOnHidden((WindowEvent event) -> {
             controller.getStage().getScene().setRoot(new Pane());
             controller.setStage(null);
@@ -231,7 +231,7 @@ public class FlowController {
         controller.initialize();
         Stage stage = new Stage();
         //stage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
-        stage.setTitle("Lab01");
+        stage.setTitle("UNAeropuerto");
         stage.setResizable(resizable);
         stage.setOnHidden((WindowEvent event) -> {
             controller.getStage().getScene().setRoot(new Pane());
