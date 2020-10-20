@@ -11,13 +11,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="636.0" prefWidth="938.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorServiciosConsultasController">
+<AnchorPane prefHeight="636.0" prefWidth="938.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorServiciosConsultasController">
    <children>
-      <VBox prefHeight="642.0" prefWidth="938.0">
+      <VBox alignment="CENTER" prefHeight="642.0" prefWidth="938.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox alignment="CENTER" prefHeight="91.0" prefWidth="910.0" spacing="50.0">
                <children>
-                  <Label text="Búsqueda Por Parámetro" />
+                  <Label styleClass="air-module-tittle" text="Búsqueda Por Parámetro" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="63.0" prefWidth="846.0" spacing="50.0">
@@ -29,14 +29,14 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="34.0" prefWidth="846.0">
                <children>
-                  <Label text="Búsqueda por Fecha" />
+                  <Label styleClass="air-module-tittle" text="Búsqueda por Fecha" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="82.0" prefWidth="846.0" spacing="63.0">
                <children>
-                  <Label text="Desde:" />
+                  <Label styleClass="air-module-subtittle" text="Desde:" />
                   <DatePicker fx:id="dateInicio" prefHeight="25.0" prefWidth="150.0" />
-                  <Label text="Hasta:" />
+                  <Label styleClass="air-module-subtittle" text="Hasta:" />
                   <DatePicker fx:id="dateFin" prefHeight="26.0" prefWidth="160.0" />
                   <JFXButton fx:id="btnBuscarFecha" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorFecha" prefHeight="30.0" prefWidth="124.0" stylesheets="@style.css" text="Buscar por fecha" />
                </children>
@@ -54,7 +54,7 @@
                         <TableColumn fx:id="columTipoServicio" prefWidth="107.199951171875" text="Tipo Servicio" />
                         <TableColumn fx:id="columAvion" prefWidth="91.20001220703125" text="Avión" />
                         <TableColumn fx:id="columMonto" prefWidth="75.0" text="Monto" />
-                        <TableColumn fx:id="columAcciones" prefWidth="83.20001220703125" text="Acciones" />
+                        <TableColumn fx:id="columAcciones" prefWidth="137.5999755859375" text="Acciones" />
                     </columns>
                   </TableView>
                </children>

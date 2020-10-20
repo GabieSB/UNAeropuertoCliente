@@ -12,7 +12,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
+import org.una.unaeropuertoclient.model.AuthenticationResponse;
+import org.una.unaeropuertoclient.model.NotificacionDto;
 import org.una.unaeropuertoclient.model.ServicioMantenimientoDto;
+import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -21,6 +24,7 @@ import org.una.unaeropuertoclient.utils.Respuesta;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -46,6 +50,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
     private List<ServicioMantenimientoDto> serviciosResultados = new ArrayList<>();
     ServicioMantenimientoService service = new ServicioMantenimientoService();
+    NotificacionService notificacionService = new NotificacionService();
     Mensaje mensaje = new Mensaje();
 
 
@@ -68,8 +73,8 @@ public class GestorServiciosConsultasController  extends Controller implements I
                     private final JFXButton btn2 = new JFXButton("Anular");
                     {
                         btn2.setOnAction((ActionEvent event) -> {
-                            ServicioMantenimientoDto ServicioMantenimientoDto = getTableView().getItems().get(getIndex());
-                            System.out.println("selectedServicioMantenimientoDto: " + ServicioMantenimientoDto.getId());
+                            ServicioMantenimientoDto servicioMantenimientoDto = getTableView().getItems().get(getIndex());
+                           registrarNotificacion(servicioMantenimientoDto);
                         });
                     }
                     HBox hBox = new HBox(btn, btn2);
@@ -132,6 +137,19 @@ public class GestorServiciosConsultasController  extends Controller implements I
         tableResultados.getItems().clear();
         tableResultados.setItems(FXCollections.observableList(serviciosResultados));
         addButtonToTable();
+    }
+
+    void registrarNotificacion(ServicioMantenimientoDto selected){
+
+        AuthenticationResponse authentication = (AuthenticationResponse) AppContext.getInstance().get("token");
+
+        NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(selected.getId()), new Date(), authentication.getUsuario().getAreasId());
+
+        Respuesta respuesta = notificacionService.create(notificacionDto);
+
+        if(respuesta.getEstado()){
+            mensaje.show(Alert.AlertType.INFORMATION, "Información", "Se solicitó la anulacion del servicion con ID: " + selected.getId());
+        }
     }
 
 
