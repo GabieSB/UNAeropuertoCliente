@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.una.unaeropuertoclient.model.AerolineaDto;
+import org.una.unaeropuertoclient.utils.FlowController;
 
 /**
  * FXML Controller class
@@ -52,6 +53,7 @@ public class GestorAerolineasController extends Controller implements Initializa
 
     @FXML
     public void OnClickNuevo(ActionEvent event) {
+        FlowController.getInstance().goViewInWindowModal("EditorAerolineas", FlowController.getInstance().getStage(), false);
     }
 
 }

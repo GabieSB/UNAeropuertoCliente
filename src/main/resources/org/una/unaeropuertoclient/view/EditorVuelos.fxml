@@ -20,6 +20,7 @@
                   <JFXComboBox fx:id="cbAerolinea" labelFloat="true" prefWidth="200.0" promptText="Aerolinea" />
                   <JFXComboBox fx:id="cbAvion" labelFloat="true" prefWidth="200.0" promptText="Avión" />
                   <JFXComboBox fx:id="cbEsadoVuelo" labelFloat="true" prefWidth="200.0" promptText="Estado de vuelo" />
+                  <JFXComboBox fx:id="cbPistaAterrisage" labelFloat="true" prefWidth="200.0" promptText="Pista" />
                   <Label fx:id="lblNombreVuelo" minWidth="200.0" prefHeight="20.0" prefWidth="200.0" styleClass="air-module-subtittle" text="Nombre de vuelo:">
                      <VBox.margin>
                         <Insets top="40.0" />

@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.una.unaeropuertoclient.model.PistaDto;
+import org.una.unaeropuertoclient.utils.FlowController;
 
 /**
  * FXML Controller class
@@ -54,6 +55,7 @@ public class GestorPistasController extends Controller implements Initializable 
 
     @FXML
     public void OnClickNuevo(ActionEvent event) {
+        FlowController.getInstance().goViewInWindowModal("EditorPistas", FlowController.getInstance().getStage(), false);
     }
 
 }

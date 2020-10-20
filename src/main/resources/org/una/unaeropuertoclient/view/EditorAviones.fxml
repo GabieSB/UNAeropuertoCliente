@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="org.una.unaeropuertoclient.controller.EditorAvionesController">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.EditorAvionesController">
    <children>
-      <Label layoutX="24.0" layoutY="24.0" styleClass="air-module-subtittle" text="Editor de aerolineas" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <Label layoutX="24.0" layoutY="24.0" styleClass="air-module-subtittle" text="Editor de aviones" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <HBox alignment="CENTER" layoutX="210.0" layoutY="160.0" prefHeight="100.0" prefWidth="200.0" spacing="15.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+         <children>
+            <JFXTextField fx:id="txtMatricula" labelFloat="true" prefHeight="25.0" prefWidth="170.0" promptText="Matrícula" />
+            <JFXComboBox fx:id="cbAerolinea" labelFloat="true" prefHeight="25.0" prefWidth="170.0" promptText="Aerolinea" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" layoutX="426.0" layoutY="338.0" maxHeight="35.0" maxWidth="-Infinity" prefHeight="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <JFXButton onAction="#OnClickSave" text="Guadar cambios" />
+            <JFXButton id="dangerous-button-efect" onAction="#OnClickCancel" text="Cancelar" />
+         </children>
+         <padding>
+            <Insets right="10.0" />
+         </padding>
+      </HBox>
    </children>
 </AnchorPane>

@@ -5,7 +5,6 @@
  */
 package org.una.unaeropuertoclient.controller;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.una.unaeropuertoclient.model.AvionDto;
+import org.una.unaeropuertoclient.utils.FlowController;
 
 /**
  * FXML Controller class
@@ -59,6 +59,7 @@ public class GestorAvionesController extends Controller implements Initializable
 
     @FXML
     public void OnClickNuevo(ActionEvent event) {
+        FlowController.getInstance().goViewInWindowModal("EditorAviones", FlowController.getInstance().getStage(), false);
     }
 
 }

@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="org.una.unaeropuertoclient.controller.EditorAerolineasController">
    <children>
       <Label layoutX="14.0" layoutY="14.0" styleClass="air-module-subtittle" text="Editor de aerolineas" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <HBox alignment="CENTER" layoutX="200.0" layoutY="150.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+         <children>
+            <JFXTextField fx:id="txtNombre" labelFloat="true" prefHeight="25.0" prefWidth="296.0" promptText="Nombre" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" layoutX="426.0" layoutY="338.0" maxHeight="35.0" maxWidth="-Infinity" prefHeight="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <JFXButton onAction="#OnClickSave" text="Guadar cambios" />
+            <JFXButton id="dangerous-button-efect" onAction="#OnClickCancel" text="Cancelar" />
+         </children>
+         <padding>
+            <Insets right="10.0" />
+         </padding>
+      </HBox>
    </children>
 </AnchorPane>

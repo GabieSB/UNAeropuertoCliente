@@ -6,20 +6,22 @@
 package org.una.unaeropuertoclient.controller;
 
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXTimePicker;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.model.LugarDto;
+import org.una.unaeropuertoclient.model.PistaDto;
+import org.una.unaeropuertoclient.service.PistaService;
 import org.una.unaeropuertoclient.utils.Mensaje;
+import org.una.unaeropuertoclient.utils.Respuesta;
 
 /**
  * FXML Controller class
@@ -52,6 +54,8 @@ public class EditorVuelosController extends Controller implements Initializable 
     public JFXComboBox<String> cbHoraLlegada;
     @FXML
     public JFXComboBox<String> cbMinutosLlegada;
+    @FXML
+    private JFXComboBox<PistaDto> cbPistaAterrisage;
 
     /**
      * Initializes the controller class.
@@ -65,6 +69,7 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
+        chargeData();
         cargarFuncionalidadesVentana();
     }
 
@@ -105,4 +110,23 @@ public class EditorVuelosController extends Controller implements Initializable 
         }
     }
 
+    private void chargeData() {
+        Thread th = new Thread(() -> chargePistas());
+        th.start();
+        
+    }
+
+    private void chargePistas() {
+        Platform.runLater(() -> {
+            Respuesta resp = new PistaService().findAll();
+            cbPistaAterrisage.getItems().clear();
+            if (resp.getEstado()) {
+                List<PistaDto> pList = (List<PistaDto>) resp.getResultado("data");
+                cbPistaAterrisage.getItems().addAll(pList);
+            } else {
+                cbPistaAterrisage.setPromptText(resp.getMensaje());
+            }
+        });
+    }
+    
 }

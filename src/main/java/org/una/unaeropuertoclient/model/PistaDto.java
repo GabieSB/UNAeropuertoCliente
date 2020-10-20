@@ -8,9 +8,16 @@ package org.una.unaeropuertoclient.model;
 import java.util.List;
 
 public class PistaDto {
+
     private Long id;
     private String numeroPista;
     private Float longitud;
     private Boolean activo;
     private List<VueloDto> vueloList;
+
+    @Override
+    public String toString() {
+        return numeroPista + " - " + longitud.toString() + "m";
+    }
+
 }

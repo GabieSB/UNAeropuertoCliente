@@ -293,6 +293,10 @@ public class FlowController {
     public void limpiarCache() {
         loaders.clear();
     }
+    
+    public Stage getStage(){
+        return mainStage;
+    }
 
     public static void changeSuperiorTittle(String name) {
         ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeScreenNameTitle(name);
