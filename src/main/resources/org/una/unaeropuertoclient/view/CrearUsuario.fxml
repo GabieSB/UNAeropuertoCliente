@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDatePicker?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
@@ -29,6 +30,7 @@
                   <JFXTextField fx:id="txtContrasennaConfirmacion" labelFloat="true" promptText="Confirmación Contraseña" />
                   <HBox alignment="CENTER_RIGHT" prefHeight="260.0" prefWidth="541.0" spacing="20.0">
                      <children>
+                        <JFXDatePicker />
                         <JFXComboBox fx:id="cbxAreas" labelFloat="true" prefHeight="25.0" prefWidth="132.0" promptText="Areas" />
                      </children>
                   </HBox>
