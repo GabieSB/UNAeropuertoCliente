@@ -30,4 +30,9 @@ public class RequesUtils {
         Type objType = TypeToken.getParameterized(List.class, ObjectTypeClass).getType();
         return new Gson().fromJson(response.body().toString(), objType);
     }
+
+    public static <ObjectType> ObjectType toObject(HttpResponse resp, Class<ObjectType> t) {
+        ObjectType obj = new Gson().fromJson(resp.body().toString(), t);
+        return obj;
+    }
 }

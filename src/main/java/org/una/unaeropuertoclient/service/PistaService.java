@@ -7,7 +7,6 @@ package org.una.unaeropuertoclient.service;
 
 import com.google.gson.Gson;
 import java.net.http.HttpResponse;
-import java.util.List;
 import org.una.unaeropuertoclient.model.PistaDto;
 import org.una.unaeropuertoclient.utils.RequesUtils;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
@@ -42,11 +41,42 @@ public class PistaService {
         return null;
     }
 
-    public Respuesta create() {
-        return null;
+    public Respuesta create(PistaDto pista) {
+        pista.setActivo(true);
+        HttpResponse resp = new RequestHTTP().post("pistas/create", jsonConv.toJson(pista));
+        if (isError(resp.statusCode())) {
+            return new Respuesta(false, "Error al crear nueva pista de aterrizaje", "");
+        }
+        return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>toObject(resp, PistaDto.class));
     }
 
-    public Respuesta update() {
-        return null;
+    public Respuesta update(PistaDto pista) {
+        pista.setActivo(true);
+        HttpResponse resp = new RequestHTTP().put("pistas/update", jsonConv.toJson(pista));
+        if (isError(resp.statusCode())) {
+            return new Respuesta(false, "Error al crear nueva pista de aterrizaje", "");
+        }
+        if (isEmptyResult(resp.statusCode())) {
+            return new Respuesta(false, "No ha sido posible hallar la pista que se desea modificar", "");
+        }
+        return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>toObject(resp, PistaDto.class));
+    }
+
+    public Respuesta filter(String numeroPista, String longitudPista) {
+        try {
+            RequestHTTP requestHTTP = new RequestHTTP();
+            numeroPista = (numeroPista.isBlank()) ? "none" : numeroPista.trim();
+            longitudPista = (longitudPista.isBlank()) ? "none" : longitudPista.trim();
+            HttpResponse respuesta = requestHTTP.get("pistas/filter/" + numeroPista + "/" + longitudPista);
+            if (isError(respuesta.statusCode())) {
+                return new Respuesta(false, "Error interno al consultar pistas, considera reportar esta falla.", "");
+            }
+            if (isEmptyResult(respuesta.statusCode())) {
+                return new Respuesta(false, "No hay pistas que coisidan con lo que buscas.", "");
+            }
+            return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>asList(respuesta, PistaDto.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
+        }
     }
 }

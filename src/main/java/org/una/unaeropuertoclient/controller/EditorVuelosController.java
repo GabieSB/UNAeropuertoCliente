@@ -20,7 +20,6 @@ import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.model.LugarDto;
 import org.una.unaeropuertoclient.model.PistaDto;
 import org.una.unaeropuertoclient.service.PistaService;
-import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
 /**
@@ -69,15 +68,18 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
+        cbAerolinea.setPromptText("Cargando...");
+        cbAvion.setPromptText("Cargando...");
+        cbPistaAterrisage.setPromptText("Cargando...");
+        cbSitioSalida.setPromptText("Cargando...");
+        cbSitioLlegada.setPromptText("Cargando...");
         chargeData();
         cargarFuncionalidadesVentana();
     }
 
     @FXML
     public void onActionCancel(ActionEvent event) {
-        if (autorizaCerrarVentana()) {
-            this.getStage().close();
-        }
+        this.getStage().close();
     }
 
     @FXML
@@ -88,16 +90,10 @@ public class EditorVuelosController extends Controller implements Initializable 
     public void OnClickSave(ActionEvent event) {
     }
 
-    private boolean autorizaCerrarVentana() {
-        return new Mensaje().showConfirmation("Atención", this.getStage(), "¿Realmente desea cancelar la edición de este vuelo?");
-    }
-
     private void cargarFuncionalidadesVentana() {
         Platform.runLater(() -> {
             this.getStage().setOnCloseRequest(event -> {
-                if (!autorizaCerrarVentana()) {
-                    event.consume();
-                }
+                //TODO
             });
         });
         for (Integer h = 0; h < 24; h++) {
@@ -113,7 +109,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     private void chargeData() {
         Thread th = new Thread(() -> chargePistas());
         th.start();
-        
+
     }
 
     private void chargePistas() {
@@ -123,10 +119,11 @@ public class EditorVuelosController extends Controller implements Initializable 
             if (resp.getEstado()) {
                 List<PistaDto> pList = (List<PistaDto>) resp.getResultado("data");
                 cbPistaAterrisage.getItems().addAll(pList);
+                cbPistaAterrisage.setPromptText("Pistas");
             } else {
                 cbPistaAterrisage.setPromptText(resp.getMensaje());
             }
         });
     }
-    
+
 }
