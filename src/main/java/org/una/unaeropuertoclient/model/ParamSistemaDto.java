@@ -5,24 +5,43 @@
  */
 package org.una.unaeropuertoclient.model;
 
-import java.util.Date;
+import java.sql.Timestamp;
+
 
 public class ParamSistemaDto {
 
-    private Long id;
+    private Integer id;
     private Short vuelosHora;
     private Integer tiempoInactividad;
     private String telefonoAeropuerto;
     private String emailAeropuerto;
-    private String nombreRepresentante;
-    private Date aperturaOficina;
-    private Date cierreOficina;
+//    private Date aperturaOficina;
+//    private Date cierreOficina;
+    String nombreRepresentante;
+//    private Date aperturaOficina;
+//    private Date cierreOficina;
+    private Timestamp aperturaOficina;
+    private Timestamp cierreOficina;
 
-    public Long getId() {
+    public ParamSistemaDto() {
+    }
+
+//    public ParamSistemaDto(Integer id, Short vuelosHora, Integer tiempoInactividad, String telefonoAeropuerto, String emailAeropuerto, String nombreRepresentante, Date aperturaOficina, Date cierreOficina) {
+//        this.id = id;
+//        this.vuelosHora = vuelosHora;
+//        this.tiempoInactividad = tiempoInactividad;
+//        this.telefonoAeropuerto = telefonoAeropuerto;
+//        this.emailAeropuerto = emailAeropuerto;
+//        this.nombreRepresentante = nombreRepresentante;
+//        this.aperturaOficina = aperturaOficina;
+//        this.cierreOficina = cierreOficina;
+//    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -65,21 +84,38 @@ public class ParamSistemaDto {
     public void setNombreRepresentante(String nombreRepresentante) {
         this.nombreRepresentante = nombreRepresentante;
     }
+//
+//    public Date getAperturaOficina() {
+//        return aperturaOficina;
+//    }
+//
+//    public void setAperturaOficina(Date aperturaOficina) {
+//        this.aperturaOficina = aperturaOficina;
+//    }
+//
+//    public Date getCierreOficina() {
+//        return cierreOficina;
+//    }
+//
+//    public void setCierreOficina(Date cierreOficina) {
+//        this.cierreOficina = cierreOficina;
+//    }
 
-    public Date getAperturaOficina() {
+    public Timestamp getAperturaOficina() {
         return aperturaOficina;
     }
 
-    public void setAperturaOficina(Date aperturaOficina) {
+    public void setAperturaOficina(Timestamp aperturaOficina) {
         this.aperturaOficina = aperturaOficina;
     }
 
-    public Date getCierreOficina() {
+    public Timestamp getCierreOficina() {
         return cierreOficina;
     }
 
-    public void setCierreOficina(Date cierreOficina) {
+    public void setCierreOficina(Timestamp cierreOficina) {
         this.cierreOficina = cierreOficina;
     }
     
+
 }

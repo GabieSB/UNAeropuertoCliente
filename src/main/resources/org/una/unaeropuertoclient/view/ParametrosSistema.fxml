@@ -59,9 +59,10 @@
                   </AnchorPane>
                </children>
             </HBox>
-            <HBox alignment="CENTER_RIGHT" prefHeight="62.0" prefWidth="357.0">
+            <HBox alignment="CENTER" prefHeight="62.0" prefWidth="357.0" spacing="30.0">
                <children>
                   <JFXButton fx:id="btnEditar" onAction="#editarParametros" text="Editar" />
+                  <JFXButton fx:id="btnGuardar" onAction="#onActionGuardar" text="Guardar" />
                </children>
             </HBox>
          </children>
