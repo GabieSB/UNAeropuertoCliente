@@ -64,10 +64,6 @@ public class GestorPistasController extends Controller implements Initializable 
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
-//        if (txtLongitud.getText().isBlank() && txtNumeroPista.getText().isBlank()) {
-//            new Mensaje().showConfirmation("Atención", this.getStage(), "Buscar sin parámetros de búsqueda puede "
-//                    + "causar relentización en la red", "¿Desea realizar la búsqueda igualmente?");
-//        }
         Respuesta resp = new PistaService().filter(txtNumeroPista.getText(), txtLongitud.getText());
         if (resp.getEstado()) {
             tbPistas.getItems().clear();

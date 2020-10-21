@@ -9,7 +9,7 @@
 
 <AnchorPane id="AnchorPane" minWidth="200.0" prefHeight="75.0" prefWidth="1024.0" styleClass="menu-superior" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.MenuSuperiorController">
    <children>
-      <Label layoutX="89.0" layoutY="7.0" prefWidth="146.0" styleClass="menu-superior-tittle" text="UNAeropuerto" textFill="#615b5b" AnchorPane.leftAnchor="89.0" AnchorPane.topAnchor="10.0">
+      <Label layoutX="89.0" layoutY="7.0" styleClass="menu-superior-tittle" text="UNAeropuerto" textFill="#615b5b" AnchorPane.leftAnchor="89.0" AnchorPane.topAnchor="10.0">
          <font>
             <Font name="System Bold" size="21.0" />
          </font>

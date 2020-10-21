@@ -51,10 +51,9 @@ public class PistaService {
     }
 
     public Respuesta update(PistaDto pista) {
-        pista.setActivo(true);
         HttpResponse resp = new RequestHTTP().put("pistas/update", jsonConv.toJson(pista));
         if (isError(resp.statusCode())) {
-            return new Respuesta(false, "Error al crear nueva pista de aterrizaje", "");
+            return new Respuesta(false, "Error al modificar pista de aterrizaje, considera reportar esta falla.", "");
         }
         if (isEmptyResult(resp.statusCode())) {
             return new Respuesta(false, "No ha sido posible hallar la pista que se desea modificar", "");
