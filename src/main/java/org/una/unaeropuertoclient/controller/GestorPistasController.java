@@ -107,7 +107,7 @@ public class GestorPistasController extends Controller implements Initializable 
                     butt.setOnAction((ActionEvent event) -> {
                         PistaDto pista = getTableView().getItems().get(getIndex());
                         AppContext.getInstance().set("EditPista", pista);
-                        AppContext.getInstance().set("GPist",thisController);
+                        AppContext.getInstance().set("GPist", thisController);
                         FlowController.getInstance().goViewInWindowModal("EditorPistas", FlowController.getInstance().getStage(), false);
                     });
                 }

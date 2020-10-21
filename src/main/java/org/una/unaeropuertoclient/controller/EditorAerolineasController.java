@@ -14,10 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import org.una.unaeropuertoclient.model.AerolineaDto;
-import org.una.unaeropuertoclient.model.GastoReparacionDto;
-import org.una.unaeropuertoclient.model.LugarDto;
 import org.una.unaeropuertoclient.service.AerolineaService;
-import org.una.unaeropuertoclient.service.LugarService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -42,7 +39,7 @@ public class EditorAerolineasController extends Controller implements Initializa
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+       
     }
 
     @Override

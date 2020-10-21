@@ -47,7 +47,7 @@ public class PistaService {
         if (isError(resp.statusCode())) {
             return new Respuesta(false, "Error al crear nueva pista de aterrizaje", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>toObject(resp, PistaDto.class));
+        return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>asObject(resp, PistaDto.class));
     }
 
     public Respuesta update(PistaDto pista) {
@@ -58,7 +58,7 @@ public class PistaService {
         if (isEmptyResult(resp.statusCode())) {
             return new Respuesta(false, "No ha sido posible hallar la pista que se desea modificar", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>toObject(resp, PistaDto.class));
+        return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>asObject(resp, PistaDto.class));
     }
 
     public Respuesta filter(String numeroPista, String longitudPista) {
@@ -71,7 +71,7 @@ public class PistaService {
                 return new Respuesta(false, "Error interno al consultar pistas, considera reportar esta falla.", "");
             }
             if (isEmptyResult(respuesta.statusCode())) {
-                return new Respuesta(false, "No hay pistas que coisidan con lo que buscas.", "");
+                return new Respuesta(false, "No hay pistas que coincidan con lo que buscas.", "");
             }
             return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>asList(respuesta, PistaDto.class));
         } catch (Exception ex) {

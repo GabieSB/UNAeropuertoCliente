@@ -31,7 +31,7 @@ public class AerolineaService {
                 return new Respuesta(false, "Error interno al consultar aerolineas, considera reportar esta falla.", "");
             }
             if (isEmptyResult(respuesta.statusCode())) {
-                return new Respuesta(false, "No hay aerolineas que coisidan con lo que buscas.", "");
+                return new Respuesta(false, "No hay aerolineas que coincidan con lo que buscas.", "");
             }
             return new Respuesta(true, "", "", "data", RequesUtils.<AerolineaDto>asList(respuesta, AerolineaDto.class));
         } catch (Exception ex) {
@@ -63,7 +63,7 @@ public class AerolineaService {
         if (isEmptyResult(resp.statusCode())) {
             return new Respuesta(false, "No ha sido posible hallar la aerolinea que se desea modificar", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<AerolineaDto>toObject(resp, AerolineaDto.class));
+        return new Respuesta(true, "", "", "data", RequesUtils.<AerolineaDto>asObject(resp, AerolineaDto.class));
     }
 
     public Respuesta create(AerolineaDto aerolinea) {
@@ -72,7 +72,7 @@ public class AerolineaService {
         if (isError(resp.statusCode())) {
             return new Respuesta(false, "Error al registrar nueva aerolinea en el sistema, considera reportar este problema", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<AerolineaDto>toObject(resp, AerolineaDto.class));
+        return new Respuesta(true, "", "", "data", RequesUtils.<AerolineaDto>asObject(resp, AerolineaDto.class));
     }
 
 }

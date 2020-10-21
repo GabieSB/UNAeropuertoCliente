@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class RequesUtils {
         return new Gson().fromJson(response.body().toString(), objType);
     }
 
-    public static <ObjectType> ObjectType toObject(HttpResponse resp, Class<ObjectType> t) {
+    public static <ObjectType> ObjectType asObject(HttpResponse resp, Class<ObjectType> t) {
         ObjectType obj = new Gson().fromJson(resp.body().toString(), t);
         return obj;
     }
