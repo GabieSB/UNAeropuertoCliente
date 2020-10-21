@@ -127,7 +127,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
 
     @FXML
     public void onActionGuardar(ActionEvent event) {
-        LocalDateTime ltApertura= LocalDateTime.of(LocalDate.now(), tpkApertura.getValue());
+        LocalDateTime ltApertura = LocalDateTime.of(LocalDate.now(), tpkApertura.getValue());
         LocalDateTime ltCierre = LocalDateTime.of(LocalDate.now(), tpkCierre.getValue());
         ParamSistemaDto p = new ParamSistemaDto();
         p.setAperturaOficina(Timestamp.valueOf(ltApertura));

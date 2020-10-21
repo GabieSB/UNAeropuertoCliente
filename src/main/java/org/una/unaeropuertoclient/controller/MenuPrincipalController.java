@@ -6,21 +6,11 @@
 package org.una.unaeropuertoclient.controller;
 
 import java.net.URL;
-import java.net.http.HttpResponse;
-import java.sql.Timestamp;
 import java.util.ResourceBundle;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jfoenix.controls.JFXButton;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.input.MouseEvent;
-import org.una.unaeropuertoclient.utils.RequestHTTP;
-import org.una.unaeropuertoclient.model.AuthenticationResponse;
-import org.una.unaeropuertoclient.model.BitacoraDto;
-import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
 
 /**
@@ -34,6 +24,8 @@ public class MenuPrincipalController extends Controller implements Initializable
     public JFXButton btnRegistrarUsuario;
     @FXML
     public JFXButton btnGestorServicios;
+    @FXML
+    public JFXButton btnNotificaciones;
 
     /**
      * Initializes the controller class.
@@ -70,12 +62,19 @@ public class MenuPrincipalController extends Controller implements Initializable
 
     
 
+    @FXML
     public void btnconsultarServicios(ActionEvent actionEvent) {
         FlowController.getInstance().goView("GestorServiciosConsultas");
     }
     @FXML
     public void OnClickAirModule(ActionEvent event) {
         FlowController.getInstance().goView("GestorVuelos");
+       
+    }
+
+    @FXML
+    public void goNotificaciones(ActionEvent event) {
+       FlowController.getInstance().goView("AutorizarNotificaciones"); 
     }
 
 }

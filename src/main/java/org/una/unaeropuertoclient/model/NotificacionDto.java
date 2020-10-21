@@ -3,20 +3,24 @@ package org.una.unaeropuertoclient.model;
 import java.util.Date;
 
 public class NotificacionDto {
-    int id;
+
+    Integer id;
     boolean activo;
-    int idObjeto;
+    Integer idObjeto;
     Date fechaRegistro;
     AreaDto areasId;
 
-    public NotificacionDto( boolean activo, int idObjeto, Date fechaRegistro, AreaDto areasId) {
+    public NotificacionDto() {
+    }
+
+    public NotificacionDto(boolean activo, int idObjeto, Date fechaRegistro, AreaDto areasId) {
         this.activo = activo;
         this.idObjeto = idObjeto;
         this.fechaRegistro = fechaRegistro;
         this.areasId = areasId;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -32,7 +36,7 @@ public class NotificacionDto {
         this.activo = activo;
     }
 
-    public int getIdObjeto() {
+    public Integer getIdObjeto() {
         return idObjeto;
     }
 
