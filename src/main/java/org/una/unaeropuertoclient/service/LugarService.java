@@ -8,7 +8,6 @@ package org.una.unaeropuertoclient.service;
 import com.google.gson.Gson;
 import java.net.http.HttpResponse;
 import org.una.unaeropuertoclient.model.LugarDto;
-import org.una.unaeropuertoclient.model.PistaDto;
 import org.una.unaeropuertoclient.utils.RequesUtils;
 import static org.una.unaeropuertoclient.utils.RequesUtils.isEmptyResult;
 import static org.una.unaeropuertoclient.utils.RequesUtils.isError;
@@ -40,13 +39,29 @@ public class LugarService {
         }
     }
 
+    public Respuesta findByEstado(boolean estado) {
+        try {
+            RequestHTTP requestHTTP = new RequestHTTP();
+            HttpResponse respuesta = requestHTTP.get("lugares/findByEstado/" + estado);
+            if (isError(respuesta.statusCode())) {
+                return new Respuesta(false, "Error al consultar", "");
+            }
+            if (isEmptyResult(respuesta.statusCode())) {
+                return new Respuesta(false, "No hay lugares", "");
+            }
+            return new Respuesta(true, "", "", "data", RequesUtils.<LugarDto>asList(respuesta, LugarDto.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Error de conexión", "");
+        }
+    }
+
     public Respuesta update(LugarDto lugar) {
         HttpResponse resp = new RequestHTTP().put("lugares/update", jsonConv.toJson(lugar));
         if (isError(resp.statusCode())) {
             return new Respuesta(false, "Error al crear modificar datos, , considera reportar este problema", "");
         }
         if (isEmptyResult(resp.statusCode())) {
-            return new Respuesta(false, "No ha sido posible hallarel lugar que se desea modificar", "");
+            return new Respuesta(false, "No ha sido posible hallar el lugar que se desea modificar", "");
         }
         return new Respuesta(true, "", "", "data", RequesUtils.<LugarDto>toObject(resp, LugarDto.class));
     }

@@ -19,6 +19,7 @@ import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.model.LugarDto;
 import org.una.unaeropuertoclient.model.PistaDto;
+import org.una.unaeropuertoclient.service.LugarService;
 import org.una.unaeropuertoclient.service.PistaService;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -109,6 +110,8 @@ public class EditorVuelosController extends Controller implements Initializable 
     private void chargeData() {
         Thread th = new Thread(() -> chargePistas());
         th.start();
+        Thread th2 = new Thread(() -> chargeLugares());
+        th2.start();
 
     }
 
@@ -122,6 +125,24 @@ public class EditorVuelosController extends Controller implements Initializable 
                 cbPistaAterrisage.setPromptText("Pistas");
             } else {
                 cbPistaAterrisage.setPromptText(resp.getMensaje());
+            }
+        });
+    }
+
+    private void chargeLugares() {
+        Platform.runLater(() -> {
+            Respuesta resp = new LugarService().findByEstado(true);
+            cbSitioLlegada.getItems().clear();
+            cbSitioSalida.getItems().clear();
+            if (resp.getEstado()) {
+                List<LugarDto> pList = (List<LugarDto>) resp.getResultado("data");
+                cbSitioSalida.getItems().addAll(pList);
+                cbSitioSalida.setPromptText("Lugar de salida");
+                cbSitioLlegada.getItems().addAll(pList);
+                cbSitioLlegada.setPromptText("Lugar de llegada");
+            } else {
+                cbSitioLlegada.setPromptText(resp.getMensaje());
+                cbSitioSalida.setPromptText(resp.getMensaje());
             }
         });
     }

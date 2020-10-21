@@ -54,6 +54,11 @@ public class LugarDto {
     public void setVuelosLlegadaList(List<VueloDto> vuelosLlegadaList) {
         this.vuelosLlegadaList = vuelosLlegadaList;
     }
+
+    @Override
+    public String toString() {
+        return this.getNombre();
+    }
     
     
 }

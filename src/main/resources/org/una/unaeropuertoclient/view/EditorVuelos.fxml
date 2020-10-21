@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.EditorVuelosController">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="639.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.EditorVuelosController">
    <children>
       <Label layoutX="14.0" layoutY="14.0" styleClass="air-module-tittle" text="Editor de vuelos" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
       <HBox alignment="CENTER" layoutX="200.0" layoutY="150.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
@@ -30,12 +30,12 @@
                   <Insets top="20.0" />
                </padding></VBox>
             <Separator orientation="VERTICAL" styleClass="air-searchSeparator" />
-            <VBox maxWidth="320.0" HBox.hgrow="ALWAYS">
+            <VBox maxWidth="335.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label styleClass="air-module-subtittle" text="Salida" />
                   <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="15.0" styleClass="air-glass-efect-color">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="112.0" spacing="20.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="120.0" spacing="20.0">
                            <children>
                               <JFXComboBox fx:id="cbSitioSalida" labelFloat="true" prefHeight="25.0" prefWidth="120.0" promptText="Sitio de salida" />
                               <Label styleClass="air-module-dark-subtittle" text="Hora de salida:" />
@@ -64,7 +64,7 @@
                   </Label>
                   <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="15.0" styleClass="air-glass-efect-color">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="112.0" spacing="20.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="120.0" spacing="20.0">
                            <children>
                               <JFXComboBox fx:id="cbSitioLlegada" labelFloat="true" prefHeight="25.0" prefWidth="120.0" promptText="Sitio de llegada" />
                               <Label styleClass="air-module-dark-subtittle" text="Hora de llegada:" />
