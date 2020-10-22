@@ -8,18 +8,24 @@ package org.una.unaeropuertoclient.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.una.unaeropuertoclient.model.VueloDto;
+import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.FlowController;
+import org.una.unaeropuertoclient.utils.Mensaje;
+import org.una.unaeropuertoclient.utils.Respuesta;
 
 /**
  * FXML Controller class
@@ -45,7 +51,7 @@ public class GestorVuelosController extends Controller implements Initializable 
     @FXML
     public JFXButton btnEliminar;
     @FXML
-    public Label txtVuelosDe;
+    public Label lblVuelosDe;
     @FXML
     public TableView<VueloDto> tbVuelos;
     @FXML
@@ -60,7 +66,6 @@ public class GestorVuelosController extends Controller implements Initializable 
     public TableColumn<VueloDto, String> clLlegada;
     @FXML
     public TableColumn<VueloDto, String> clEstado;
-    private ObservableList<VueloDto> tableList;
 
     /**
      * Initializes the controller class.
@@ -70,13 +75,13 @@ public class GestorVuelosController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        activateResponsiveConfig();
-        configureDataRepresentation();
+        prepareTable();
     }
 
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Módulo de vuelos");
+        clearScreen();
     }
 
     @FXML
@@ -86,14 +91,20 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
+        Respuesta resp = new VueloService().filter(txtAerolinea.getText(),
+                txtFlyName.getText(), txtMatriculaAvion.getText(), txtLlegada.getText(),
+                txtSalida.getText(), dpDesde.getValue(), dpHasta.getValue());
+        if (resp.getEstado()) {
+            tbVuelos.getItems().clear();
+            tbVuelos.getItems().addAll((List) resp.getResultado("data"));
+        } else {
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+        }
     }
 
     @FXML
     public void onActionLimpiar(ActionEvent event) {
-    }
-
-    @FXML
-    public void onActionEliminar(ActionEvent event) {
+        clearScreen();
     }
 
     private void activateResponsiveConfig() {
@@ -113,14 +124,39 @@ public class GestorVuelosController extends Controller implements Initializable 
         clNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombreVuelo()));
         clEstado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getStateAsWord()));
     }
-    
-    private void chargeTodayData(){
-       // admin1
+
+    private void chargeTodayData() {
+        Thread th = new Thread(() -> {
+            Platform.runLater(() -> {
+                Respuesta resp = new VueloService().filter("", "", "", "", "", LocalDate.now().minusDays(1L), LocalDate.now().plusDays(1L));
+                if (resp.getEstado()) {
+                    tbVuelos.getItems().clear();
+                    tbVuelos.getItems().addAll((List) resp.getResultado("data"));
+                    lblVuelosDe.setText("Vuelos de: hoy");
+                }
+            });
+        });
+        th.start();
     }
 
     @FXML
     public void onClickAdvanceSettings(ActionEvent event) {
         FlowController.getInstance().goView("AdvanceVuelosConfig");
+    }
+
+    private void prepareTable() {
+        activateResponsiveConfig();
+        configureDataRepresentation();
+    }
+
+    private void clearScreen() {
+        txtAerolinea.setText("");
+        txtFlyName.setText("");
+        txtLlegada.setText("");
+        txtSalida.setText("");
+        txtFlyName.setText("");
+        txtMatriculaAvion.setText("");
+        chargeTodayData();
     }
 
 }

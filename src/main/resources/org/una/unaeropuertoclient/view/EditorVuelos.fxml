@@ -17,7 +17,7 @@
          <children>
             <VBox alignment="TOP_CENTER" spacing="20.0" HBox.hgrow="ALWAYS">
                <children>
-                  <JFXComboBox fx:id="cbAerolinea" labelFloat="true" prefWidth="200.0" promptText="Aerolinea" />
+                  <JFXComboBox fx:id="cbAerolinea" labelFloat="true" onAction="#chargeAviones" prefWidth="200.0" promptText="Aerolinea" />
                   <JFXComboBox fx:id="cbAvion" labelFloat="true" prefWidth="200.0" promptText="Avión" />
                   <JFXComboBox fx:id="cbEsadoVuelo" labelFloat="true" prefWidth="200.0" promptText="Estado de vuelo" />
                   <JFXComboBox fx:id="cbPistaAterrisage" labelFloat="true" prefWidth="200.0" promptText="Pista" />

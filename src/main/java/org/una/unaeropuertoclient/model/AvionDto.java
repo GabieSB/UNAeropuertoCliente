@@ -63,4 +63,10 @@ public class AvionDto {
     public void setVueloList(List<VueloDto> vueloList) {
         this.vueloList = vueloList;
     }
+
+    @Override
+    public String toString() {
+        return this.matricula;
+    }
+
 }

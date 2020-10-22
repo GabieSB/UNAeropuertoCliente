@@ -21,11 +21,11 @@ public class VueloDto {
     private AlertaDto alerta;
 
     public String getSitioYFechaLLegada() {
-        return null;
+        return lugarLlegada.getNombre() + " " + horaLlegada;
     }
 
     public String getSitioYFechaSalida() {
-        return null;
+        return lugarSalida.getNombre() + " " + horaSalida;
     }
 
     public String getStateAsWord() {
@@ -133,5 +133,7 @@ public class VueloDto {
     public void setAlerta(AlertaDto alerta) {
         this.alerta = alerta;
     }
+    
+    
 
 }

@@ -104,6 +104,8 @@ public class AvionService {
             RequestHTTP requestHTTP = new RequestHTTP();
             matricula = (matricula.isBlank()) ? "none" : matricula.trim();
             aerolinea = (aerolinea.isBlank()) ? "none" : aerolinea.trim();
+            aerolinea = aerolinea.replace(" ", "-");
+            matricula = matricula.replace(" ", "-");
             HttpResponse respuesta = requestHTTP.get("aviones/filter/" + matricula + "/" + aerolinea);
             if (isError(respuesta.statusCode())) {
                 return new Respuesta(false, "Error interno al consultar aviones, considera reportar esta falla.", "");
