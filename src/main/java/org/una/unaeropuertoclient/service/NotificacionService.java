@@ -24,7 +24,7 @@ public class NotificacionService {
             System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Parece que un error interno ha causado que tu petición no se registre, considera reportar este error.", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }

@@ -15,13 +15,10 @@
          </font>
       </Label>
       <JFXButton layoutX="14.0" layoutY="28.0" onAction="#OnActionGoBack" text="Atrás" />
-      <HBox alignment="CENTER" layoutX="824.0" layoutY="12.0" maxWidth="230.0" prefHeight="58.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
+      <HBox alignment="CENTER" layoutX="824.0" layoutY="12.0" maxWidth="230.0" prefHeight="75.0" prefWidth="197.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label fx:id="lblUsuarioLogeado" text="userName">
-               <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="menu-superior-userIcon" />
-               </graphic>
-            </Label>
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" styleClass="menu-superior-userIcon" />
+            <Label fx:id="lblUsuarioLogeado" text="userName" />
          </children>
       </HBox>
       <Label fx:id="lblPantallaActual" layoutX="162.0" layoutY="45.0" styleClass="menu-superior-subtittle" text="Pantalla actual" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="162.0" />

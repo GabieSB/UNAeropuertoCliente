@@ -41,6 +41,7 @@ public class MenuPrincipalController extends Controller implements Initializable
 
     @Override
     public void initialize() {
+        FlowController.changeSuperiorTittle("Menú principal");
     }
 
     @FXML
