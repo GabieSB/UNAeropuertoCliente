@@ -24,10 +24,11 @@ public class AvionDto {
         this.id = id;
     }
 
-    public String getMatricula() {
+    
+public String getMatricula() {
         return matricula;
+        
     }
-
     public void setMatricula(String matricula) {
         this.matricula = matricula;
     }

@@ -104,24 +104,24 @@ public class ParametrosSistemaController extends Controller implements Initializ
     }
 
     public void desactivarComponentes() {
-        txtCorreo.setDisable(true);
-        txtRepresentante.setDisable(true);
-        txtTelefono.setDisable(true);
-        cbxTiempoInactivo.setDisable(true);
-        cbxVuelos.setDisable(true);
-        tpkApertura.setDisable(true);
-        tpkCierre.setDisable(true);
+        txtCorreo.setEditable(false);
+        txtRepresentante.setEditable(false);
+        txtTelefono.setEditable(false);
+        cbxTiempoInactivo.setEditable(false);
+        cbxVuelos.setEditable(false);
+        tpkApertura.setEditable(false);
+        tpkCierre.setEditable(false);
         btnGuardar.setDisable(true);
     }
 
     public void ActivarComponentes() {
-        txtCorreo.setDisable(false);
-        txtRepresentante.setDisable(false);
-        txtTelefono.setDisable(false);
-        cbxTiempoInactivo.setDisable(false);
-        cbxVuelos.setDisable(false);
-        tpkApertura.setDisable(false);
-        tpkCierre.setDisable(false);
+        txtCorreo.setEditable(true);
+        txtRepresentante.setEditable(true);
+        txtTelefono.setEditable(true);
+        cbxTiempoInactivo.setEditable(true);
+        cbxVuelos.setEditable(true);
+        tpkApertura.setEditable(true);
+        tpkCierre.setEditable(true);
         btnGuardar.setDisable(false);
     }
 

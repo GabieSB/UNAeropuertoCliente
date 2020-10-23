@@ -1,30 +1,30 @@
 package org.una.unaeropuertoclient.model;
 
-import java.util.Date;
-
+import java.sql.Timestamp;
 public class NotificacionDto {
 
-    Integer id;
+    Long id;
     boolean activo;
-    Integer idObjeto;
-    Date fechaRegistro;
+    int idObjeto;
+    //Date fechaRegistro;
+    Timestamp fechaRegistro;
     AreaDto areasId;
 
     public NotificacionDto() {
     }
 
-    public NotificacionDto(boolean activo, int idObjeto, Date fechaRegistro, AreaDto areasId) {
+    public NotificacionDto(boolean activo, int idObjeto, Timestamp fechaRegistro, AreaDto areasId) {
         this.activo = activo;
         this.idObjeto = idObjeto;
         this.fechaRegistro = fechaRegistro;
         this.areasId = areasId;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -36,19 +36,19 @@ public class NotificacionDto {
         this.activo = activo;
     }
 
-    public Integer getIdObjeto() {
+    public int getIdObjeto() {
         return idObjeto;
     }
 
-    public void setIdObjeto(int idObjeto) {
+    public void setIdObjeto(Integer idObjeto) {
         this.idObjeto = idObjeto;
     }
 
-    public Date getFechaRegistro() {
+    public Timestamp getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(Timestamp fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
@@ -59,4 +59,5 @@ public class NotificacionDto {
     public void setAreasId(AreaDto areasId) {
         this.areasId = areasId;
     }
+
 }
