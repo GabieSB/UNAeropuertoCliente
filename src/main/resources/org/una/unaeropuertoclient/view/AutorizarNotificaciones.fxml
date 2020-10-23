@@ -19,7 +19,7 @@
                   <Label text="Notificaciones" />
                   <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <JFXToggleButton fx:id="togNotificacion" onAction="#toggBuscar" text="Notificaciones Activas" unToggleColor="#800000" viewOrder="5.0" />
+                        <JFXToggleButton fx:id="togNotificacion" onAction="#toggBuscar" selected="true" text="Notificaciones Activas" unToggleColor="#800000" viewOrder="5.0" />
                      </children>
                      <padding>
                         <Insets right="30.0" />

@@ -22,17 +22,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.una.unaeropuertoclient.model.AreaDto;
 import org.una.unaeropuertoclient.model.RolDto;
+import org.una.unaeropuertoclient.model.RolUsuarioDto;
 import org.una.unaeropuertoclient.model.UsuarioDto;
 import org.una.unaeropuertoclient.service.AreaService;
 import org.una.unaeropuertoclient.service.RolService;
+import org.una.unaeropuertoclient.service.RolUsuarioService;
 import org.una.unaeropuertoclient.service.UsuarioService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -84,25 +83,20 @@ public class CrearUsuarioController extends Controller implements Initializable 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cargarAreas();
-     //   cargarRoles();
-        RolService rolService = new RolService();
-        Respuesta respuesta = rolService.getAll();
-        if (respuesta.getEstado()) {
-            rolList = (List<RolDto>) respuesta.getResultado("data");
-        } else {
-            new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer areas", this.getStage(), respuesta.getMensaje());
+        //cargarRoles();
+//        RolService rolService = new RolService();
+//        Respuesta respuesta = rolService.getAll();
 
-        }
-        for (RolDto rolDto : rolList) {
-//            JFXCheckBox jFXCheckBox = new JFXCheckBox();
-//            jFXCheckBox.setText(rolDto.getNombre());
+//        if (respuesta.getEstado()) {
+//            rolList = (List<RolDto>) respuesta.getResultado("data");
+//        } else {
+//            new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer areas", this.getStage(), respuesta.getMensaje());
 //
-//            vbxRoles.getChildren().add(jFXCheckBox);
-//            System.out.println(rolDto.getNombre());
- cbxRoles.getItems().add(rolDto.getNombre());
-        }
-//        System.out.printl((JFXCheckBox)vbxRoles.getClass());
-//        (JFXCheckBox)vbxRoles.getChildren().get(0).toString();
+//        }
+//        for (RolDto rolDto : rolList) {
+//            cbxRoles.getItems().add(rolDto.getNombre());
+//        }
+
     }
 
     @Override
@@ -119,9 +113,21 @@ public class CrearUsuarioController extends Controller implements Initializable 
             }
         }
 
+        System.out.print("DQwsdqsa");
         UsuarioDto usuarioDto = new UsuarioDto(txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtContrasenna.getText(), Timestamp.valueOf(LocalDateTime.of(dtpFechaNacimiento.getValue(), LocalTime.MIN)), Timestamp.valueOf(LocalDateTime.of(dtpFechaInicio.getValue(), LocalTime.MIN)), new Timestamp(System.currentTimeMillis()), checkActivo.isSelected(), areaD);
         UsuarioService usuarioService = new UsuarioService();
-        usuarioService.create(usuarioDto);
+
+        Respuesta res = usuarioService.create(usuarioDto);
+        if (res != null) {
+            for (RolDto rol : rolList) {
+                if (cbxRoles.getValue().toString().equals(rol.getNombre())) {
+                    UsuarioDto usu = (UsuarioDto) res.getResultado("data");
+                    RolUsuarioDto rolUsuario = new RolUsuarioDto(Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()), true, rol, usuarioDto);
+                    RolUsuarioService rolUsuarioService = new RolUsuarioService();
+                    rolUsuarioService.create(rolUsuario);
+                }
+            }
+        }
     }
 
     @FXML
@@ -170,18 +176,7 @@ public class CrearUsuarioController extends Controller implements Initializable 
         }
         );
         th.start();
-//        AreaService areaService = new AreaService();
-//
-//        Respuesta respuesta = areaService.getAll();
-//        if (respuesta.getEstado()) {
-//            areaList = (List<AreaDto>) respuesta.getResultado("data");
-//        } else {
-//            new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer areas", this.getStage(), respuesta.getMensaje());
-//
-//        }
-//        for (AreaDto areaDto : areaList) {
-//            cbxAreas.getItems().add(areaDto.getNombre());
-//        }
+//  
     }
 
     public void DatosEdicion() {

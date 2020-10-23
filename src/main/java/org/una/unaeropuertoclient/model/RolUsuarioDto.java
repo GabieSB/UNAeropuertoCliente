@@ -5,16 +5,25 @@
  */
 package org.una.unaeropuertoclient.model;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class RolUsuarioDto {
 
     private Long id;
-    private Date fechaRegistro;
-    private Date fechaModificacion;
+    private Timestamp fechaRegistro;
+    private Timestamp fechaModificacion;
     private Boolean activo;
     private RolDto rolesId;
     private UsuarioDto usuariosId;
+
+    public RolUsuarioDto(Timestamp fechaRegistro,Timestamp fechaModificacion, Boolean activo, RolDto rolesId, UsuarioDto usuariosId) {
+        this.fechaRegistro = fechaRegistro;
+        this.fechaModificacion = fechaModificacion;
+        this.activo = activo;
+        this.rolesId = rolesId;
+        this.usuariosId = usuariosId;
+    }
 
     public Long getId() {
         return id;
@@ -40,7 +49,7 @@ public class RolUsuarioDto {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(Timestamp fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
@@ -48,7 +57,7 @@ public class RolUsuarioDto {
         return fechaModificacion;
     }
 
-    public void setFechaModificacion(Date fechaModificacion) {
+    public void setFechaModificacion(Timestamp fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
     }
 
