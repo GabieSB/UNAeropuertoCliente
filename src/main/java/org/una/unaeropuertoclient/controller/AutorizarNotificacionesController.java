@@ -111,7 +111,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                     listNotificaciones = (List) resp.getResultado("data");
                     for (NotificacionDto notificacionDto : listNotificaciones) {
                         ServicioMantenimientoService serv = new ServicioMantenimientoService();
-                        Respuesta r = serv.buscarPorID(notificacionDto.getIdObjeto());
+                        Respuesta r = serv.buscarPorID(notificacionDto.getIdObjeto().toString());
                         if(n==2){
                         ServicioMantenimientoDto servicioMantenimientoDto = (ServicioMantenimientoDto) r.getResultado("data");
                         listServicio.add(servicioMantenimientoDto);
@@ -203,7 +203,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                 n.setActivo(false);
                 ServicioMantenimientoService serv = new ServicioMantenimientoService();
                 for (ServicioMantenimientoDto se : listServicio) {
-                    if (n.getIdObjeto() == se.getId()) {
+                    if (n.getIdObjeto()== se.getId().longValue()) {
                         se.setActivo(false);
                         serv.update(se);
                     }

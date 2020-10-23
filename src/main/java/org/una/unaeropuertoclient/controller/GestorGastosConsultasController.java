@@ -18,6 +18,8 @@ import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.utils.*;
 
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class GestorGastosConsultasController extends Controller implements Initializable {
@@ -152,7 +154,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
         AreaDto areaDto = new AreaDto();
         areaDto.setId((long) 3);
 
-        NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(gastoReparacionDto.getId()), new Date(), areaDto);
+        NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(gastoReparacionDto.getId()), Timestamp.valueOf(LocalDateTime.now()), areaDto);
 
         Respuesta respuesta = notificacionService.create(notificacionDto);
 

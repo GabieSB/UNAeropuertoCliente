@@ -36,7 +36,7 @@ public class NotificacionDto {
         this.activo = activo;
     }
 
-    public int getIdObjeto() {
+    public Integer getIdObjeto() {
         return idObjeto;
     }
 
