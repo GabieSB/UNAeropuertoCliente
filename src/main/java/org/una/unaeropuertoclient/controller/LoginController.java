@@ -42,7 +42,8 @@ public class LoginController extends Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        txtCedula.setText("admin1");
+        txtContrasenna.setText("Una2020");
     }
 
     @Override

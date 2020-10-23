@@ -48,6 +48,7 @@
                <columns>
                   <TableColumn fx:id="clMatricula" prefWidth="260.0" text="Matrícula" />
                   <TableColumn fx:id="clAerolinea" prefWidth="139.0" text="Aerolinea" />
+                  <TableColumn fx:id="clAcciones" prefWidth="75.0" text="Acciones" />
                </columns>
             </TableView>
          </children>

@@ -43,10 +43,11 @@
                   </HBox>
                </children>
             </AnchorPane>
-            <TableView fx:id="tbAerolineas" editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tbPistas" editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                <columns>
                   <TableColumn fx:id="clNombre" prefWidth="260.0" text="Número de pista" />
-                  <TableColumn fx:id="clEstado" prefWidth="139.0" text="Longitud" />
+                  <TableColumn fx:id="clLongitud" prefWidth="139.0" text="Longitud" />
+                  <TableColumn fx:id="clAcciones" prefWidth="75.0" text="Acciones" />
                </columns>
             </TableView>
          </children>
