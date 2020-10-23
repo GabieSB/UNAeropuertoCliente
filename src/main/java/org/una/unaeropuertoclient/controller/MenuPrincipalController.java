@@ -77,4 +77,15 @@ public class MenuPrincipalController extends Controller implements Initializable
        FlowController.getInstance().goView("AutorizarNotificaciones"); 
     }
 
+    public void btnRegistrarGastos(ActionEvent actionEvent) {
+        FlowController.getInstance().goView("RegistrarGastos");
+    }
+
+    public void btnconsultarGastos(ActionEvent actionEvent) {
+        FlowController.getInstance().goView("GestorGastosConsultas");
+    }
+
+    public void btnConsultarBitacoras(ActionEvent actionEvent) {
+        FlowController.getInstance().goView("BuscarBitacoras");
+    }
 }

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="613.0" prefWidth="830.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorGastosConsultasController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="614.0" prefWidth="834.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="830.0" />
+            <HBox prefHeight="34.0" prefWidth="830.0">
+               <children>
+                  <JFXButton fx:id="btonNuevo" alignment="CENTER" contentDisplay="BOTTOM" onAction="#btnNuevo" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Nuevo" visible="false" />
+               </children>
+               <padding>
+                  <Insets left="50.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="67.0" prefWidth="834.0" spacing="40.0">
+               <children>
+                  <JFXComboBox fx:id="comboxParametros" prefHeight="24.0" prefWidth="204.0" promptText="Parámetro" />
+                  <JFXTextField fx:id="txtValorBuscado" prefHeight="24.0" prefWidth="323.0" />
+                  <JFXButton fx:id="btonBuscarParametro" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorParametro" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Buscar por Paramétro" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" layoutX="10.0" layoutY="48.0" prefHeight="67.0" prefWidth="834.0" spacing="35.0">
+               <children>
+                  <JFXComboBox fx:id="comboxParametros1" prefHeight="24.0" prefWidth="204.0" promptText="Parámetro" />
+                  <Label text="De:" />
+                  <JFXTextField fx:id="txtDiasInicio" prefHeight="24.0" prefWidth="62.0" />
+                  <Label text="hasta" />
+                  <JFXTextField fx:id="txtDiasFinal" prefHeight="24.0" prefWidth="62.0" />
+                  <Label text="días" />
+                  <JFXButton fx:id="btonBuscarEntreDias" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarEntreDias" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Buscar entre días" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="21.0" prefWidth="834.0">
+               <children>
+                  <Label text="Búsqueda por fecha" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="59.0" prefWidth="834.0" spacing="50.0">
+               <children>
+                  <Label styleClass="air-module-subtittle" text="Desde:" />
+                  <DatePicker fx:id="dateInicio" prefHeight="25.0" prefWidth="150.0" />
+                  <Label styleClass="air-module-subtittle" text="Hasta:" />
+                  <DatePicker fx:id="dateFin" prefHeight="26.0" prefWidth="160.0" />
+                  <JFXButton fx:id="btnBuscarFecha" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorFecha" prefHeight="30.0" prefWidth="124.0" stylesheets="@style.css" text="Buscar por fecha" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="342.0" prefWidth="830.0">
+               <children>
+                  <TableView fx:id="tableResultados" prefHeight="294.0" prefWidth="798.0">
+                    <columns>
+                      <TableColumn fx:id="columId" prefWidth="39.20001373291018" text="ID" />
+                      <TableColumn fx:id="columFecha" prefWidth="111.20001220703125" text="Fecha de registro" />
+                        <TableColumn fx:id="columEstado" prefWidth="75.0" text="Estado Pago" />
+                        <TableColumn fx:id="columActivo" prefWidth="49.59999084472656" text="Activo" />
+                        <TableColumn fx:id="columContrato" prefWidth="57.60003662109375" text="Contrato" />
+                        <TableColumn fx:id="columDurabilidad" prefWidth="68.79998779296875" text="Duración" />
+                        <TableColumn fx:id="columPeriocidad" prefWidth="61.60003662109375" text="Periocidad" />
+                        <TableColumn fx:id="columTipo" prefWidth="64.0" text="Tipo" />
+                        <TableColumn fx:id="columObservaciones" prefWidth="89.59991455078125" text="Observaciones" />
+                        <TableColumn fx:id="columAcciones" prefWidth="258.4000244140625" text="Acciones" />
+                    </columns>
+                  </TableView>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

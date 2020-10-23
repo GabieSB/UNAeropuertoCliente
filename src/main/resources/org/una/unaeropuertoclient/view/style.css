@@ -45,6 +45,7 @@ and open the template in the editor.
     -fx-text-fill:  #E0E0E0;
 }
 
+
 .jfx-button:hover{
     -fx-background-color: linear-gradient(#212121 0%, #37474F 100%);
 }

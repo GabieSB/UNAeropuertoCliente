@@ -4,7 +4,11 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,17 +16,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
-import org.una.unaeropuertoclient.model.AuthenticationResponse;
-import org.una.unaeropuertoclient.model.NotificacionDto;
-import org.una.unaeropuertoclient.model.ServicioMantenimientoDto;
+import org.una.unaeropuertoclient.model.*;
 import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
-import org.una.unaeropuertoclient.utils.AppContext;
-import org.una.unaeropuertoclient.utils.FlowController;
-import org.una.unaeropuertoclient.utils.Mensaje;
-import org.una.unaeropuertoclient.utils.Respuesta;
+import org.una.unaeropuertoclient.utils.*;
 
 import java.net.URL;
+import java.util.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,16 +39,18 @@ public class GestorServiciosConsultasController  extends Controller implements I
     public TableColumn<ServicioMantenimientoDto, String> columId;
     public TableColumn<ServicioMantenimientoDto, String> columFecha;
     public TableColumn<ServicioMantenimientoDto, String> columFactura;
-    public TableColumn<ServicioMantenimientoDto, String> columEstadoPago;
-    public TableColumn<ServicioMantenimientoDto, String> columServicioFinalizado;
+    public TableColumn<ServicioMantenimientoDto, Boolean> columEstadoPago;
+    public TableColumn<ServicioMantenimientoDto,  Boolean> columServicioFinalizado;
     public TableColumn<ServicioMantenimientoDto, String> columTipoServicio;
     public TableColumn<ServicioMantenimientoDto, String> columAvion;
-    public TableColumn<ServicioMantenimientoDto, String> columEstadoServicio;
+    public TableColumn<ServicioMantenimientoDto, Boolean> columEstadoServicio;
     public TableColumn<ServicioMantenimientoDto, Void> columAcciones;
     public TableColumn<ServicioMantenimientoDto, String> columMonto;
 
     public DatePicker dateInicio;
     public DatePicker dateFin;
+    public JFXButton btnNuevo;
+    boolean isGestor = false;
 
     private List<ServicioMantenimientoDto> serviciosResultados = new ArrayList<>();
     ServicioMantenimientoService service = new ServicioMantenimientoService();
@@ -68,17 +70,30 @@ public class GestorServiciosConsultasController  extends Controller implements I
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             ServicioMantenimientoDto servicioMantenimientoDto = getTableView().getItems().get(getIndex());
-                            AppContext.getInstance().set("servicioSeleccionado", servicioMantenimientoDto);
-                            FlowController.getInstance().goView("GestorServicios");
+                            if(servicioMantenimientoDto.getActivo()){
+                                AppContext.getInstance().set("servicioSeleccionado", servicioMantenimientoDto);
+                                FlowController.getInstance().goView("GestorServicios");
+                            }else{
+                                mensaje.show(Alert.AlertType.WARNING, "", "El servicio mantenimiento que intenta modificar esta inactivo");
+                            }
+
                         });
                     }
                     private final JFXButton btn2 = new JFXButton("Anular");
                     {
                         btn2.setOnAction((ActionEvent event) -> {
                             ServicioMantenimientoDto servicioMantenimientoDto = getTableView().getItems().get(getIndex());
-                           registrarNotificacion(servicioMantenimientoDto);
+                            if(servicioMantenimientoDto.getActivo()) registrarNotificacion(servicioMantenimientoDto);
+                            else mensaje.show(Alert.AlertType.WARNING, "", "El servicio mantenimiento que intenta anular ya esta inactivo");
                         });
+
+                        btn2.setStyle(" -fx-background-color: #d63152;\n" +
+                                "    -fx-font-size: 12px;\n" +
+                                "    -fx-border-radius: 0.2;\n" +
+                                "    -jfx-button-type:RAISED;\n" +
+                                "    -fx-text-fill:  #E0E0E0;");
                     }
+
                     HBox hBox = new HBox(btn, btn2);
                     @Override
                     public void updateItem(Void item, boolean empty) {
@@ -113,32 +128,71 @@ public class GestorServiciosConsultasController  extends Controller implements I
         comboxParametros.setItems(options);
     }
 
-
+    private void cargarPropertiesTable(){
+        columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
+        columFactura.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroFactura().toString()));
+        columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicio().toString()));
+        columEstadoServicio.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getActivo()));
+        columEstadoServicio.setCellFactory( tc -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null :
+                        item.booleanValue() ? "Activo" : "Inactivo");
+            }
+        });
+        columEstadoPago.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getEstadoPago()));
+        columEstadoPago.setCellFactory( tc -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null :
+                        item.booleanValue() ? "Pagado" : "Pendiente");
+            }
+        });
+        columAvion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAvionesId().getMatricula()));
+        columTipoServicio.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTiposServiciosId().getNombre()));
+        columMonto.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getCobroList().get(0).getMonto().toString()));
+        columServicioFinalizado.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getEstaFinalizacion()));
+        columServicioFinalizado.setCellFactory( tc -> new TableCell<>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null :
+                        item.booleanValue() ? "Finalizado" : "Pendiente");
+            }
+        });
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         llenarComboBox();
-        columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
-        columFactura.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroFactura().toString()));
-        columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicio().toString()));
-        columServicioFinalizado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstaFinalizacion().toString()));
-        columEstadoServicio.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getActivo().toString()));
-        columEstadoPago.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstadoPago().toString()));
-        columAvion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAvionesId().getMatricula()));
-        columTipoServicio.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTiposServiciosId().getNombre()));
-        columMonto.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getCobroList().get(0).getMonto().toString()));
+        cargarPropertiesTable();
+
+
+
 
     }
 
     @Override
     public void initialize() {
+        AuthenticationResponse auth = (AuthenticationResponse) AppContext.getInstance().get("token");
+        Optional<RolUsuarioDto> rol = auth.getRolUsuario().stream().filter(r -> r.getRolesId().getNombre().equals("GESTOR_MANTENIMIENTO_AEROPUERTO")).findFirst();
+        if(rol.isPresent())
+        {
+            isGestor = true;
+            btnNuevo.setVisible(true);
+            System.out.println("Gestor");
+        }
+        FlowController.changeSuperiorTittle("Servicios de Mantenimiento de Aviones");
 
     }
 
     public void llenarTabla(){
         tableResultados.getItems().clear();
         tableResultados.setItems(FXCollections.observableList(serviciosResultados));
-        addButtonToTable();
+        if(isGestor) addButtonToTable();
+        else columAcciones.setVisible(false);
     }
 
     void registrarNotificacion(ServicioMantenimientoDto selected){
@@ -169,33 +223,49 @@ public class GestorServiciosConsultasController  extends Controller implements I
     public void busquedaSegunParametro(int selectedItem, String valor) {
 
         Respuesta respuesta = null;
+
+        if(valor.isEmpty()){
+
+        }
         switch (selectedItem) {
             case 0: {
-                respuesta = service.buscarPorID(Integer.parseInt(valor)); break;
+                if(Validar.isLongNumber(valor)){  respuesta = service.buscarPorID(valor); }
+                else  mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser un número");
+                break;
             }
-            case 1:  respuesta = service.buscarPorNumeroFactura(Long.parseLong(valor)); break;
+            case 1:
+                if(Validar.isLongNumber(valor)) respuesta = service.buscarPorNumeroFactura(Long.parseLong(valor));
+                else mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser un número");
+                break;
             case 2:
             {
-                if (valor.equalsIgnoreCase("true") || valor.equalsIgnoreCase("false"))
+                if (valor.contains("pagado") || valor.contains("pendiente")){
+                    valor = (valor.contains("pagado"))? "true":"false";
                     respuesta = service.buscarPorEstadoPago(Boolean.parseBoolean(valor));
+                }
+
                 else
-                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser true o false");
+                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser pagado o pendiente");
                 break;
             }
 
             case 3:{
-                if (valor.equalsIgnoreCase("true") || valor.equalsIgnoreCase("false"))
+                if (valor.contains("finalizado") || valor.contains("pendiente")){
+                    valor = (valor.contains("finalizado"))? "true":"false";
                     respuesta = service.buscarPorEstadoFinalizacion(Boolean.parseBoolean(valor));
+                }
+
                 else
-                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser true o false");
+                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser finalizado o pendiente");
                 break;
             }
             case 4:
             {
-                if (valor.equalsIgnoreCase("true") || valor.equalsIgnoreCase("false"))
-                    respuesta = service.buscarPorEstado(Boolean.parseBoolean(valor));
+                if (valor.contains("activo")|| valor.contains("inactivo")){
+                    valor = (valor.contains("inactivo"))? "false":"true";
+                    respuesta = service.buscarPorEstado(Boolean.parseBoolean(valor));}
                 else
-                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser true o false");
+                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser activo o inactivo");
                 break;
             }
             case 5: respuesta = service.buscarPorTipoNombre(valor); break;
@@ -203,19 +273,22 @@ public class GestorServiciosConsultasController  extends Controller implements I
         }
 
 
-        if(respuesta != null && respuesta.getEstado()){
-            if(selectedItem == 0) {
-                ServicioMantenimientoDto service1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
-                serviciosResultados.clear();
-                serviciosResultados.add(service1);
+        if(respuesta != null ){
+            if(respuesta.getEstado()){
+                if(selectedItem == 0) {
+                    ServicioMantenimientoDto service1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
+                    serviciosResultados.clear();
+                    serviciosResultados.add(service1);
 
+                }else{
+                    serviciosResultados = (List<ServicioMantenimientoDto>) respuesta.getResultado("data");
+                }
+
+                llenarTabla();
             }else{
-                serviciosResultados = (List<ServicioMantenimientoDto>) respuesta.getResultado("data");
+                mensaje.show(Alert.AlertType.INFORMATION, "Respuesta", respuesta.getMensaje());
             }
 
-            llenarTabla();
-        }else{
-            mensaje.show(Alert.AlertType.ERROR, "Información", "No se encontraron resultados :c");
         }
 
     }
@@ -233,4 +306,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
     }
 
+    public void btnNuevo(ActionEvent actionEvent) {
+        FlowController.getInstance().goView("GestorServicios");
+    }
 }
