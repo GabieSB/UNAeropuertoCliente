@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane prefHeight="642.0" prefWidth="843.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.BuscarBitacoraController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="642.0" prefWidth="843.0" stylesheets="@style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <HBox prefHeight="64.0" prefWidth="843.0" />
+            <HBox alignment="CENTER" prefHeight="63.0" prefWidth="846.0" spacing="50.0">
+               <children>
+                  <JFXComboBox fx:id="comboxParametros" prefHeight="24.0" prefWidth="204.0" promptText="Parámetro" />
+                  <JFXTextField fx:id="txtValorBuscado" prefHeight="24.0" prefWidth="323.0" />
+                  <JFXButton fx:id="btonBuscarParametro" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorParametro" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Buscar por Paramétro" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="82.0" prefWidth="846.0" spacing="63.0">
+               <children>
+                  <Label styleClass="air-module-subtittle" text="Desde:" />
+                  <DatePicker fx:id="dateInicio" prefHeight="25.0" prefWidth="150.0" />
+                  <Label styleClass="air-module-subtittle" text="Hasta:" />
+                  <DatePicker fx:id="dateFin" prefHeight="26.0" prefWidth="160.0" />
+                  <JFXButton fx:id="btnBuscarFecha" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorFecha" prefHeight="30.0" prefWidth="124.0" stylesheets="@style.css" text="Buscar por fecha" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="349.0" prefWidth="843.0">
+               <children>
+                  <TableView fx:id="tableResultados" prefHeight="376.0" prefWidth="694.0">
+                    <columns>
+                      <TableColumn fx:id="columId" prefWidth="75.0" text="ID" />
+                      <TableColumn fx:id="columFecha" prefWidth="192.8000259399414" text="Fecha Modificación" />
+                        <TableColumn fx:id="columAccion" prefWidth="125.5999755859375" text="Acción" />
+                        <TableColumn fx:id="columUsuario" minWidth="0.0" prefWidth="141.60000610351562" text="Usuario" />
+                    </columns>
+                  </TableView>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

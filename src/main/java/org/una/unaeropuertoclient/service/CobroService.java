@@ -22,8 +22,8 @@ public class CobroService {
             HttpResponse respuesta = requestHTTP.post("cobros/create", gson.toJson(cobro));
             System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
-                if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                if (respuesta.statusCode() == 204) {
+                    return new Respuesta(false, "Parece que no hay resultados en la búsqueda", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
@@ -45,8 +45,8 @@ public class CobroService {
             HttpResponse respuesta = requestHTTP.put("cobros/update", gson.toJson(cobro));
             System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
-                if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                if (respuesta.statusCode() == 204) {
+                    return new Respuesta(false, "Parece que no hay resultados en la búsqueda", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }

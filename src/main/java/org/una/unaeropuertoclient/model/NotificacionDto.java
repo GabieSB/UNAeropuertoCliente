@@ -3,7 +3,7 @@ package org.una.unaeropuertoclient.model;
 import java.util.Date;
 
 public class NotificacionDto {
-    int id;
+    long id;
     boolean activo;
     int idObjeto;
     Date fechaRegistro;
@@ -16,11 +16,11 @@ public class NotificacionDto {
         this.areasId = areasId;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

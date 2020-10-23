@@ -12,18 +12,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.util.converter.LocalDateStringConverter;
-import org.una.unaeropuertoclient.model.AvionDto;
-import org.una.unaeropuertoclient.model.CobroDto;
-import org.una.unaeropuertoclient.model.ServicioMantenimientoDto;
-import org.una.unaeropuertoclient.model.TipoServicioDto;
+import org.una.unaeropuertoclient.model.*;
 import org.una.unaeropuertoclient.service.AvionService;
 import org.una.unaeropuertoclient.service.CobroService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.service.TipoServicioService;
-import org.una.unaeropuertoclient.utils.AppContext;
-import org.una.unaeropuertoclient.utils.FlowController;
-import org.una.unaeropuertoclient.utils.Mensaje;
-import org.una.unaeropuertoclient.utils.Respuesta;
+import org.una.unaeropuertoclient.utils.*;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -50,14 +44,15 @@ public class GestorServiciosController extends Controller implements Initializab
     CobroService cobroService = new CobroService();
     ServicioMantenimientoDto servicioSelecionado  = null;
     Boolean componentesIniciados = false;
+    boolean isGestor;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
+        FlowController.changeSuperiorTittle("Registrar Servicio Mantenimiento de Aviones");
       iniciarComponetes();
 
     }
     private void iniciarComponetes(){
+
         Respuesta respuesta = tipoServicioService.getAll();
         if( respuesta.getEstado()){
             tiposServicios = (List<TipoServicioDto>) respuesta.getResultado("data");
@@ -77,21 +72,25 @@ public class GestorServiciosController extends Controller implements Initializab
     }
     @Override
     public void initialize() {
-        System.out.println("En inizialite");
+        FlowController.changeSuperiorTittle("Registrar Servicio Mantenimiento de Aviones");
         AvionDto avionDto = (AvionDto) AppContext.getInstance().get("avionSeleccionado");
         if(avionDto!=null){
             txtAvion.setText(avionDto.getMatricula());
         }
 
         if(servicioSelecionado==null){
-            servicioSelecionado = (ServicioMantenimientoDto) AppContext.getInstance().get("servicioSeleccionado");
-            if(servicioSelecionado!=null){
-                if(!componentesIniciados) iniciarComponetes();
-                btonRegistrar.setText("MODIFICAR");
-                cargarDatosServicio();
-            }
+           cargarServicioAModificar();
         }
 
+    }
+
+    public void cargarServicioAModificar(){
+        servicioSelecionado = (ServicioMantenimientoDto) AppContext.getInstance().get("servicioSeleccionado");
+        if(servicioSelecionado!=null){
+            if(!componentesIniciados) iniciarComponetes();
+            btonRegistrar.setText("MODIFICAR");
+            cargarDatosServicio();
+        }
     }
 
     public void cargarDatosServicio(){
@@ -110,16 +109,26 @@ public class GestorServiciosController extends Controller implements Initializab
     private  ServicioMantenimientoDto crearServicioMantenimientoConDatosIngresados(){
         Optional<TipoServicioDto> optTipo  = tiposServicios.stream().filter(t ->    t.getNombre().equals(comboxTipos.getSelectionModel().getSelectedItem())).findFirst();
         AvionService avionService = new AvionService();
-
         Respuesta respuesta =  avionService.getByMatricula(txtAvion.getText());
         AvionDto avion  = null;
-
         if(respuesta.getEstado()) avion = (AvionDto) respuesta.getResultado("data");
+        boolean sePuedeCrear = true;
+        if(optTipo.isEmpty())  {
+            new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Parece que no has  seleccionado un tipo de servicio");
+            sePuedeCrear = false;
+        }
+        if(!Validar.isLongNumber(txtNumeroFactura.getText())) {
+            new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Parece que el valor ingresado en el número de factura no es permitido, debería ser un número"); sePuedeCrear = false;}
+        if(avion==null) {
+            new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Parece que ha habido problemas al registrar la matrícula del avión"); sePuedeCrear = false;}
 
-        ServicioMantenimientoDto  servicioMantenimiento  = new ServicioMantenimientoDto(dateServicio.getValue(),Long.parseLong(txtNumeroFactura.getText()), btnEstadoPago.isSelected(), btonFinalizado.isSelected(),avion, optTipo.get() );
-        servicioMantenimiento.setActivo(btonActivo.isSelected());
 
-        return  servicioMantenimiento;
+        if (sePuedeCrear) {
+            ServicioMantenimientoDto  servicioMantenimiento  = new ServicioMantenimientoDto(dateServicio.getValue(),Long.parseLong(txtNumeroFactura.getText()), btnEstadoPago.isSelected(), btonFinalizado.isSelected(),avion, optTipo.get() );
+            servicioMantenimiento.setActivo(true);
+            return servicioMantenimiento;
+        }else return  null;
+
     }
 
     @FXML
@@ -130,44 +139,44 @@ public class GestorServiciosController extends Controller implements Initializab
     }
     public void registrarServicio(){
         ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
-        Respuesta respuesta = service.create(servicioMantenimientoDto);
-        if(respuesta.getEstado()){
-            CobroDto cobroDto = new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
-            ServicioMantenimientoDto servicioMantenimientoDto1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
-            servicioMantenimientoDto.setId(servicioMantenimientoDto1.getId());
-            cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
-            Respuesta respuesta1 = cobroService.create(cobroDto);
-            if(respuesta1.getEstado()){
-                new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Registrado Exitosamente");
+        if(servicioMantenimientoDto!=null){
+            Respuesta respuesta = service.create(servicioMantenimientoDto);
+            if(respuesta.getEstado()){
+                CobroDto cobroDto = new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
+                ServicioMantenimientoDto servicioMantenimientoDto1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
+                servicioMantenimientoDto.setId(servicioMantenimientoDto1.getId());
+                cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
+                Respuesta respuesta1 = cobroService.create(cobroDto);
+                if(respuesta1.getEstado()){
+                    new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Registrado Exitosamente");
+                }
             }
         }
+
     }
 
     public void modificarServicio(){
-        System.out.println("MODIFICANDO SERVICIO");
         ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
-        servicioMantenimientoDto.setId(servicioSelecionado.getId());
-        Respuesta respuesta = service.update(servicioMantenimientoDto);
-        if(respuesta.getEstado()){
-            CobroDto cobroDto =  new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
-            cobroDto.setId(servicioSelecionado.getCobroList().get(0).getId());
-            cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
-            Respuesta respuesta1 = cobroService.update(cobroDto);
-            if(respuesta1.getEstado()){
-                new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Modificado Exitosamente");
-            }else{
-                new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error en registrar el servicio");
+        if(servicioMantenimientoDto!=null){
+            servicioMantenimientoDto.setId(servicioSelecionado.getId());
+            Respuesta respuesta = service.update(servicioMantenimientoDto);
+            if(respuesta.getEstado()){
+                CobroDto cobroDto =  new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
+                cobroDto.setId(servicioSelecionado.getCobroList().get(0).getId());
+                cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
+                Respuesta respuesta1 = cobroService.update(cobroDto);
+                if(respuesta1.getEstado()){
+                    new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Modificado Exitosamente");
+                }else{
+                    new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error en registrar el servicio");
+                }
             }
         }
-
-
 
     }
 
 
     public void buscarAvion(ActionEvent actionEvent) {
-
         FlowController.getInstance().goView("BuscarAvion");
-        System.out.println("regresa");
     }
 }

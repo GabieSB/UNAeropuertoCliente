@@ -15,4 +15,42 @@ public class TipoReparacionDto {
     private String nombre;
     private Boolean activo;
     private List<GastoReparacionDto> gastoReparList;
+
+    public TipoReparacionDto(String nombre, Boolean activo, List<GastoReparacionDto> gastoReparList) {
+        this.nombre = nombre;
+        this.activo = activo;
+        this.gastoReparList = gastoReparList;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+    public List<GastoReparacionDto> getGastoReparList() {
+        return gastoReparList;
+    }
+
+    public void setGastoReparList(List<GastoReparacionDto> gastoReparList) {
+        this.gastoReparList = gastoReparList;
+    }
 }

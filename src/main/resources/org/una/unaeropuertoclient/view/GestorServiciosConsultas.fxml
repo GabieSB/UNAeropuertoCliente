@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
@@ -15,10 +16,18 @@
    <children>
       <VBox alignment="CENTER" prefHeight="642.0" prefWidth="938.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="91.0" prefWidth="910.0" spacing="50.0">
+            <HBox alignment="CENTER" prefHeight="42.0" prefWidth="938.0" spacing="50.0">
                <children>
                   <Label styleClass="air-module-tittle" text="Búsqueda Por Parámetro" />
                </children>
+            </HBox>
+            <HBox prefHeight="44.0" prefWidth="938.0">
+               <children>
+                  <JFXButton fx:id="btnNuevo" alignment="CENTER" contentDisplay="BOTTOM" onAction="#btnNuevo" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Nuevo" visible="false" />
+               </children>
+               <padding>
+                  <Insets left="50.0" />
+               </padding>
             </HBox>
             <HBox alignment="CENTER" prefHeight="63.0" prefWidth="846.0" spacing="50.0">
                <children>

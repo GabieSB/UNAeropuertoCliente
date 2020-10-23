@@ -18,11 +18,11 @@
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton onAction="#OnClickAirModule" prefHeight="70.0" prefWidth="139.0" text="AIRCONTROL" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" text="Gestor Servicio" />
-            <JFXButton onAction="#btnconsultarServicios" prefHeight="70.0" prefWidth="139.0" text="Consultar Servicios" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton onAction="#btnconsultarServicios" prefHeight="70.0" prefWidth="139.0" text="Gestor Servicios" />
+            <JFXButton onAction="#btnconsultarGastos" prefHeight="70.0" prefWidth="139.0" text="Gestor Gastos" />
+            <JFXButton onAction="#btnConsultarBitacoras" prefHeight="70.0" prefWidth="139.0" text="Consultar Bitacoras" />
+            <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton onAction="#btnRegistrarGastos" prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
