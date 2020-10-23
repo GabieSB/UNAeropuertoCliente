@@ -293,13 +293,17 @@ public class FlowController {
     public void limpiarCache() {
         loaders.clear();
     }
-    
-    public Stage getStage(){
+
+    public Stage getStage() {
         return mainStage;
     }
 
     public static void changeSuperiorTittle(String name) {
         ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeScreenNameTitle(name);
+    }
+
+    public static void changeUserNameTittle(String name) {
+        ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeUserNameTitle(name);
     }
 
     public <RootTipe extends Node> void chargeOn(Pane chargeHere, String viewName) {

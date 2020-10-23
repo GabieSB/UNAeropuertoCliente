@@ -8,6 +8,8 @@ package org.una.unaeropuertoclient.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -23,7 +25,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
+import org.una.unaeropuertoclient.model.AreaDto;
+import org.una.unaeropuertoclient.model.AuthenticationResponse;
+import org.una.unaeropuertoclient.model.NotificacionDto;
 import org.una.unaeropuertoclient.model.VueloDto;
+import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -187,7 +193,11 @@ public class GestorVuelosController extends Controller implements Initializable 
                 {
                     delete.setId("dangerous-button-efect");
                     delete.setOnAction((ActionEvent event) -> {
-                        System.out.println("ELIMINARRRRRR");
+                        AuthenticationResponse aut = (AuthenticationResponse) AppContext.getInstance().get("token");
+                        AreaDto actual = aut.getUsuario().getAreasId();
+                        NotificacionDto notifDelete = new NotificacionDto(true, getTableView().getItems().get(getIndex())
+                                .getId().intValue(), Timestamp.valueOf(LocalDateTime.now()), actual);
+                        createNewDeleteNotification(notifDelete);
                     });
                 }
                 private final HBox hb = new HBox();
@@ -211,6 +221,17 @@ public class GestorVuelosController extends Controller implements Initializable 
             return cell;
         };
         clAcciones.setCellFactory(cellFactory);
+    }
+
+    public void createNewDeleteNotification(NotificacionDto notificacion) {
+        if (new Mensaje().showConfirmation("Atención", this.getStage(), "Esta acción solicitará al encargado del área de vuelos que este vuelo sea cancelado", "¿Deseas solicitar la cancelación de este vuelo?")) {
+            Respuesta resp = new NotificacionService().create(notificacion);
+            if (resp.getEstado()) {
+                new Mensaje().showModal(Alert.AlertType.INFORMATION, "Todo bien poe ahora", this.getStage(), "Se ha solicitado la inactivación de este vuelo, este desaparecerá en cuanto el gerente de esta área apruebe esta acción");
+            } else {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+            }
+        }
     }
 
 }
