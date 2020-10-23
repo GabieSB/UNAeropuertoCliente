@@ -23,6 +23,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.FormatStyle;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -106,6 +107,17 @@ public class GestorServiciosController extends Controller implements Initializab
 
     }
 
+    private  void limpiar(){
+
+        dateServicio.setValue(LocalDate.now());
+        txtNumeroFactura.setText("");
+        btonFinalizado.setSelected(false);
+        btnEstadoPago.setSelected(false);
+        btonActivo.setSelected(false);
+        txtAvion.setText("");
+
+    }
+
     private  ServicioMantenimientoDto crearServicioMantenimientoConDatosIngresados(){
         Optional<TipoServicioDto> optTipo  = tiposServicios.stream().filter(t ->    t.getNombre().equals(comboxTipos.getSelectionModel().getSelectedItem())).findFirst();
         AvionService avionService = new AvionService();
@@ -147,6 +159,7 @@ public class GestorServiciosController extends Controller implements Initializab
                 servicioMantenimientoDto.setId(servicioMantenimientoDto1.getId());
                 cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
                 Respuesta respuesta1 = cobroService.create(cobroDto);
+                System.out.println("antes de cobro");
                 if(respuesta1.getEstado()){
                     new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Registrado Exitosamente");
                 }

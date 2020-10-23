@@ -64,7 +64,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
 
         columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
         columContrato.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroContrato().toString()));
-        columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaRegistro().toString()));
+        columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicioFormateada()));
         columEstado.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getEstadoPago()));
         columEstado.setCellFactory( tc -> new TableCell<>() {
             @Override
@@ -207,6 +207,13 @@ public class GestorGastosConsultasController extends Controller implements Initi
 
     }
 
+    private void limpiar(){
+        txtDiasFinal.setText("");
+        txtDiasInicio.setText("");
+        txtValorBuscado.setText("");
+
+    }
+
     public void busquedaSegunParametro(int selectedItem, String valor) {
 
         Respuesta respuesta = null;
@@ -302,7 +309,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
     public void buscarEntreDias(ActionEvent actionEvent) {
         int selectedItem = comboxParametros1.getSelectionModel().getSelectedIndex();
 
-        if(comboxParametros1.getSelectionModel().isEmpty() && Validar.isLongNumber(txtDiasFinal.getText()) && Validar.isLongNumber(txtDiasInicio.getText()))
+        if(!comboxParametros1.getSelectionModel().isEmpty() && Validar.isLongNumber(txtDiasFinal.getText()) && Validar.isLongNumber(txtDiasInicio.getText()))
         buscarEntreDiasDurabilidadYPeriocidad(selectedItem);
         else   mensaje.show(Alert.AlertType.INFORMATION,"ERROR DE DATOS", "Parece que no has ingresado datos correctos.");
     }

@@ -12,11 +12,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="613.0" prefWidth="830.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorGastosConsultasController">
+<AnchorPane prefHeight="567.0" prefWidth="830.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorGastosConsultasController">
    <children>
-      <VBox alignment="CENTER" prefHeight="614.0" prefWidth="834.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <VBox alignment="CENTER" prefHeight="576.0" prefWidth="830.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="36.0" prefWidth="830.0" />
+            <HBox alignment="CENTER" prefHeight="0.0" prefWidth="830.0" />
             <HBox prefHeight="34.0" prefWidth="830.0">
                <children>
                   <JFXButton fx:id="btonNuevo" alignment="CENTER" contentDisplay="BOTTOM" onAction="#btnNuevo" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Nuevo" visible="false" />
@@ -57,9 +57,9 @@
                   <JFXButton fx:id="btnBuscarFecha" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorFecha" prefHeight="30.0" prefWidth="124.0" stylesheets="@style.css" text="Buscar por fecha" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="342.0" prefWidth="830.0">
+            <HBox alignment="CENTER" prefHeight="312.0" prefWidth="830.0">
                <children>
-                  <TableView fx:id="tableResultados" prefHeight="294.0" prefWidth="798.0">
+                  <TableView fx:id="tableResultados" prefHeight="307.0" prefWidth="798.0">
                     <columns>
                       <TableColumn fx:id="columId" prefWidth="39.20001373291018" text="ID" />
                       <TableColumn fx:id="columFecha" prefWidth="111.20001220703125" text="Fecha de registro" />

@@ -68,7 +68,7 @@ public class BuscarBitacoraController  extends Controller implements Initializab
             if(categoria == 0){
                 if(Validar.isLongNumber(valor)){
                     respuesta = bitacoraService.buscarPorID(Long.parseLong(valor));
-                }
+                }else  new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Parece que has ingresado un valor incorrecto. El ID debería ser un número");
 
             }else if(categoria == 1){
                 respuesta= bitacoraService.buscarPorUserCedula(valor);
@@ -87,8 +87,7 @@ public class BuscarBitacoraController  extends Controller implements Initializab
                 new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al realizar la búsqueda", this.getStage(), "No se pudieron obtener resultados");
 
             }
-
-        }
+        }else new Mensaje().showModal(Alert.AlertType.WARNING, "Información", this.getStage(), "Parece que el espacio de valor a consultar esta vacío");
 
 
     }

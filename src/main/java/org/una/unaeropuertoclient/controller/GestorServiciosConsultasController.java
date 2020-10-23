@@ -131,7 +131,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
     private void cargarPropertiesTable(){
         columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
         columFactura.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroFactura().toString()));
-        columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicio().toString()));
+        columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicioFormateada()));
         columEstadoServicio.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getActivo()));
         columEstadoServicio.setCellFactory( tc -> new TableCell<>() {
             @Override
@@ -177,7 +177,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
     @Override
     public void initialize() {
         AuthenticationResponse auth = (AuthenticationResponse) AppContext.getInstance().get("token");
-        Optional<RolUsuarioDto> rol = auth.getRolUsuario().stream().filter(r -> r.getRolesId().getNombre().equals("GESTOR_MANTENIMIENTO_AEROPUERTO")).findFirst();
+        Optional<RolUsuarioDto> rol = auth.getRolUsuario().stream().filter(r -> r.getRolesId().getNombre().equals("GESTOR_SERVICIOS_AERONAVES")).findFirst();
         if(rol.isPresent())
         {
             isGestor = true;

@@ -21,7 +21,7 @@
                   <Label styleClass="air-module-tittle" text="Búsqueda Por Parámetro" />
                </children>
             </HBox>
-            <HBox prefHeight="44.0" prefWidth="938.0">
+            <HBox prefHeight="30.0" prefWidth="938.0">
                <children>
                   <JFXButton fx:id="btnNuevo" alignment="CENTER" contentDisplay="BOTTOM" onAction="#btnNuevo" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Nuevo" visible="false" />
                </children>
@@ -36,12 +36,12 @@
                   <JFXButton fx:id="btonBuscarParametro" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorParametro" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Buscar por Paramétro" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="34.0" prefWidth="846.0">
+            <HBox alignment="CENTER" prefHeight="22.0" prefWidth="938.0">
                <children>
-                  <Label styleClass="air-module-tittle" text="Búsqueda por Fecha" />
+                  <Label prefHeight="9.0" prefWidth="171.0" styleClass="air-module-tittle" text="Búsqueda por Fecha" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="82.0" prefWidth="846.0" spacing="63.0">
+            <HBox alignment="CENTER" prefHeight="64.0" prefWidth="938.0" spacing="63.0">
                <children>
                   <Label styleClass="air-module-subtittle" text="Desde:" />
                   <DatePicker fx:id="dateInicio" prefHeight="25.0" prefWidth="150.0" />
