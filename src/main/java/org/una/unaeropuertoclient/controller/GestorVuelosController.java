@@ -8,11 +8,11 @@ package org.una.unaeropuertoclient.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -91,15 +91,20 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
-        Respuesta resp = new VueloService().filter(txtAerolinea.getText(),
-                txtFlyName.getText(), txtMatriculaAvion.getText(), txtLlegada.getText(),
-                txtSalida.getText(), dpDesde.getValue(), dpHasta.getValue());
-        if (resp.getEstado()) {
-            tbVuelos.getItems().clear();
-            tbVuelos.getItems().addAll((List) resp.getResultado("data"));
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        Thread th = new Thread(() -> {
+            Respuesta resp = new VueloService().filter(txtAerolinea.getText(),
+                    txtFlyName.getText(), txtMatriculaAvion.getText(), txtLlegada.getText(),
+                    txtSalida.getText(), dpDesde.getValue(), dpHasta.getValue());
+            Platform.runLater(() -> {
+                if (resp.getEstado()) {
+                    tbVuelos.getItems().clear();
+                    tbVuelos.getItems().addAll((List) resp.getResultado("data"));
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     @FXML
@@ -127,8 +132,8 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     private void chargeTodayData() {
         Thread th = new Thread(() -> {
+            Respuesta resp = new VueloService().findVuelosDelDia();
             Platform.runLater(() -> {
-                Respuesta resp = new VueloService().filter("", "", "", "", "", LocalDate.now().minusDays(1L), LocalDate.now().plusDays(1L));
                 if (resp.getEstado()) {
                     tbVuelos.getItems().clear();
                     tbVuelos.getItems().addAll((List) resp.getResultado("data"));
@@ -156,6 +161,8 @@ public class GestorVuelosController extends Controller implements Initializable 
         txtSalida.setText("");
         txtFlyName.setText("");
         txtMatriculaAvion.setText("");
+        dpDesde.setValue(null);
+        dpHasta.setValue(null);
         chargeTodayData();
     }
 

@@ -5,6 +5,10 @@
  */
 package org.una.unaeropuertoclient.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class VueloDto {
@@ -21,11 +25,11 @@ public class VueloDto {
     private AlertaDto alerta;
 
     public String getSitioYFechaLLegada() {
-        return lugarLlegada.getNombre() + " " + horaLlegada;
+        return lugarLlegada.getNombre() + " el " + toCompresionHumana(horaLlegada);
     }
 
     public String getSitioYFechaSalida() {
-        return lugarSalida.getNombre() + " " + horaSalida;
+        return lugarSalida.getNombre() + " el " + toCompresionHumana(horaSalida);
     }
 
     public String getStateAsWord() {
@@ -133,7 +137,14 @@ public class VueloDto {
     public void setAlerta(AlertaDto alerta) {
         this.alerta = alerta;
     }
-    
-    
 
+    private String toCompresionHumana(Date date) {
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd-MM-uuuu");
+        LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+        LocalDate dia = ldt.toLocalDate();
+        String diasText = dia.format(formatters);
+        String ret = diasText + " a la" + (ldt.getHour() != 1 ? "s" : "");
+        ret += " " + ldt.toLocalTime().toString();
+        return ret;
+    }
 }

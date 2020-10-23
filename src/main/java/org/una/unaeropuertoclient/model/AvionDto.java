@@ -6,6 +6,7 @@
 package org.una.unaeropuertoclient.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class AvionDto {
 
@@ -67,6 +68,24 @@ public class AvionDto {
     @Override
     public String toString() {
         return this.matricula;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null) {
+            if (obj instanceof AvionDto) {
+                AvionDto avi = (AvionDto) obj;
+                return this.matricula.equals(avi.getMatricula()) && Objects.equals(avi.getId(), id);
+            }
+        }
+        return false;
     }
 
 }

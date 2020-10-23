@@ -18,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import org.una.unaeropuertoclient.model.AerolineaDto;
@@ -31,6 +32,7 @@ import org.una.unaeropuertoclient.service.LugarService;
 import org.una.unaeropuertoclient.service.PistaService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -69,6 +71,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     private JFXComboBox<PistaDto> cbPistaAterrisage;
     private boolean editionMode;
     private VueloDto vuelo;
+    private List<ComboBox> cbList;
 
     /**
      * Initializes the controller class.
@@ -78,7 +81,10 @@ public class EditorVuelosController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        cbList = Arrays.asList(cbAerolinea, cbAvion, cbPistaAterrisage,
+                cbSitioLlegada, cbSitioSalida, cbEsadoVuelo, cbMinutosSalida,
+                cbHoraSalida, cbMinutosLlegada, cbHoraLlegada);
+        cargarFuncionalidadesVentana();
     }
 
     @Override
@@ -90,24 +96,24 @@ public class EditorVuelosController extends Controller implements Initializable 
         cbSitioSalida.setPromptText("Cargando...");
         cbSitioLlegada.setPromptText("Cargando...");
         tryActivEditionMode();
-        cargarFuncionalidadesVentana();
         chargeExternalData();
     }
 
     @FXML
     public void onActionCancel(ActionEvent event) {
-        clearContextData();
+        FlowController.getInstance().eliminarDeCache("EditorVuelos");
         this.getStage().close();
     }
 
     @FXML
     public void OnActionClear(ActionEvent event) {
-        Arrays.asList(cbAerolinea, cbAvion, cbHoraLlegada, cbHoraSalida,
-                cbMinutosLlegada, cbMinutosSalida, cbPistaAterrisage,
-                cbSitioLlegada, cbSitioSalida, cbEsadoVuelo).
-                forEach(cb -> cb.setValue(null));
+        cbList.forEach(cb -> cb.setValue(null));
         clearContextData();
         tryActivEditionMode();
+        lblNombreVuelo.setText("Nombre de vuelo:");
+        dpFechaLlegada.setValue(null);
+        dpFechaSalida.setValue(null);
+        
     }
 
     @FXML
@@ -120,11 +126,10 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void cargarFuncionalidadesVentana() {
-        cbEsadoVuelo.getItems().clear();
         cbEsadoVuelo.getItems().addAll("Programado", "En vuelo", "Finalizado");
         Platform.runLater(() -> {
             this.getStage().setOnCloseRequest(event -> {
-                clearContextData();
+                FlowController.getInstance().eliminarDeCache("EditorVuelos");
             });
         });
         for (Integer h = 0; h < 24; h++) {
@@ -147,8 +152,8 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void chargePistas() {
+        Respuesta resp = new PistaService().findAll();
         Platform.runLater(() -> {
-            Respuesta resp = new PistaService().findAll();
             cbPistaAterrisage.getItems().clear();
             if (resp.getEstado()) {
                 List<PistaDto> pList = (List<PistaDto>) resp.getResultado("data");
@@ -161,8 +166,8 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void chargeLugares() {
+        Respuesta resp = new LugarService().findByEstado(true);
         Platform.runLater(() -> {
-            Respuesta resp = new LugarService().findByEstado(true);
             cbSitioLlegada.getItems().clear();
             cbSitioSalida.getItems().clear();
             if (resp.getEstado()) {
@@ -179,8 +184,8 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void chargeAerolinas() {
+        Respuesta resp = new AerolineaService().findByEstado(true);
         Platform.runLater(() -> {
-            Respuesta resp = new AerolineaService().findByEstado(true);
             cbAerolinea.getItems().clear();
             if (resp.getEstado()) {
                 List<AerolineaDto> aeroList = (List<AerolineaDto>) resp.getResultado("data");
@@ -194,20 +199,30 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @FXML
     public void chargeAviones(ActionEvent event) {
+        createNombreVuelo();
         Thread th = new Thread(() -> {
             Platform.runLater(() -> {
                 cbAvion.setDisable(false);
                 cbAvion.setPromptText("Cargando...");
-                Respuesta resp = new AvionService().filter("", cbAerolinea.getValue().getNombre());
-                cbAvion.getItems().clear();
-                if (resp.getEstado()) {
-                    List<AvionDto> pList = (List<AvionDto>) resp.getResultado("data");
-                    cbAvion.getItems().addAll(pList);
-                    cbAvion.setPromptText("Aviones");
-                } else {
-                    cbAvion.setPromptText(resp.getMensaje());
-                }
             });
+            if (cbAerolinea.getValue() != null) {
+                Respuesta resp = new AvionService().filter("", cbAerolinea.getValue().getNombre());
+                Platform.runLater(() -> {
+                    cbAvion.getItems().clear();
+                    if (resp.getEstado()) {
+                        List<AvionDto> pList = (List<AvionDto>) resp.getResultado("data");
+                        cbAvion.getItems().addAll(pList);
+                        cbAvion.setPromptText("Aviones");
+                    } else {
+                        cbAvion.setPromptText(resp.getMensaje());
+                    }
+                });
+            } else {
+                Platform.runLater(() -> {
+                    cbAvion.setPromptText("Aviones(Vacío)");
+                    cbAvion.setDisable(true);
+                });
+            }
         });
         th.start();
     }
@@ -219,13 +234,14 @@ public class EditorVuelosController extends Controller implements Initializable 
             unChargeData();
         } else {
             editionMode = false;
+            cbEsadoVuelo.getSelectionModel().select("Programado");
+            cbEsadoVuelo.setDisable(true);
             vuelo = new VueloDto();
         }
     }
 
     private void unChargeData() {
-        vuelo.setNombreVuelo(lblNombreVuelo.getText());
-        vuelo.setAvionesId(cbAvion.getValue());
+       vuelo.setAvionesId(cbAvion.getValue());
         vuelo.setLugarLlegada(cbSitioLlegada.getValue());
         vuelo.setLugarSalida(cbSitioSalida.getValue());
         vuelo.setPistasId(cbPistaAterrisage.getValue());
@@ -266,7 +282,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void chargeData() {
-        lblNombreVuelo.setText("Nombre de vuelo: " + vuelo.getNombreVuelo());
+        lblNombreVuelo.setText("Vuelo: " + vuelo.getNombreVuelo());
         cbAvion.getSelectionModel().select(vuelo.getAvionesId());
         cbSitioLlegada.getSelectionModel().select(vuelo.getLugarLlegada());
         cbSitioSalida.getSelectionModel().select(vuelo.getLugarSalida());
@@ -283,14 +299,9 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void refreshBack() {
-        Thread th = new Thread(() -> {
-            Platform.runLater(() -> {
-                if (AppContext.getInstance().get("GVuelo") != null) {
-                    ((GestorVuelosController) AppContext.getInstance().get("GVuelo")).onActionBuscar(new ActionEvent());
-                }
-            });
-        });
-        th.start();
+        if (AppContext.getInstance().get("GVuelo") != null) {
+            ((GestorVuelosController) AppContext.getInstance().get("GVuelo")).onActionBuscar(new ActionEvent());
+        }
     }
 
     private void clearContextData() {
@@ -306,6 +317,21 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     public LocalDateTime toLocalDateTime(Date dateToConvert) {
         return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public void createNombreVuelo() {
+        Thread th = new Thread(() -> {
+            Respuesta resp = new VueloService().countVuelosByAerolinea(cbAerolinea.getValue());
+            Platform.runLater(() -> {
+                if (resp.getEstado()) {
+                    Long consecutivo = (Long) resp.getResultado("data");
+                    consecutivo++;
+                    vuelo.setNombreVuelo(cbAerolinea.getValue().getNombre() + "-" + consecutivo.toString());
+                    lblNombreVuelo.setText("Vuelo: " + vuelo.getNombreVuelo());
+                }
+            });
+        });
+        th.start();
     }
 
 }

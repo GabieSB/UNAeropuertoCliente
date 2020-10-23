@@ -6,6 +6,7 @@
 package org.una.unaeropuertoclient.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class LugarDto {
 
@@ -59,6 +60,25 @@ public class LugarDto {
     public String toString() {
         return this.getNombre();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null) {
+            if (obj instanceof LugarDto) {
+                LugarDto lug = (LugarDto) obj;
+                return this.nombre.equals(lug.nombre) && Objects.equals(this.id, lug.getId());
+            }
+        }
+        return false;
+    }
+    
     
     
 }

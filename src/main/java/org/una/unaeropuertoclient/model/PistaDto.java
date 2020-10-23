@@ -6,6 +6,7 @@
 package org.una.unaeropuertoclient.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PistaDto {
 
@@ -58,6 +59,24 @@ public class PistaDto {
     @Override
     public String toString() {
         return numeroPista + " - " + longitud.toString() + "m";
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null) {
+            if (obj instanceof PistaDto) {
+                PistaDto pist = (PistaDto) obj;
+                return pist.getNumeroPista().equals(pist.getNumeroPista()) && Objects.equals(pist.getId(), id);
+            }
+        }
+        return false;
     }
 
 }
