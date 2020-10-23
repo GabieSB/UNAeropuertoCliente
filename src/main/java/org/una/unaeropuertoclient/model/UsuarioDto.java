@@ -5,8 +5,6 @@
  */
 package org.una.unaeropuertoclient.model;
 
-
-
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +24,7 @@ public class UsuarioDto {
     private List<RolUsuarioDto> rolUsuarioList;
     private AreaDto areasId;
 
-    public UsuarioDto(String cedula, String nombre, String apellidos, String contrasenna,Timestamp fechaNacimiento,Timestamp fechaIngreso, Timestamp fechaModificacion, Boolean activo,AreaDto areaDto) {
+    public UsuarioDto(String cedula, String nombre, String apellidos, String contrasenna, Timestamp fechaNacimiento, Timestamp fechaIngreso, Timestamp fechaModificacion, Boolean activo, AreaDto areaDto) {
         this.cedula = cedula;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -35,10 +33,9 @@ public class UsuarioDto {
         this.fechaIngreso = fechaIngreso;
         this.fechaModificacion = fechaModificacion;
         this.activo = activo;
-         areasId=areaDto;
+        areasId = areaDto;
     }
 
-  
     public Long getId() {
         return id;
     }
@@ -134,5 +131,5 @@ public class UsuarioDto {
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-    
+
 }

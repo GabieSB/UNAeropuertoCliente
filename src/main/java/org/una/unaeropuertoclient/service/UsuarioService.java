@@ -20,6 +20,8 @@ import org.una.unaeropuertoclient.model.AuthenticationRequest;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
 import org.una.unaeropuertoclient.model.RolUsuarioDto;
 import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.RequesUtils;
+import static org.una.unaeropuertoclient.utils.RequesUtils.isError;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
 /**
@@ -62,32 +64,26 @@ public class UsuarioService {
 
     }
 
-    public void create(UsuarioDto usuario) {
+    public Respuesta create(UsuarioDto usuario) {
 
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
 
-        AuthenticationResponse authentication = (AuthenticationResponse) AppContext.getInstance().get("token");
-
-        //System.out.println(bitacoraDto.getFechaModificacion().getTime());
         RequestHTTP requestHTTP = new RequestHTTP();
-
         HttpResponse response = requestHTTP.post("usuarios/create", gson.toJson(usuario));
+        if (isError(response.statusCode())) {
+            return new Respuesta(false, "Error al crear un usuario", "");
+        }
+        return new Respuesta(true, "", "", "data", RequesUtils.<UsuarioDto>asObject(response, UsuarioDto.class));
 
     }
 
-    public Respuesta getById(String nombr, String apellido, String cedula, String fechaInicio, String fechaFinal,boolean activo, boolean boolFechas) {
+    public Respuesta getById(String nombr, String apellido, String cedula, String fechaInicio, String fechaFinal, boolean activo, boolean boolFechas) {
         try {
-//            String b;
-//            if(activo){
-//                b="true";
-//            }else{
-//            b="false";
-//            }
-            String url = "usuarios/busquedaCompleta/" + nombr + "/" + apellido + "/" + cedula+"/"+activo;
+            String url = "usuarios/busquedaCompleta/" + nombr + "/" + apellido + "/" + cedula + "/" + activo;
 
             if (boolFechas) {
-                url = "usuarios/busquedaCompletaConFechas/" + nombr + "/" + apellido + "/" + cedula+"/"+activo + "/"+fechaInicio + "/" +fechaFinal;
+                url = "usuarios/busquedaCompletaConFechas/" + nombr + "/" + apellido + "/" + cedula + "/" + activo + "/" + fechaInicio + "/" + fechaFinal;
             }
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.get(url);

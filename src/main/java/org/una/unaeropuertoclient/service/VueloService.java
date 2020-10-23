@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.utils.RequesUtils;
@@ -95,6 +97,30 @@ public class VueloService {
             return new Respuesta(true, "", "", "data", RequesUtils.<Long>asObject(resp, Long.class));
         } catch (Exception ex) {
             return new Respuesta(false, "Error en conexión", "");
+        }
+    }
+
+    public Respuesta buscarPorID(String numero) {
+        try {
+            System.out.printf("Buscar por id");
+            RequestHTTP requestHTTP = new RequestHTTP();
+            HttpResponse respuesta = requestHTTP.get("vuelos/" + numero);
+            System.out.println(respuesta.body().toString());
+
+            if (requestHTTP.getStatus() != 200) {
+                if (respuesta.statusCode() == 204) {
+                    return new Respuesta(false, "Parece que no hay resultados en la búsqueda", String.valueOf(requestHTTP.getStatus()));
+                }
+                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
+            }
+
+            VueloDto vueloDto = jsonConv.fromJson(respuesta.body().toString(), VueloDto.class);
+            return new Respuesta(true, "", "", "data", vueloDto);
+
+        } catch (Exception ex) {
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            System.out.println("ha ocurrido un error");
+            return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
     }
 
