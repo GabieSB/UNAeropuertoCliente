@@ -72,6 +72,8 @@ public class EditorVuelosController extends Controller implements Initializable 
     private boolean editionMode;
     private VueloDto vuelo;
     private List<ComboBox> cbList;
+    private String oldFlyName;
+    private AerolineaDto oldAerline;
 
     /**
      * Initializes the controller class.
@@ -95,13 +97,14 @@ public class EditorVuelosController extends Controller implements Initializable 
         cbPistaAterrisage.setPromptText("Cargando...");
         cbSitioSalida.setPromptText("Cargando...");
         cbSitioLlegada.setPromptText("Cargando...");
-        tryActivEditionMode();
         chargeExternalData();
+        tryActivEditionMode();
     }
 
     @FXML
     public void onActionCancel(ActionEvent event) {
         FlowController.getInstance().eliminarDeCache("EditorVuelos");
+        clearContextData();
         this.getStage().close();
     }
 
@@ -113,7 +116,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         lblNombreVuelo.setText("Nombre de vuelo:");
         dpFechaLlegada.setValue(null);
         dpFechaSalida.setValue(null);
-        
+
     }
 
     @FXML
@@ -129,6 +132,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         cbEsadoVuelo.getItems().addAll("Programado", "En vuelo", "Finalizado");
         Platform.runLater(() -> {
             this.getStage().setOnCloseRequest(event -> {
+                clearContextData();
                 FlowController.getInstance().eliminarDeCache("EditorVuelos");
             });
         });
@@ -154,9 +158,9 @@ public class EditorVuelosController extends Controller implements Initializable 
     private void chargePistas() {
         Respuesta resp = new PistaService().findAll();
         Platform.runLater(() -> {
-            cbPistaAterrisage.getItems().clear();
             if (resp.getEstado()) {
                 List<PistaDto> pList = (List<PistaDto>) resp.getResultado("data");
+                pList.removeIf(elemnt -> elemnt.equals(cbPistaAterrisage.getValue()));
                 cbPistaAterrisage.getItems().addAll(pList);
                 cbPistaAterrisage.setPromptText("Pistas");
             } else {
@@ -168,12 +172,13 @@ public class EditorVuelosController extends Controller implements Initializable 
     private void chargeLugares() {
         Respuesta resp = new LugarService().findByEstado(true);
         Platform.runLater(() -> {
-            cbSitioLlegada.getItems().clear();
-            cbSitioSalida.getItems().clear();
             if (resp.getEstado()) {
                 List<LugarDto> pList = (List<LugarDto>) resp.getResultado("data");
+                pList.removeIf(elemnt -> elemnt.equals(cbSitioSalida.getValue()));
                 cbSitioSalida.getItems().addAll(pList);
                 cbSitioSalida.setPromptText("Lugar de salida");
+                pList.add(cbSitioSalida.getValue());
+                pList.removeIf(elemnt -> elemnt.equals(cbSitioLlegada.getValue()));
                 cbSitioLlegada.getItems().addAll(pList);
                 cbSitioLlegada.setPromptText("Lugar de llegada");
             } else {
@@ -186,9 +191,9 @@ public class EditorVuelosController extends Controller implements Initializable 
     private void chargeAerolinas() {
         Respuesta resp = new AerolineaService().findByEstado(true);
         Platform.runLater(() -> {
-            cbAerolinea.getItems().clear();
             if (resp.getEstado()) {
                 List<AerolineaDto> aeroList = (List<AerolineaDto>) resp.getResultado("data");
+                aeroList.removeIf(elemnt -> elemnt.equals(cbAerolinea.getValue()));
                 cbAerolinea.setPromptText("Aerolinas");
                 cbAerolinea.getItems().addAll(aeroList);
             } else {
@@ -197,9 +202,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         });
     }
 
-    @FXML
-    public void chargeAviones(ActionEvent event) {
-        createNombreVuelo();
+    public void chargeAviones(boolean clearItems) {
         Thread th = new Thread(() -> {
             Platform.runLater(() -> {
                 cbAvion.setDisable(false);
@@ -208,9 +211,14 @@ public class EditorVuelosController extends Controller implements Initializable 
             if (cbAerolinea.getValue() != null) {
                 Respuesta resp = new AvionService().filter("", cbAerolinea.getValue().getNombre());
                 Platform.runLater(() -> {
-                    cbAvion.getItems().clear();
+                    if (clearItems) {
+                        cbAvion.getItems().clear();
+                    }
                     if (resp.getEstado()) {
                         List<AvionDto> pList = (List<AvionDto>) resp.getResultado("data");
+                        if (!clearItems) {
+                            pList.removeIf(elemnt -> elemnt.equals(cbAvion.getValue()));
+                        }
                         cbAvion.getItems().addAll(pList);
                         cbAvion.setPromptText("Aviones");
                     } else {
@@ -231,7 +239,14 @@ public class EditorVuelosController extends Controller implements Initializable 
         if (AppContext.getInstance().get("EditVuelo") != null) {
             editionMode = true;
             vuelo = (VueloDto) AppContext.getInstance().get("EditVuelo");
-            unChargeData();
+            cbAerolinea.getItems().add(vuelo.getAvionesId().getAerolineasId());
+            cbAvion.getItems().add(vuelo.getAvionesId());
+            cbSitioLlegada.getItems().add(vuelo.getLugarLlegada());
+            cbSitioSalida.getItems().add(vuelo.getLugarSalida());
+            cbPistaAterrisage.getItems().add(vuelo.getPistasId());
+            copyUnmodificableFlyData();
+            chargeData();
+            chargeAviones(false);
         } else {
             editionMode = false;
             cbEsadoVuelo.getSelectionModel().select("Programado");
@@ -240,8 +255,14 @@ public class EditorVuelosController extends Controller implements Initializable 
         }
     }
 
+    @FXML
+    public void OnActionChargeAviones(ActionEvent event) {
+        createNombreVuelo();
+        chargeAviones(true);
+    }
+
     private void unChargeData() {
-       vuelo.setAvionesId(cbAvion.getValue());
+        vuelo.setAvionesId(cbAvion.getValue());
         vuelo.setLugarLlegada(cbSitioLlegada.getValue());
         vuelo.setLugarSalida(cbSitioSalida.getValue());
         vuelo.setPistasId(cbPistaAterrisage.getValue());
@@ -273,6 +294,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         if (resp.getEstado()) {
             new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
             vuelo = (VueloDto) resp.getResultado("data");
+            copyUnmodificableFlyData();
             chargeData();
             editionMode = true;
             refreshBack();
@@ -282,8 +304,9 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void chargeData() {
-        lblNombreVuelo.setText("Vuelo: " + vuelo.getNombreVuelo());
+        cbAerolinea.getSelectionModel().select(vuelo.getAvionesId().getAerolineasId());
         cbAvion.getSelectionModel().select(vuelo.getAvionesId());
+        lblNombreVuelo.setText("Vuelo: " + vuelo.getNombreVuelo());
         cbSitioLlegada.getSelectionModel().select(vuelo.getLugarLlegada());
         cbSitioSalida.getSelectionModel().select(vuelo.getLugarSalida());
         cbPistaAterrisage.getSelectionModel().select(vuelo.getPistasId());
@@ -331,7 +354,20 @@ public class EditorVuelosController extends Controller implements Initializable 
                 }
             });
         });
-        th.start();
+        if (!editionMode) {
+            th.start();
+        } else if (cbAerolinea.getValue().equals(oldAerline)) {
+            vuelo.setNombreVuelo(oldFlyName);
+            lblNombreVuelo.setText("Vuelo: " + vuelo.getNombreVuelo());
+        } else {
+            th.start();
+        }
+
+    }
+
+    public void copyUnmodificableFlyData() {
+        oldAerline = vuelo.getAvionesId().getAerolineasId();
+        oldFlyName = vuelo.getNombreVuelo();
     }
 
 }

@@ -67,8 +67,7 @@ public class VueloService {
     }
 
     public Respuesta update(VueloDto vuelo) {
-        String h = jsonConv.toJson(vuelo);
-        HttpResponse resp = new RequestHTTP().put("lugares/update", h);
+        HttpResponse resp = new RequestHTTP().put("vuelos/update", jsonConv.toJson(vuelo));
         if (isError(resp.statusCode())) {
             return new Respuesta(false, "Error al crear modificar datos, considera reportar este problema", "");
         }
@@ -80,8 +79,7 @@ public class VueloService {
 
     public Respuesta create(VueloDto vuelo) {
         vuelo.setEstado((byte) 0);
-        String h = jsonConv.toJson(vuelo);
-        HttpResponse resp = new RequestHTTP().post("vuelos/create", h);
+        HttpResponse resp = new RequestHTTP().post("vuelos/create", jsonConv.toJson(vuelo));
         if (isError(resp.statusCode())) {
             return new Respuesta(false, "Error al registrar nuevo vuelo en el sistema, considera reportar este problema", "");
         }

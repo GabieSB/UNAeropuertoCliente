@@ -49,12 +49,16 @@ public class VueloDto {
         switch (state) {
             case "Programado":
                 estado = 0;
+                break;
             case "En vuelo":
                 estado = 1;
+                break;
             case "Finalizado":
                 estado = 2;
+                break;
             default:
                 estado = 3;
+                break;
         }
     }
 

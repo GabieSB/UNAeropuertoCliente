@@ -12,17 +12,18 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.service.VueloService;
+import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -49,10 +50,6 @@ public class GestorVuelosController extends Controller implements Initializable 
     @FXML
     public DatePicker dpHasta;
     @FXML
-    public JFXButton btnEliminar;
-    @FXML
-    public Label lblVuelosDe;
-    @FXML
     public TableView<VueloDto> tbVuelos;
     @FXML
     public TableColumn<VueloDto, String> clNombre;
@@ -66,6 +63,8 @@ public class GestorVuelosController extends Controller implements Initializable 
     public TableColumn<VueloDto, String> clLlegada;
     @FXML
     public TableColumn<VueloDto, String> clEstado;
+    @FXML
+    public TableColumn<VueloDto, Void> clAcciones;
 
     /**
      * Initializes the controller class.
@@ -113,12 +112,13 @@ public class GestorVuelosController extends Controller implements Initializable 
     }
 
     private void activateResponsiveConfig() {
-        clSalida.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4));
-        clLlegada.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4));
-        clAerolinea.prefWidthProperty().bind(tbVuelos.widthProperty().divide(8));
-        clAvion.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
-        clNombre.prefWidthProperty().bind(tbVuelos.widthProperty().divide(8));
-        clEstado.prefWidthProperty().bind(tbVuelos.widthProperty().divide(12));
+        clSalida.prefWidthProperty().bind(tbVuelos.widthProperty().divide(5));
+        clLlegada.prefWidthProperty().bind(tbVuelos.widthProperty().divide(5));
+        clAerolinea.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));
+        clAvion.prefWidthProperty().bind(tbVuelos.widthProperty().divide(11));
+        clNombre.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));
+        clEstado.prefWidthProperty().bind(tbVuelos.widthProperty().divide(13));
+        clAcciones.prefWidthProperty().bind(tbVuelos.widthProperty().divide(13));
     }
 
     private void configureDataRepresentation() {
@@ -137,7 +137,6 @@ public class GestorVuelosController extends Controller implements Initializable 
                 if (resp.getEstado()) {
                     tbVuelos.getItems().clear();
                     tbVuelos.getItems().addAll((List) resp.getResultado("data"));
-                    lblVuelosDe.setText("Vuelos de: hoy");
                 }
             });
         });
@@ -152,6 +151,7 @@ public class GestorVuelosController extends Controller implements Initializable 
     private void prepareTable() {
         activateResponsiveConfig();
         configureDataRepresentation();
+        addTableAcction();
     }
 
     private void clearScreen() {
@@ -164,6 +164,36 @@ public class GestorVuelosController extends Controller implements Initializable 
         dpDesde.setValue(null);
         dpHasta.setValue(null);
         chargeTodayData();
+    }
+
+    private void addTableAcction() {
+        GestorVuelosController thisController = this;
+        Callback<TableColumn<VueloDto, Void>, TableCell<VueloDto, Void>> cellFactory = (final TableColumn<VueloDto, Void> param) -> {
+            final TableCell<VueloDto, Void> cell = new TableCell<>() {
+                private final JFXButton butt = new JFXButton("Editar");
+
+                {
+                    butt.setOnAction((ActionEvent event) -> {
+                        VueloDto pista = getTableView().getItems().get(getIndex());
+                        AppContext.getInstance().set("EditVuelo", pista);
+                        AppContext.getInstance().set("GVuelo", thisController);
+                        FlowController.getInstance().goViewInWindowModal("EditorVuelos", FlowController.getInstance().getStage(), false);
+                    });
+                }
+
+                @Override
+                public void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        setGraphic(butt);
+                    }
+                }
+            };
+            return cell;
+        };
+        clAcciones.setCellFactory(cellFactory);
     }
 
 }
