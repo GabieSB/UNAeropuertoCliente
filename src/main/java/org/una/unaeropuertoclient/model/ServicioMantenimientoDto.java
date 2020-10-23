@@ -7,6 +7,8 @@
 
 package org.una.unaeropuertoclient.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -34,7 +36,14 @@ public class ServicioMantenimientoDto {
     }
 
     public Date getFechaServicio() {
+
         return fechaServicio;
+    }
+
+    public String getFechaServicioFormateada(){
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        String strDate = dateFormat.format(fechaServicio);
+        return strDate;
     }
 
     public void setFechaServicio(Date fechaServicio) {

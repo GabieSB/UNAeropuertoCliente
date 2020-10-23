@@ -5,6 +5,8 @@
  */
 package org.una.unaeropuertoclient.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -51,6 +53,12 @@ public class GastoReparacionDto {
 
     public Date getFechaRegistro() {
         return fechaRegistro;
+    }
+
+    public String getFechaServicioFormateada(){
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        String strDate = dateFormat.format(fechaRegistro);
+        return strDate;
     }
 
     public void setFechaRegistro(Date fechaRegistro) {

@@ -26,7 +26,7 @@ public class ServicioMantenimientoService {
         try {
             System.out.printf("En crear servicio");
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.put("servicios_mantenimientos/update", gson.toJson(servicio));
+            HttpResponse respuesta = requestHTTP.post("servicios_mantenimientos/create", gson.toJson(servicio));
             System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
                 if (respuesta.statusCode() == 204) {
