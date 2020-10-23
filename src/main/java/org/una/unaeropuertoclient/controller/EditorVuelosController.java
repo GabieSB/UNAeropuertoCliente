@@ -177,7 +177,9 @@ public class EditorVuelosController extends Controller implements Initializable 
                 pList.removeIf(elemnt -> elemnt.equals(cbSitioSalida.getValue()));
                 cbSitioSalida.getItems().addAll(pList);
                 cbSitioSalida.setPromptText("Lugar de salida");
-                pList.add(cbSitioSalida.getValue());
+                if (cbSitioSalida.getValue() != null) {
+                    pList.add(cbSitioSalida.getValue());
+                }
                 pList.removeIf(elemnt -> elemnt.equals(cbSitioLlegada.getValue()));
                 cbSitioLlegada.getItems().addAll(pList);
                 cbSitioLlegada.setPromptText("Lugar de llegada");

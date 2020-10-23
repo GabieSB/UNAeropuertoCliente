@@ -15,11 +15,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.service.VueloService;
@@ -118,7 +120,7 @@ public class GestorVuelosController extends Controller implements Initializable 
         clAvion.prefWidthProperty().bind(tbVuelos.widthProperty().divide(11));
         clNombre.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));
         clEstado.prefWidthProperty().bind(tbVuelos.widthProperty().divide(13));
-        clAcciones.prefWidthProperty().bind(tbVuelos.widthProperty().divide(13));
+        clAcciones.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
     }
 
     private void configureDataRepresentation() {
@@ -170,15 +172,30 @@ public class GestorVuelosController extends Controller implements Initializable 
         GestorVuelosController thisController = this;
         Callback<TableColumn<VueloDto, Void>, TableCell<VueloDto, Void>> cellFactory = (final TableColumn<VueloDto, Void> param) -> {
             final TableCell<VueloDto, Void> cell = new TableCell<>() {
-                private final JFXButton butt = new JFXButton("Editar");
+                private final JFXButton edit = new JFXButton("Editar");
 
                 {
-                    butt.setOnAction((ActionEvent event) -> {
+                    edit.setOnAction((ActionEvent event) -> {
                         VueloDto pista = getTableView().getItems().get(getIndex());
                         AppContext.getInstance().set("EditVuelo", pista);
                         AppContext.getInstance().set("GVuelo", thisController);
                         FlowController.getInstance().goViewInWindowModal("EditorVuelos", FlowController.getInstance().getStage(), false);
                     });
+                }
+                private final JFXButton delete = new JFXButton("Inactivar");
+
+                {
+                    delete.setId("dangerous-button-efect");
+                    delete.setOnAction((ActionEvent event) -> {
+                        System.out.println("ELIMINARRRRRR");
+                    });
+                }
+                private final HBox hb = new HBox();
+
+                {
+                    hb.getChildren().addAll(edit, delete);
+                    hb.setSpacing(10d);
+                    hb.setAlignment(Pos.CENTER);
                 }
 
                 @Override
@@ -187,7 +204,7 @@ public class GestorVuelosController extends Controller implements Initializable 
                     if (empty) {
                         setGraphic(null);
                     } else {
-                        setGraphic(butt);
+                        setGraphic(hb);
                     }
                 }
             };
