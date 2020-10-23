@@ -237,7 +237,7 @@ public class ServicioMantenimientoService {
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
     }
-    public Respuesta buscarPorID(String numero){
+    public Respuesta buscarPorID(int numero){
         try {
             System.out.printf("En crear servicio");
             RequestHTTP requestHTTP = new RequestHTTP();

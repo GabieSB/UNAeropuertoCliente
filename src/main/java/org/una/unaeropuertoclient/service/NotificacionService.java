@@ -22,7 +22,7 @@ public class NotificacionService {
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.post("notificaciones/create", gson.toJson(notificacion));
             System.out.println(respuesta.body().toString());
-            if (requestHTTP.getStatus()!=200) {
+            if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
                 }
@@ -39,9 +39,10 @@ public class NotificacionService {
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
     }
-        public Respuesta getNoficaciones(int idArea) {
-        try {         
-            String url = "notificaciones/findByAreasId/"+idArea;
+
+    public Respuesta getNoficaciones(int idArea) {
+        try {
+            String url = "notificaciones/findByAreasId/" + idArea;
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.get(url);
             if (requestHTTP.getStatus() != 200) {
@@ -59,6 +60,50 @@ public class NotificacionService {
 
         } catch (Exception ex) {
             Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
+        }
+    }
+
+    public Respuesta getIDandEstado(int idArea, boolean estado) {
+        try {
+            String url = "notificaciones/buscarIdandEstado/" + idArea + "/" + estado;
+            RequestHTTP requestHTTP = new RequestHTTP();
+            HttpResponse respuesta = requestHTTP.get(url);
+            if (requestHTTP.getStatus() != 200) {
+                if (respuesta.statusCode() == 500) {
+                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                }
+                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
+            }
+            System.out.println(respuesta.body().toString());
+            //UsuarioDto usuarioDto = g.fromJson(respuesta.body().toString(), UsuarioDto.class);
+            List<NotificacionDto> usuarioDto = new Gson().fromJson(respuesta.body().toString(), new TypeToken<List<NotificacionDto>>() {
+            }.getType());
+            return new Respuesta(true, "", "", "data", usuarioDto);
+
+        } catch (Exception ex) {
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
+        }
+    }
+
+    public Respuesta update(NotificacionDto notif) {
+        try {
+            RequestHTTP requestHTTP = new RequestHTTP();
+            HttpResponse respuesta = requestHTTP.put("notificaciones/update", gson.toJson(notif));
+            System.out.println(respuesta.body().toString());
+            if (requestHTTP.getStatus() != 200) {
+                if (respuesta.statusCode() == 500) {
+                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                }
+                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
+            }
+            NotificacionDto notificacionDto = gson.fromJson(respuesta.body().toString(), NotificacionDto.class);
+
+            return new Respuesta(true, "", "", "data", notificacionDto);
+
+        } catch (Exception ex) {
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " notificacion() ->", ex);
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
     }

@@ -23,6 +23,8 @@ import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -143,8 +145,8 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
         AuthenticationResponse authentication = (AuthenticationResponse) AppContext.getInstance().get("token");
 
-        NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(selected.getId()), new Date(), authentication.getUsuario().getAreasId());
-
+//        NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(selected.getId()), new Date(), authentication.getUsuario().getAreasId());
+  NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(selected.getId()),Timestamp.valueOf(LocalDateTime.now()), authentication.getUsuario().getAreasId());
         Respuesta respuesta = notificacionService.create(notificacionDto);
 
         if(respuesta.getEstado()){
@@ -169,7 +171,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
         Respuesta respuesta = null;
         switch (selectedItem) {
             case 0: {
-                respuesta = service.buscarPorID(valor); break;
+                respuesta = service.buscarPorID(Integer.parseInt(valor)); break;
             }
             case 1:  respuesta = service.buscarPorNumeroFactura(Long.parseLong(valor)); break;
             case 2:
