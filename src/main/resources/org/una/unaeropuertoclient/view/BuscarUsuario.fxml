@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="761.0" prefWidth="970.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.BuscarUsuarioController">
+   <children>
+      <VBox layoutX="30.0" layoutY="70.0" prefHeight="200.0" prefWidth="100.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="51.0" prefWidth="600.0">
+               <children>
+                  <Label text="Buscar Usuario" />
+               </children>
+            </HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" spacing="14.0">
+               <children>
+                  <JFXTextField fx:id="txtNombre" labelFloat="true" promptText="Nombre" />
+                  <JFXTextField fx:id="txtApellido" labelFloat="true" promptText="Apellido" />
+                  <JFXTextField fx:id="txtCedula" labelFloat="true" promptText="Cédula" />
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                     <children>
+                        <DatePicker fx:id="dtpFechaInicial" editable="false" promptText="Fecha de Inicio" />
+                        <DatePicker fx:id="dtpFechaFinal" editable="false" promptText="Fecha Final">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </DatePicker>
+                        <JFXCheckBox fx:id="checkActivo" text="Activo" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="200.0">
+                     <children>
+                        <JFXButton fx:id="btnLimpiar" onAction="#limpiarBtn" text="Limpiar" />
+                        <JFXButton fx:id="btnBuscar" onAction="#actionBuscarPersona" text="Buscar" />
+                     </children>
+                  </HBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="100.0" right="100.0" />
+               </VBox.margin>
+            </VBox>
+            <TableView fx:id="tblUsuarios" prefHeight="205.0" prefWidth="655.0">
+              <columns>
+                <TableColumn fx:id="tbcId" prefWidth="38.0" text="ID" />
+                  <TableColumn fx:id="tblCedula" prefWidth="62.0" text="Cédula" />
+                <TableColumn fx:id="tbcNombre" prefWidth="84.0" text="Nombre" />
+                  <TableColumn fx:id="tbcApellido" prefWidth="94.0" text="Apellidos" />
+                  <TableColumn fx:id="tbcFechaIngreso" prefWidth="123.0" text="Fecha Ingreso" />
+                  <TableColumn fx:id="tbcFechaModificacion" prefWidth="136.0" text="Fecha Modificación" />
+                  <TableColumn fx:id="tbcEstado" prefWidth="92.0" text="Estado" />
+                  <TableColumn fx:id="tblEditar" prefWidth="123.0" text="Editar" />
+              </columns>
+            </TableView>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="100.0" right="100.0" top="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

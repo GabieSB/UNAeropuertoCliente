@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
 
 /**
@@ -22,6 +23,8 @@ public class MenuSuperiorController extends Controller implements Initializable 
 
     @FXML
     public Label lblUsuarioLogeado;
+    @FXML
+    public Label lblPantallaActual;
 
     /**
      * Initializes the controller class.
@@ -31,7 +34,7 @@ public class MenuSuperiorController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        AppContext.getInstance().set("MenuSuperior", this);
     }
 
     @Override
@@ -41,6 +44,14 @@ public class MenuSuperiorController extends Controller implements Initializable 
     @FXML
     public void OnActionGoBack(ActionEvent event) {
         FlowController.getInstance().goBack();
+    }
+
+    public void changeUserNameTitle(String name) {
+        lblUsuarioLogeado.setText(name);
+    }
+
+    public void changeScreenNameTitle(String name) {
+        lblPantallaActual.setText(name);
     }
 
 }

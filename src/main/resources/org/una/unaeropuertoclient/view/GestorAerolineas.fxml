@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="470.0" prefWidth="720.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorAerolineasController">
+   <children>
+      <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="101.0" styleClass="air-module-tittle" text="Aerolineas" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <VBox alignment="CENTER" layoutX="15.0" layoutY="41.0" prefHeight="400.0" prefWidth="705.0" spacing="15.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+         <children>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="air-glass-efect-color">
+               <children>
+                  <HBox alignment="CENTER" layoutX="260.0" layoutY="44.0" prefHeight="100.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <JFXTextField fx:id="txtNombre" labelFloat="true" prefWidth="190.0" promptText="Nombre">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </JFXTextField>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" styleClass="air-searchSeparator" />
+                        <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
+                           <children>
+                              <JFXButton onAction="#OnClickNuevo" prefHeight="25.0" prefWidth="100.0" text="Nuevo" />
+                              <JFXButton minWidth="100.0" onAction="#onActionBuscar" text="Buscar" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" top="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <TableView fx:id="tbAerolineas" editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="clNombre" prefWidth="260.0" text="Nombre" />
+                <TableColumn fx:id="clEstado" prefWidth="139.0" text="Estado" />
+                  <TableColumn fx:id="clAcciones" prefWidth="96.0" text="Acciones" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

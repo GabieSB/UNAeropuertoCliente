@@ -7,6 +7,8 @@
 
 package org.una.unaeropuertoclient.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -34,7 +36,14 @@ public class ServicioMantenimientoDto {
     }
 
     public Date getFechaServicio() {
+
         return fechaServicio;
+    }
+
+    public String getFechaServicioFormateada(){
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        String strDate = dateFormat.format(fechaServicio);
+        return strDate;
     }
 
     public void setFechaServicio(Date fechaServicio) {
@@ -97,6 +106,14 @@ public class ServicioMantenimientoDto {
         this.cobroList = cobroList;
     }
 
+    public void agregarCobro(CobroDto cobroDto){
+        if(cobroList == null){
+            cobroList = new ArrayList<>();
+        }else{
+            cobroList.add(cobroDto);
+        }
+    }
+
     public ServicioMantenimientoDto(LocalDate fechaServicio, Long numeroFactura, Boolean estadoPago, Boolean estaFinalizacion, AvionDto avionesId, TipoServicioDto tiposServiciosId) {
         this.fechaServicio =  Date.from(fechaServicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
         this.numeroFactura = numeroFactura;
@@ -105,6 +122,6 @@ public class ServicioMantenimientoDto {
         this.activo = true;
         this.avionesId = avionesId;
         this.tiposServiciosId = tiposServiciosId;
-        this.cobroList = new ArrayList<>();
+        this.cobroList = null;
     }
 }

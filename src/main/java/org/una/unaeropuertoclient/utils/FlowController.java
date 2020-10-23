@@ -20,7 +20,10 @@ import javafx.stage.WindowEvent;
 import org.una.unaeropuertoclient.App;
 import org.una.unaeropuertoclient.controller.Controller;
 import java.util.Stack;
+import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import org.una.unaeropuertoclient.controller.MenuSuperiorController;
 
 /**
  *
@@ -79,6 +82,7 @@ public class FlowController {
         this.mainStage = stage;
         this.idioma = idioma;
         mainStage.setMinWidth(633d);
+        mainStage.setMinHeight(500d);
     }
 
     @SuppressWarnings({"DoubleCheckedLocking", "static-access", "UseSpecificCatch"})
@@ -106,6 +110,8 @@ public class FlowController {
         try {
             this.mainStage.setScene(new Scene(FXMLLoader.load(App.class.getResource("view/Base.fxml"), this.idioma)));
             this.mainStage.show();
+            this.mainStage.setHeight(690);
+            this.mainStage.setWidth(1000);
             //this.mainStage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
             this.mainStage.setTitle("UNAeropuerto");
         } catch (IOException ex) {
@@ -186,7 +192,7 @@ public class FlowController {
         controller.initialize();
         Stage stage = new Stage();
         //stage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
-        stage.setTitle("Lab01");
+        stage.setTitle("UNAeropuerto");
         stage.setOnHidden((WindowEvent event) -> {
             controller.getStage().getScene().setRoot(new Pane());
             controller.setStage(null);
@@ -227,7 +233,7 @@ public class FlowController {
         controller.initialize();
         Stage stage = new Stage();
         //stage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
-        stage.setTitle("Lab01");
+        stage.setTitle("UNAeropuerto");
         stage.setResizable(resizable);
         stage.setOnHidden((WindowEvent event) -> {
             controller.getStage().getScene().setRoot(new Pane());
@@ -286,5 +292,34 @@ public class FlowController {
 
     public void limpiarCache() {
         loaders.clear();
+    }
+
+    public Stage getStage() {
+        return mainStage;
+    }
+
+    public static void changeSuperiorTittle(String name) {
+        ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeScreenNameTitle(name);
+    }
+
+    public static void changeUserNameTittle(String name) {
+        ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeUserNameTitle(name);
+    }
+
+    public <RootTipe extends Node> void chargeOn(Pane chargeHere, String viewName) {
+        try {
+            FXMLLoader loader = getLoader(viewName);
+            Controller controller = loader.getController();
+            controller.initialize();
+            RootTipe root = ((RootTipe) loader.getRoot());
+            chargeHere.getChildren().clear();
+            chargeHere.getChildren().add(root);
+            AnchorPane.setBottomAnchor(root, 0d);
+            AnchorPane.setTopAnchor(root, 0d);
+            AnchorPane.setRightAnchor(root, 0d);
+            AnchorPane.setLeftAnchor(root, 0d);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(FlowController.class.getName()).log(Level.SEVERE, "Error al cargar ''" + viewName + "'' dentro de otro nodo.", ex);
+        }
     }
 }

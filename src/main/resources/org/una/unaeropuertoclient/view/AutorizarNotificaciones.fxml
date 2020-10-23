@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="703.0" prefWidth="811.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.AutorizarNotificacionesController">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="40.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Notificaciones" />
+                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <JFXToggleButton fx:id="togNotificacion" onAction="#toggBuscar" selected="true" text="Notificaciones Activas" unToggleColor="#800000" viewOrder="5.0" />
+                     </children>
+                     <padding>
+                        <Insets right="30.0" />
+                     </padding>
+                  </HBox>
+                  <TableView fx:id="tbvNotificaciones" prefHeight="450.0" prefWidth="811.0">
+                    <columns>
+                      <TableColumn fx:id="tabId" prefWidth="56.0" text="ID" />
+                        <TableColumn fx:id="tabMatricula" prefWidth="75.0" text="Matricula" />
+                        <TableColumn fx:id="tabNumeroFactura" prefWidth="75.0" text="Nº Factura" />
+                        <TableColumn fx:id="tabTipoServicio" prefWidth="126.0" text="Tipo de Servico" />
+                        <TableColumn fx:id="tabFechaServicio" prefWidth="150.0" text="Fecha de Servico" />
+                        <TableColumn fx:id="tabFechaSolicitud" prefWidth="123.0" text="Fecha de Solicitud" />
+                        <TableColumn fx:id="tabEstado" prefWidth="88.0" text="Estado" />
+                        <TableColumn fx:id="tabOpciones" prefWidth="129.0" text="Opciones" />
+                    </columns>
+                  </TableView>
+               </children>
+               <padding>
+                  <Insets top="50.0" />
+               </padding>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+   <stylesheets>
+      <URL value="@styleAdvanceFlySettings.css" />
+      <URL value="@style.css" />
+   </stylesheets>
+</AnchorPane>
