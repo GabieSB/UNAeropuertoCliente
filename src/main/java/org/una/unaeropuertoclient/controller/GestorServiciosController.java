@@ -99,7 +99,7 @@ public class GestorServiciosController extends Controller implements Initializab
         txtNumeroFactura.setText(servicioSelecionado.getNumeroFactura().toString());
         btonFinalizado.setSelected(servicioSelecionado.getEstaFinalizacion());
         btnEstadoPago.setSelected(servicioSelecionado.getEstadoPago());
-        btonActivo.setSelected(servicioSelecionado.getActivo());
+//        btonActivo.setSelected(servicioSelecionado.getActivo());
         txtAvion.setText(servicioSelecionado.getAvionesId().getMatricula());
         comboxTipos.getSelectionModel().select(servicioSelecionado.getTiposServiciosId().getNombre());
         txtCobro.setText(servicioSelecionado.getCobroList().get(0).getMonto().toString());
