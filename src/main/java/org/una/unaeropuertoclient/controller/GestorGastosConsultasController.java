@@ -154,7 +154,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
         AreaDto areaDto = new AreaDto();
         areaDto.setId((long) 3);
 
-        NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(gastoReparacionDto.getId()), Timestamp.valueOf(LocalDateTime.now()), areaDto);
+        NotificacionDto notificacionDto = new NotificacionDto(true, gastoReparacionDto.getId(), Timestamp.valueOf(LocalDateTime.now()), areaDto);
 
         Respuesta respuesta = notificacionService.create(notificacionDto);
 

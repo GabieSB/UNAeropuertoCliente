@@ -5,11 +5,13 @@
  */
 package org.una.unaeropuertoclient.model;
 
+import java.util.List;
+
 /**
  *
  * @author LordLalo
  */
-public class RecolectarInformacionNotas {
+public class RecolectorInfoNotas {
 
     private Long idNota;
     private String matricula;
@@ -19,11 +21,11 @@ public class RecolectarInformacionNotas {
     private String numeroFactura;
     private String tipoServicio;
     private Boolean estado;
- 
-    public RecolectarInformacionNotas() {
+
+    public RecolectorInfoNotas() {
     }
 
-    public RecolectarInformacionNotas(Long idNota, String matricula, String fecha, String idArea, String fechaServico, String numeroFeactura, String tipoServicio,boolean estado) {
+    public RecolectorInfoNotas(Long idNota, String matricula, String fecha, String idArea, String fechaServico, String numeroFeactura, String tipoServicio, boolean estado) {
         this.idNota = idNota;
         this.matricula = matricula;
         this.fecha = fecha;
@@ -31,8 +33,22 @@ public class RecolectarInformacionNotas {
         this.fechaServico = fechaServico;
         this.numeroFactura = numeroFeactura;
         this.tipoServicio = tipoServicio;
-        this.estado=estado;
+        this.estado = estado;
+    }
 
+    public RecolectorInfoNotas(VueloDto vuelo, List<NotificacionDto> notifList) {
+        notifList.forEach(notif -> {
+            if (notif.getIdObjeto().equals(vuelo.getId())) {
+                this.idNota = notif.getId();
+                this.matricula = vuelo.getNombreVuelo();
+                this.fecha = notif.getFechaRegistro().toString();
+                this.idArea = notif.getAreasId().toString();
+                this.fechaServico = vuelo.getSitioYFechaLLegada();
+                this.numeroFactura = vuelo.getAvionesId().getMatricula();
+                this.tipoServicio = vuelo.getSitioYFechaSalida();
+                this.estado = notif.isActivo();
+            }
+        });
     }
 
     public String getTipoServicio() {
@@ -46,8 +62,6 @@ public class RecolectarInformacionNotas {
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
-
-    
 
     public String getNumeroFactura() {
         return numeroFactura;

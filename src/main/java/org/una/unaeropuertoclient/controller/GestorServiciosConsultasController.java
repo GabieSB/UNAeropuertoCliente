@@ -2,13 +2,9 @@ package org.una.unaeropuertoclient.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTextField;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,13 +16,11 @@ import org.una.unaeropuertoclient.model.*;
 import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.utils.*;
-
 import java.net.URL;
 import java.util.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -200,7 +194,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
         AuthenticationResponse authentication = (AuthenticationResponse) AppContext.getInstance().get("token");
 
 //        NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(selected.getId()), new Date(), authentication.getUsuario().getAreasId());
-  NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(selected.getId()),Timestamp.valueOf(LocalDateTime.now()), authentication.getUsuario().getAreasId());
+  NotificacionDto notificacionDto = new NotificacionDto(true, selected.getId(),Timestamp.valueOf(LocalDateTime.now()), authentication.getUsuario().getAreasId());
         Respuesta respuesta = notificacionService.create(notificacionDto);
 
         if(respuesta.getEstado()){

@@ -4,16 +4,15 @@ import java.sql.Timestamp;
 public class NotificacionDto {
 
     Long id;
-    boolean activo;
-    int idObjeto;
-    //Date fechaRegistro;
+    Boolean activo;
+    Long idObjeto;
     Timestamp fechaRegistro;
     AreaDto areasId;
 
     public NotificacionDto() {
     }
 
-    public NotificacionDto(boolean activo, int idObjeto, Timestamp fechaRegistro, AreaDto areasId) {
+    public NotificacionDto(boolean activo, Long idObjeto, Timestamp fechaRegistro, AreaDto areasId) {
         this.activo = activo;
         this.idObjeto = idObjeto;
         this.fechaRegistro = fechaRegistro;
@@ -36,11 +35,11 @@ public class NotificacionDto {
         this.activo = activo;
     }
 
-    public Integer getIdObjeto() {
+    public Long getIdObjeto() {
         return idObjeto;
     }
 
-    public void setIdObjeto(Integer idObjeto) {
+    public void setIdObjeto(Long idObjeto) {
         this.idObjeto = idObjeto;
     }
 

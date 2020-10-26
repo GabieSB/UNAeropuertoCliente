@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
+import java.util.List;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.utils.RequesUtils;
@@ -106,18 +107,17 @@ public class VueloService {
         }
     }
 
-    public Respuesta buscarPorID(String numero) {
+    public Respuesta findByIdUsingIdParam(List<Long> idList) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.get("vuelos/" + numero);
+            HttpResponse respuesta = requestHTTP.put("vuelos/findByIdUsingListParam/", jsonConv.toJson(idList));
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 204) {
                     return new Respuesta(false, "Parece que no hay resultados en la búsqueda", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
-            VueloDto vueloDto = jsonConv.fromJson(respuesta.body().toString(), VueloDto.class);
-            return new Respuesta(true, "", "", "data", vueloDto);
+            return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asList(respuesta, VueloDto.class));
         } catch (Exception ex) {
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
