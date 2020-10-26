@@ -8,9 +8,7 @@ package org.una.unaeropuertoclient.controller;
 import com.jfoenix.controls.JFXComboBox;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -35,6 +33,7 @@ import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
+import static org.una.unaeropuertoclient.utils.VuelosUtilis.*;
 
 /**
  * FXML Controller class
@@ -121,8 +120,12 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @FXML
     public void OnClickSave(ActionEvent event) {
-        if (isValidData()) {
-            saveChanges();
+        if (isAllFull()) {
+            if (estaElAvionLibre()) {
+                saveChanges();
+            } else {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "El avión que has seleccionado ya tiene un vuelo programado en esta fecha y hora");
+            }
         } else {
             new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "Quizá has dejado algún espacio sin rellenar.");
         }
@@ -273,7 +276,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         vuelo.setHoraSalida(toDate(dpFechaSalida, cbHoraSalida.getValue(), cbMinutosSalida.getValue()));
     }
 
-    private boolean isValidData() {
+    private boolean isAllFull() {
         if (dpFechaLlegada.getValue() != null && dpFechaLlegada.getValue() != null) {
             if (cbAerolinea.getValue() != null && cbAvion != null) {
                 if (cbMinutosLlegada.getValue() != null && cbHoraLlegada.getValue() != null) {
@@ -335,15 +338,6 @@ public class EditorVuelosController extends Controller implements Initializable 
         AppContext.getInstance().delete("GVuelo");
     }
 
-    private Date toDate(DatePicker dp, String hours, String minuts) {
-        LocalDateTime locaDT = dp.getValue().atTime(Integer.valueOf(hours), Integer.valueOf(minuts));
-        return Date.from(locaDT.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    public LocalDateTime toLocalDateTime(Date dateToConvert) {
-        return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-    }
-
     public void createNombreVuelo() {
         Thread th = new Thread(() -> {
             Respuesta resp = new VueloService().countVuelosByAerolinea(cbAerolinea.getValue());
@@ -370,6 +364,19 @@ public class EditorVuelosController extends Controller implements Initializable 
     public void copyUnmodificableFlyData() {
         oldAerline = vuelo.getAvionesId().getAerolineasId();
         oldFlyName = vuelo.getNombreVuelo();
+    }
+
+    public boolean estaElAvionLibre() {
+        LocalDateTime start = dpFechaSalida.getValue().atTime(Integer.valueOf(cbHoraSalida.getValue()),
+                Integer.valueOf(cbMinutosSalida.getValue()));
+        LocalDateTime end = dpFechaLlegada.getValue().atTime(Integer.valueOf(cbHoraLlegada.getValue()),
+                Integer.valueOf(cbMinutosLlegada.getValue()));
+        Respuesta resp = new AvionService().isAvionLibre(start, end, vuelo.getId(), cbAvion.getValue().getId());
+        if (resp.getEstado()) {
+            return (boolean) resp.getResultado("data");
+        }
+        new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+        return false;
     }
 
 }

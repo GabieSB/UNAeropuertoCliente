@@ -18,7 +18,7 @@
             <Insets left="20.0" right="20.0" />
          </padding>
       </VBox>
-      <JFXButton layoutX="174.0" layoutY="154.0" onAction="#onActionSalir" prefHeight="25.0" prefWidth="70.0" text="Salir" AnchorPane.bottomAnchor="49.0" AnchorPane.rightAnchor="147.0" />
+      <JFXButton id="dangerous-button-efect" layoutX="174.0" layoutY="154.0" onAction="#onActionSalir" prefHeight="25.0" prefWidth="70.0" text="Salir" AnchorPane.bottomAnchor="49.0" AnchorPane.rightAnchor="147.0" />
       <JFXButton layoutX="254.0" layoutY="154.0" onAction="#onActionIngresar" prefHeight="25.0" prefWidth="70.0" text="Ingrear" AnchorPane.bottomAnchor="49.0" AnchorPane.rightAnchor="67.0" />
    </children>
 </AnchorPane>

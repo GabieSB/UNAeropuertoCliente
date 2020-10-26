@@ -9,8 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.utils.RequesUtils;
@@ -69,23 +68,31 @@ public class VueloService {
     }
 
     public Respuesta update(VueloDto vuelo) {
-        HttpResponse resp = new RequestHTTP().put("vuelos/update", jsonConv.toJson(vuelo));
-        if (isError(resp.statusCode())) {
-            return new Respuesta(false, "Error al crear modificar datos, considera reportar este problema", "");
+        try {
+            HttpResponse resp = new RequestHTTP().put("vuelos/update", jsonConv.toJson(vuelo));
+            if (isError(resp.statusCode())) {
+                return new Respuesta(false, "Error al crear modificar datos, considera reportar este problema", "");
+            }
+            if (isEmptyResult(resp.statusCode())) {
+                return new Respuesta(false, "No ha sido posible hallar el vuelo que se desea modificar", "");
+            }
+            return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asObject(resp, VueloDto.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
-        if (isEmptyResult(resp.statusCode())) {
-            return new Respuesta(false, "No ha sido posible hallar el vuelo que se desea modificar", "");
-        }
-        return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asObject(resp, VueloDto.class));
     }
 
     public Respuesta create(VueloDto vuelo) {
-        vuelo.setEstado((byte) 0);
-        HttpResponse resp = new RequestHTTP().post("vuelos/create", jsonConv.toJson(vuelo));
-        if (isError(resp.statusCode())) {
-            return new Respuesta(false, "Error al registrar nuevo vuelo en el sistema, considera reportar este problema", "");
+        try {
+            vuelo.setEstado((byte) 0);
+            HttpResponse resp = new RequestHTTP().post("vuelos/create", jsonConv.toJson(vuelo));
+            if (isError(resp.statusCode())) {
+                return new Respuesta(false, "Error al registrar nuevo vuelo en el sistema, considera reportar este problema", "");
+            }
+            return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asObject(resp, VueloDto.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asObject(resp, VueloDto.class));
     }
 
     public Respuesta countVuelosByAerolinea(AerolineaDto aerolinea) {
@@ -100,26 +107,18 @@ public class VueloService {
         }
     }
 
-    public Respuesta buscarPorID(String numero) {
+    public Respuesta findByIdUsingIdParam(List<Long> idList) {
         try {
-            System.out.printf("Buscar por id");
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.get("vuelos/" + numero);
-            System.out.println(respuesta.body().toString());
-
+            HttpResponse respuesta = requestHTTP.put("vuelos/findByIdUsingListParam/", jsonConv.toJson(idList));
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 204) {
                     return new Respuesta(false, "Parece que no hay resultados en la búsqueda", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
-
-            VueloDto vueloDto = jsonConv.fromJson(respuesta.body().toString(), VueloDto.class);
-            return new Respuesta(true, "", "", "data", vueloDto);
-
+            return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asList(respuesta, VueloDto.class));
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
-            System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
     }

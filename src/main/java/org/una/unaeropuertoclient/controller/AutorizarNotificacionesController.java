@@ -11,10 +11,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -24,15 +26,15 @@ import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
 import org.una.unaeropuertoclient.model.GastoReparacionDto;
 import org.una.unaeropuertoclient.model.NotificacionDto;
-import org.una.unaeropuertoclient.model.RecolectarInformacionNotas;
+import org.una.unaeropuertoclient.model.RecolectorInfoNotas;
 import org.una.unaeropuertoclient.model.ServicioMantenimientoDto;
 import org.una.unaeropuertoclient.model.VueloDto;
-import org.una.unaeropuertoclient.service.AvionService;
 import org.una.unaeropuertoclient.service.GastoReparacionService;
 import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
 /**
@@ -43,30 +45,29 @@ import org.una.unaeropuertoclient.utils.Respuesta;
 public class AutorizarNotificacionesController extends Controller implements Initializable {
 
     @FXML
-    public TableView<RecolectarInformacionNotas> tbvNotificaciones;
-
+    public TableView<RecolectorInfoNotas> tbvNotificaciones;
     @FXML
     public JFXToggleButton togNotificacion;
     @FXML
-    private TableColumn<RecolectarInformacionNotas, String> tabId;
+    private TableColumn<RecolectorInfoNotas, String> tabId;
     @FXML
-    private TableColumn<RecolectarInformacionNotas, String> tabNumeroFactura;
+    private TableColumn<RecolectorInfoNotas, String> tabNumeroFactura;
     @FXML
-    private TableColumn<RecolectarInformacionNotas, String> tabTipoServicio;
+    private TableColumn<RecolectorInfoNotas, String> tabTipoServicio;
     @FXML
-    private TableColumn<RecolectarInformacionNotas, String> tabFechaServicio;
+    private TableColumn<RecolectorInfoNotas, String> tabFechaServicio;
     private List<NotificacionDto> listNotificaciones = new ArrayList<>();
-    private List<ServicioMantenimientoDto> listServicio = new ArrayList<>();
-    private List<GastoReparacionDto> listGastoReparacion = new ArrayList<>();
-    private List<VueloDto> listVuelo = new ArrayList<>();
+    private final List<ServicioMantenimientoDto> listServicio = new ArrayList<>();
+    private final List<GastoReparacionDto> listGastoReparacion = new ArrayList<>();
+    private final List<VueloDto> listVuelo = new ArrayList<>();
     @FXML
-    private TableColumn<RecolectarInformacionNotas, String> tabMatricula;
+    private TableColumn<RecolectorInfoNotas, String> tabMatricula;
     @FXML
-    private TableColumn<RecolectarInformacionNotas, Void> tabOpciones;
+    private TableColumn<RecolectorInfoNotas, Void> tabOpciones;
     @FXML
-    private TableColumn<RecolectarInformacionNotas, String> tabFechaSolicitud;
+    private TableColumn<RecolectorInfoNotas, String> tabFechaSolicitud;
     @FXML
-    private TableColumn<RecolectarInformacionNotas, Boolean> tabEstado;
+    private TableColumn<RecolectorInfoNotas, Boolean> tabEstado;
     int numeroArea;
 
     @Override
@@ -111,111 +112,113 @@ public class AutorizarNotificacionesController extends Controller implements Ini
         } else {
             cargarDatos(false, numeroArea);
         }
-
     }
 
-    private void cargarDatos(boolean estado, int n) {
+    private void cargarDatos(boolean estado, int numeroAerea) {
         listNotificaciones.clear();
         tbvNotificaciones.getItems().clear();
         Thread th = new Thread(() -> {
-
             NotificacionService notificacionService = new NotificacionService();
-            //       Respuesta resp = notificacionService.getNoficaciones(2);
-            Respuesta resp = notificacionService.getIDandEstado(n, estado);
+            Respuesta resp = notificacionService.getIDandEstado(numeroAerea, estado);
             Platform.runLater(() -> {
-                if (resp != null) {
+                if (resp.getEstado()) {
                     listNotificaciones = (List) resp.getResultado("data");
-                    for (NotificacionDto notificacionDto : listNotificaciones) {
-                        if (n == 2) {
-                            ServicioMantenimientoService serv = new ServicioMantenimientoService();
-                            Respuesta r = serv.buscarPorID(notificacionDto.getIdObjeto().toString());
-                            ServicioMantenimientoDto servicioMantenimientoDto = (ServicioMantenimientoDto) r.getResultado("data");
-                            listServicio.add(servicioMantenimientoDto);
-                            RecolectarInformacionNotas recolectarInformacionNotas = new RecolectarInformacionNotas(notificacionDto.getId(), servicioMantenimientoDto.getAvionesId().getMatricula(), servicioMantenimientoDto.getFechaServicio().toString(), notificacionDto.getAreasId().toString(), servicioMantenimientoDto.getFechaServicio().toString(), servicioMantenimientoDto.getNumeroFactura().toString(), servicioMantenimientoDto.getTiposServiciosId().getNombre(), notificacionDto.isActivo());
-                            tbvNotificaciones.getItems().add(recolectarInformacionNotas);
-                        } else {
-                            if (n == 3) {
-                                GastoReparacionService gastoReparacionService = new GastoReparacionService();
-                                Respuesta r = gastoReparacionService.buscarPorID(notificacionDto.getIdObjeto().toString());
-                                GastoReparacionDto gasto = (GastoReparacionDto) r.getResultado("data");
-                                listGastoReparacion.add(gasto);
-                                RecolectarInformacionNotas recolectarInformacionNotas = new RecolectarInformacionNotas(notificacionDto.getId(), gasto.getNumeroContrato().toString(), notificacionDto.getFechaRegistro().toString(), notificacionDto.getAreasId().toString(), gasto.getFechaRegistro().toString(), gasto.getTiposId().getNombre(), gasto.getObservaciones(), notificacionDto.isActivo());
-                                tbvNotificaciones.getItems().add(recolectarInformacionNotas);
-                            } else {
-                                VueloService vueloService = new VueloService();
-                                Respuesta r = vueloService.buscarPorID(notificacionDto.getIdObjeto().toString());
-                                VueloDto vuelo = (VueloDto) r.getResultado("data");
-                                listVuelo.add(vuelo);
-                                RecolectarInformacionNotas recolectarInformacionNotas = new RecolectarInformacionNotas(notificacionDto.getId(), vuelo.getNombreVuelo(), notificacionDto.getFechaRegistro().toString(), notificacionDto.getAreasId().toString(), vuelo.getSitioYFechaLLegada(), vuelo.getAvionesId().getMatricula(), vuelo.getSitioYFechaSalida(), notificacionDto.isActivo());
-                                tbvNotificaciones.getItems().add(recolectarInformacionNotas);
+                    List<Long> idList = listNotificaciones.stream().map(nota -> nota.getIdObjeto()).collect(Collectors.toList());
+                    switch (numeroAerea) {
+                        case 1:
+                            Respuesta vResp = new VueloService().findByIdUsingIdParam(idList);
+                            if (vResp.getEstado()) {
+                                ((List<VueloDto>) vResp.getResultado("data")).forEach(vuelo -> {
+                                    listVuelo.add(vuelo);
+                                    RecolectorInfoNotas colectorInfoNotas = new RecolectorInfoNotas(vuelo, listNotificaciones);
+                                    tbvNotificaciones.getItems().add(colectorInfoNotas);
+                                });
                             }
-                        }
-
+                            break;
+                        case 2:
+                            break;
+                        default:
+                            break;
                     }
+
+//                    for (NotificacionDto notificacionDto : listNotificaciones) {
+//                        if (n == 2) {
+//                            ServicioMantenimientoService serv = new ServicioMantenimientoService();
+//                            Respuesta r = serv.buscarPorID(notificacionDto.getIdObjeto().toString());
+//                            ServicioMantenimientoDto servicioMantenimientoDto = (ServicioMantenimientoDto) r.getResultado("data");
+//                            listServicio.add(servicioMantenimientoDto);
+//                            RecolectorInfoNotas recolectarInformacionNotas = new RecolectorInfoNotas(notificacionDto.getId(), servicioMantenimientoDto.getAvionesId().getMatricula(), servicioMantenimientoDto.getFechaServicio().toString(), notificacionDto.getAreasId().toString(), servicioMantenimientoDto.getFechaServicio().toString(), servicioMantenimientoDto.getNumeroFactura().toString(), servicioMantenimientoDto.getTiposServiciosId().getNombre(), notificacionDto.isActivo());
+//                            tbvNotificaciones.getItems().add(recolectarInformacionNotas);
+//                        } else {
+//                            if (n == 3) {
+//                                GastoReparacionService gastoReparacionService = new GastoReparacionService();
+//                                Respuesta r = gastoReparacionService.buscarPorID(notificacionDto.getIdObjeto().toString());
+//                                GastoReparacionDto gasto = (GastoReparacionDto) r.getResultado("data");
+//                                listGastoReparacion.add(gasto);
+//                                RecolectorInfoNotas recolectarInformacionNotas = new RecolectorInfoNotas(notificacionDto.getId(), gasto.getNumeroContrato().toString(), notificacionDto.getFechaRegistro().toString(), notificacionDto.getAreasId().toString(), gasto.getFechaRegistro().toString(), gasto.getTiposId().getNombre(), gasto.getObservaciones(), notificacionDto.isActivo());
+//                                tbvNotificaciones.getItems().add(recolectarInformacionNotas);
+//                            } else {
+//                                VueloService vueloService = new VueloService();
+//                                Respuesta r = vueloService.buscarPorID(notificacionDto.getIdObjeto().toString());
+//                                VueloDto vuelo = (VueloDto) r.getResultado("data");
+//                                listVuelo.add(vuelo);
+//                                RecolectorInfoNotas recolectarInformacionNotas = new RecolectorInfoNotas(notificacionDto.getId(), vuelo.getNombreVuelo(), notificacionDto.getFechaRegistro().toString(), notificacionDto.getAreasId().toString(), vuelo.getSitioYFechaLLegada(), vuelo.getAvionesId().getMatricula(), vuelo.getSitioYFechaSalida(), notificacionDto.isActivo());
+//                                tbvNotificaciones.getItems().add(recolectarInformacionNotas);
+//                            }
+//                        }
+//                    }
                     addButtonToTable();
                 }
             });
         });
         th.start();
-
     }
 
     private void addButtonToTable() {
+        Callback<TableColumn<RecolectorInfoNotas, Void>, TableCell<RecolectorInfoNotas, Void>> cellFactory = (final TableColumn<RecolectorInfoNotas, Void> param) -> {
+            final TableCell<RecolectorInfoNotas, Void> cell = new TableCell<>() {
+                public JFXButton acceptar = new JFXButton("Acceptar");
 
-        Callback<TableColumn<RecolectarInformacionNotas, Void>, TableCell<RecolectarInformacionNotas, Void>> cellFactory = new Callback<>() {
-            @Override
-            public TableCell<RecolectarInformacionNotas, Void> call(final TableColumn<RecolectarInformacionNotas, Void> param) {
-                final TableCell<RecolectarInformacionNotas, Void> cell = new TableCell<>() {
+                {
+                    acceptar.setOnAction((ActionEvent event) -> {
+                        RecolectorInfoNotas recolectorInfoNotas = getTableView().getItems().get(getIndex());
+                        acceptar(recolectorInfoNotas);
+                    });
+                }
+                public JFXButton denegar = new JFXButton("Denegar");
 
-                    public JFXButton acceptar = new JFXButton("Acceptar");
+                {
+                    denegar.setStyle("-fx-background-color:#b71c1c;");
+                    denegar.setOnAction((ActionEvent event) -> {
+                        RecolectorInfoNotas recolectarInformacionNota = getTableView().getItems().get(getIndex());
+                        desactivar(recolectarInformacionNota);
+                    });
+                }
+                public HBox v = new HBox(acceptar, denegar);
 
-                    {
-                        acceptar.setOnAction((ActionEvent event) -> {
-                            RecolectarInformacionNotas recolectarInformacionNotas = getTableView().getItems().get(getIndex());
-                            acceptar(recolectarInformacionNotas);
+                {
+                    v.setSpacing(2);
+                }
 
-                        });
+                @Override
+                public void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setGraphic(null);
+                    } else {
+                        setGraphic(v);
                     }
-                    public JFXButton denegar = new JFXButton("Denegar");
-
-                    {
-                        denegar.setStyle("-fx-background-color:#b71c1c;");
-                        denegar.setOnAction((ActionEvent event) -> {
-                            RecolectarInformacionNotas recolectarInformacionNota = getTableView().getItems().get(getIndex());
-                            desactivar(recolectarInformacionNota);
-                        });
-                    }
-
-                    public HBox v = new HBox(acceptar, denegar);
-
-                    {
-                        v.setSpacing(2);
-                    }
-
-                    @Override
-                    public void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                        } else {
-                            setGraphic(v);
-                        }
-                    }
-
-                };
-                return cell;
-            }
+                }
+            };
+            return cell;
         };
-
         tabOpciones.setCellFactory(cellFactory);
-
-        // tableResultados.getColumns().add(columAcciones);
     }
 
-    private void desactivar(RecolectarInformacionNotas recolectarInformacionNota) {
+    private void desactivar(RecolectorInfoNotas recolectarInformacionNota) {
         for (NotificacionDto notf : listNotificaciones) {
 
-            if (notf.getId() == recolectarInformacionNota.getIdNota()) {
+            if (notf.getId().equals(recolectarInformacionNota.getIdNota())) {
                 NotificacionDto n = notf;
                 n.setActivo(false);
                 ServicioMantenimientoService serv = new ServicioMantenimientoService();
@@ -230,55 +233,63 @@ public class AutorizarNotificacionesController extends Controller implements Ini
         cargarDatos(true, numeroArea);
     }
 
-    private void acceptar(RecolectarInformacionNotas recolectarInformacionNota) {
-        if (numeroArea == 1) {
-            for (NotificacionDto notf : listNotificaciones) {
-                if (notf.getId() == recolectarInformacionNota.getIdNota()) {
-                    NotificacionDto n = notf;
-                    n.setActivo(false);
-                    VueloService vueloService = new VueloService();
-                    for (VueloDto se : listVuelo) {
-                        if (n.getIdObjeto() == se.getId().longValue()) {
-                            se.setEstado((byte) 3);
-                            vueloService.update(se);
-                        }
-                    }
-                    NotificacionService notificacionService = new NotificacionService();
-                    Respuesta res = notificacionService.update(n);
-                }
-            }
-        }
+    private void acceptar(RecolectorInfoNotas colectorInfoNotas) {
         for (NotificacionDto notf : listNotificaciones) {
-            if (numeroArea == 2) {
-                if (notf.getId() == recolectarInformacionNota.getIdNota()) {
-                    NotificacionDto n = notf;
-                    n.setActivo(false);
-                    ServicioMantenimientoService serv = new ServicioMantenimientoService();
-                    for (ServicioMantenimientoDto se : listServicio) {
-                        if (n.getIdObjeto() == se.getId().longValue()) {
-                            se.setActivo(false);
-                            serv.update(se);
+            if (numeroArea == 1) {
+                if (notf.getId().equals(colectorInfoNotas.getIdNota())) {
+                    notf.setActivo(false);
+                    for (VueloDto se : listVuelo) {
+                        if (notf.getIdObjeto().equals(se.getId())) {
+                            se.setEstado((byte) 3);
+                            Respuesta resp = new VueloService().update(se);
+                            if (resp.getEstado()) {
+                                Respuesta res = new NotificacionService().update(notf);
+                                if (!res.getEstado()) {
+                                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), res.getMensaje());
+                                }
+                            } else {
+                                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                            }
                         }
                     }
-                    NotificacionService notificacionService = new NotificacionService();
-                    Respuesta res = notificacionService.update(n);
                 }
             }
-        }
-        if (numeroArea == 3) {
-            for (NotificacionDto notf : listNotificaciones) {
-                if (notf.getId() == recolectarInformacionNota.getIdNota()) {
-                    NotificacionDto n = notf;
-                    n.setActivo(false);
-                    GastoReparacionService serv = new GastoReparacionService();
-                    for (GastoReparacionDto se : listGastoReparacion) {
-                        if (n.getIdObjeto() == se.getId().longValue()) {
+            if (numeroArea == 2) {
+                if (notf.getId().equals(colectorInfoNotas.getIdNota())) {
+                    notf.setActivo(false);
+                    for (ServicioMantenimientoDto se : listServicio) {
+                        if (notf.getIdObjeto().equals(se.getId())) {
                             se.setActivo(false);
-                            serv.update(se);
+                            Respuesta resp = new ServicioMantenimientoService().update(se);
+                            if (resp.getEstado()) {
+                                Respuesta res = new NotificacionService().update(notf);
+                                if (!res.getEstado()) {
+                                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), res.getMensaje());
+                                }
+                            } else {
+                                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                            }
                         }
                     }
-                    NotificacionService notificacionService = new NotificacionService();
-                    Respuesta res = notificacionService.update(n);
+                }
+            }
+            if (numeroArea == 3) {
+                if (notf.getId().equals(colectorInfoNotas.getIdNota())) {
+                    notf.setActivo(false);
+                    for (GastoReparacionDto se : listGastoReparacion) {
+                        if (notf.getIdObjeto().equals(se.getId())) {
+                            se.setActivo(false);
+                            Respuesta resp = new GastoReparacionService().update(se);
+                            if (resp.getEstado()) {
+                                Respuesta res = new NotificacionService().update(notf);
+                                if (!res.getEstado()) {
+                                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), res.getMensaje());
+                                }
+                            } else {
+                                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                            }
+                        }
+                    }
                 }
             }
         }

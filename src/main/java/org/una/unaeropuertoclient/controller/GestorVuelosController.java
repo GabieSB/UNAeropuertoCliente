@@ -196,7 +196,7 @@ public class GestorVuelosController extends Controller implements Initializable 
                         AuthenticationResponse aut = (AuthenticationResponse) AppContext.getInstance().get("token");
                         AreaDto actual = aut.getUsuario().getAreasId();
                         NotificacionDto notifDelete = new NotificacionDto(true, getTableView().getItems().get(getIndex())
-                                .getId().intValue(), Timestamp.valueOf(LocalDateTime.now()), actual);
+                                .getId(), Timestamp.valueOf(LocalDateTime.now()), actual);
                         createNewDeleteNotification(notifDelete);
                     });
                 }
