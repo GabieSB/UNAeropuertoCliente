@@ -5,6 +5,7 @@
  */
 package org.una.unaeropuertoclient.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -22,11 +23,13 @@ import javafx.scene.control.Label;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.model.LugarDto;
+import org.una.unaeropuertoclient.model.ParamSistemaDto;
 import org.una.unaeropuertoclient.model.PistaDto;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.service.AerolineaService;
 import org.una.unaeropuertoclient.service.AvionService;
 import org.una.unaeropuertoclient.service.LugarService;
+import org.una.unaeropuertoclient.service.ParamSistemaServicio;
 import org.una.unaeropuertoclient.service.PistaService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
@@ -68,11 +71,14 @@ public class EditorVuelosController extends Controller implements Initializable 
     public JFXComboBox<String> cbMinutosLlegada;
     @FXML
     private JFXComboBox<PistaDto> cbPistaAterrisage;
+    @FXML
+    public JFXButton btnSave;
     private boolean editionMode;
     private VueloDto vuelo;
     private List<ComboBox> cbList;
     private String oldFlyName;
     private AerolineaDto oldAerline;
+    private ParamSistemaDto paramSistem;
 
     /**
      * Initializes the controller class.
@@ -90,6 +96,7 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
+        btnSave.setDisable(true);
         cbAerolinea.setPromptText("Cargando...");
         cbAvion.setPromptText("Aviones(Vacío)");
         cbAvion.setDisable(true);
@@ -104,6 +111,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     public void onActionCancel(ActionEvent event) {
         FlowController.getInstance().eliminarDeCache("EditorVuelos");
         clearContextData();
+        paramSistem = null;
         this.getStage().close();
     }
 
@@ -136,6 +144,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         Platform.runLater(() -> {
             this.getStage().setOnCloseRequest(event -> {
                 clearContextData();
+                paramSistem = null;
                 FlowController.getInstance().eliminarDeCache("EditorVuelos");
             });
         });
@@ -150,12 +159,14 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void chargeExternalData() {
-        Thread th = new Thread(() -> chargePistas());
-        th.start();
+        Thread th1 = new Thread(() -> chargePistas());
+        th1.start();
         Thread th2 = new Thread(() -> chargeLugares());
         th2.start();
         Thread th3 = new Thread(() -> chargeAerolinas());
         th3.start();
+        Thread th4 = new Thread(() -> chargeParamSistema());
+        th4.start();
     }
 
     private void chargePistas() {
@@ -168,6 +179,20 @@ public class EditorVuelosController extends Controller implements Initializable 
                 cbPistaAterrisage.setPromptText("Pistas");
             } else {
                 cbPistaAterrisage.setPromptText(resp.getMensaje());
+            }
+        });
+    }
+
+    public void chargeParamSistema() {
+        Respuesta resp = new ParamSistemaServicio().getById();
+        Platform.runLater(() -> {
+            if (resp.getEstado()) {
+                paramSistem = (ParamSistemaDto) resp.getResultado("data");
+                btnSave.setDisable(false);
+            } else {
+                new Mensaje().showModal(Alert.AlertType.ERROR, "Error", this.getStage(), "No ha sido "
+                        + "posible cargar los datos del aeropuerto, tal como hora de apertura y de "
+                        + "cierre, debido a esto se ha cancelado la posibilidad de crear o modificar vuelos.");
             }
         });
     }

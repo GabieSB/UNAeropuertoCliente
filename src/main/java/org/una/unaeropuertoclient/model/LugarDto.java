@@ -15,6 +15,7 @@ public class LugarDto {
     private Boolean activo;
     private List<VueloDto> vuelosSalidaList;
     private List<VueloDto> vuelosLlegadaList;
+    private ParamSistemaDto paramSistema;
 
     public Long getId() {
         return id;
@@ -78,7 +79,5 @@ public class LugarDto {
         }
         return false;
     }
-    
-    
-    
+
 }
