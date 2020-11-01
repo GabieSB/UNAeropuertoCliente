@@ -7,9 +7,7 @@ package org.una.unaeropuertoclient.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.una.unaeropuertoclient.model.ParamSistemaDto;
@@ -21,9 +19,6 @@ import org.una.unaeropuertoclient.utils.Respuesta;
  * @author LordLalo
  */
 public class ParamSistemaServicio {
-    
-//    Gson gson = new GsonBuilder()
-//            .setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
     
       public Respuesta getById(){
            Gson gson = new GsonBuilder()

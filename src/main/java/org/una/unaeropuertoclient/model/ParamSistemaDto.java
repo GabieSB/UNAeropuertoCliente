@@ -7,7 +7,6 @@ package org.una.unaeropuertoclient.model;
 
 import java.sql.Timestamp;
 
-
 public class ParamSistemaDto {
 
     private Integer id;
@@ -15,27 +14,13 @@ public class ParamSistemaDto {
     private Integer tiempoInactividad;
     private String telefonoAeropuerto;
     private String emailAeropuerto;
-//    private Date aperturaOficina;
-//    private Date cierreOficina;
     String nombreRepresentante;
-//    private Date aperturaOficina;
-//    private Date cierreOficina;
     private Timestamp aperturaOficina;
     private Timestamp cierreOficina;
+    private LugarDto ubicacion;
 
     public ParamSistemaDto() {
     }
-
-//    public ParamSistemaDto(Integer id, Short vuelosHora, Integer tiempoInactividad, String telefonoAeropuerto, String emailAeropuerto, String nombreRepresentante, Date aperturaOficina, Date cierreOficina) {
-//        this.id = id;
-//        this.vuelosHora = vuelosHora;
-//        this.tiempoInactividad = tiempoInactividad;
-//        this.telefonoAeropuerto = telefonoAeropuerto;
-//        this.emailAeropuerto = emailAeropuerto;
-//        this.nombreRepresentante = nombreRepresentante;
-//        this.aperturaOficina = aperturaOficina;
-//        this.cierreOficina = cierreOficina;
-//    }
 
     public Integer getId() {
         return id;
@@ -84,22 +69,6 @@ public class ParamSistemaDto {
     public void setNombreRepresentante(String nombreRepresentante) {
         this.nombreRepresentante = nombreRepresentante;
     }
-//
-//    public Date getAperturaOficina() {
-//        return aperturaOficina;
-//    }
-//
-//    public void setAperturaOficina(Date aperturaOficina) {
-//        this.aperturaOficina = aperturaOficina;
-//    }
-//
-//    public Date getCierreOficina() {
-//        return cierreOficina;
-//    }
-//
-//    public void setCierreOficina(Date cierreOficina) {
-//        this.cierreOficina = cierreOficina;
-//    }
 
     public Timestamp getAperturaOficina() {
         return aperturaOficina;
@@ -116,6 +85,13 @@ public class ParamSistemaDto {
     public void setCierreOficina(Timestamp cierreOficina) {
         this.cierreOficina = cierreOficina;
     }
-    
+
+    public LugarDto getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(LugarDto ubicacion) {
+        this.ubicacion = ubicacion;
+    }
 
 }

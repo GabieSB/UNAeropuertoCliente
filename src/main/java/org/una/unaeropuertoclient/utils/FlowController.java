@@ -22,7 +22,6 @@ import org.una.unaeropuertoclient.controller.Controller;
 import java.util.Stack;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import org.una.unaeropuertoclient.controller.MenuSuperiorController;
 
 /**

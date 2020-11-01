@@ -21,7 +21,7 @@
                   <JFXComboBox fx:id="cbAvion" labelFloat="true" prefWidth="200.0" promptText="Avión" />
                   <JFXComboBox fx:id="cbEsadoVuelo" labelFloat="true" prefWidth="200.0" promptText="Estado de vuelo" />
                   <JFXComboBox fx:id="cbPistaAterrisage" labelFloat="true" prefWidth="200.0" promptText="Pista" />
-                  <Label fx:id="lblNombreVuelo" minWidth="200.0" prefHeight="20.0" prefWidth="200.0" styleClass="air-module-subtittle" text="Nombre de vuelo:">
+                  <Label fx:id="lblNombreVuelo" minWidth="200.0" prefHeight="20.0" styleClass="air-module-subtittle" text="Nombre de vuelo:">
                      <VBox.margin>
                         <Insets top="40.0" />
                      </VBox.margin></Label>
@@ -30,31 +30,31 @@
                   <Insets top="20.0" />
                </padding></VBox>
             <Separator orientation="VERTICAL" styleClass="air-searchSeparator" />
-            <VBox maxWidth="335.0" HBox.hgrow="ALWAYS">
+            <VBox maxWidth="360.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label styleClass="air-module-subtittle" text="Salida" />
                   <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="15.0" styleClass="air-glass-efect-color">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="120.0" spacing="20.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" spacing="20.0">
                            <children>
-                              <JFXComboBox fx:id="cbSitioSalida" labelFloat="true" prefHeight="25.0" prefWidth="120.0" promptText="Sitio de salida" />
+                              <JFXComboBox fx:id="cbSitioSalida" labelFloat="true" prefHeight="25.0" promptText="Sitio de salida" />
                               <Label styleClass="air-module-dark-subtittle" text="Hora de salida:" />
                            </children>
                         </VBox>
-                        <VBox alignment="TOP_CENTER" prefWidth="150.0" spacing="10.0">
+                        <VBox alignment="TOP_CENTER" spacing="10.0">
                            <children>
                               <DatePicker fx:id="dpFechaSalida" promptText="Fecha de salida" />
-                              <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                              <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="10.0">
                                  <children>
-                                    <JFXComboBox fx:id="cbHoraSalida" labelFloat="true" prefHeight="25.0" prefWidth="60.0" promptText="Hora" />
-                                    <JFXComboBox fx:id="cbMinutosSalida" labelFloat="true" prefHeight="25.0" prefWidth="75.0" promptText="Minutos" />
+                                    <JFXComboBox fx:id="cbHoraSalida" labelFloat="true" prefHeight="25.0" promptText="Hora" />
+                                    <JFXComboBox fx:id="cbMinutosSalida" labelFloat="true" prefHeight="25.0" promptText="Minutos" />
                                  </children>
                               </HBox>
                            </children>
                         </VBox>
                      </children>
                      <padding>
-                        <Insets top="10.0" />
+                        <Insets left="5.0" right="5.0" top="10.0" />
                      </padding>
                   </HBox>
                   <Label styleClass="air-module-subtittle" text="Llegada">
@@ -64,27 +64,30 @@
                   </Label>
                   <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="15.0" styleClass="air-glass-efect-color">
                      <children>
-                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="120.0" spacing="20.0">
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" spacing="20.0">
                            <children>
-                              <JFXComboBox fx:id="cbSitioLlegada" labelFloat="true" prefHeight="25.0" prefWidth="120.0" promptText="Sitio de llegada" />
+                              <JFXComboBox fx:id="cbSitioLlegada" labelFloat="true" prefHeight="25.0" promptText="Sitio de llegada" />
                               <Label styleClass="air-module-dark-subtittle" text="Hora de llegada:" />
                            </children>
                         </VBox>
-                        <VBox alignment="TOP_CENTER" prefWidth="150.0" spacing="10.0">
+                        <VBox alignment="TOP_CENTER" spacing="10.0">
                            <children>
                               <DatePicker fx:id="dpFechaLlegada" promptText="Fecha de llegada" />
-                              <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                              <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="10.0">
                                  <children>
-                                    <JFXComboBox fx:id="cbHoraLlegada" labelFloat="true" prefHeight="25.0" prefWidth="60.0" promptText="Hora" />
-                                    <JFXComboBox fx:id="cbMinutosLlegada" labelFloat="true" prefHeight="25.0" prefWidth="75.0" promptText="Minutos" />
+                                    <JFXComboBox fx:id="cbHoraLlegada" labelFloat="true" prefHeight="25.0" promptText="Hora" />
+                                    <JFXComboBox fx:id="cbMinutosLlegada" labelFloat="true" prefHeight="25.0" promptText="Minutos" />
                                  </children>
                               </HBox>
                            </children>
                         </VBox>
                      </children>
                      <padding>
-                        <Insets top="10.0" />
+                        <Insets left="5.0" right="5.0" top="10.0" />
                      </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
                   </HBox>
                </children>
                <padding>
@@ -97,7 +100,7 @@
          <children>
             <JFXButton id="dangerous-button-efect" onAction="#onActionCancel" text="Cancelar" />
             <JFXButton onAction="#OnActionClear" text="Limpiar campos" />
-            <JFXButton onAction="#OnClickSave" text="Guardar" />
+            <JFXButton fx:id="btnSave" onAction="#OnClickSave" text="Guardar" />
          </children>
          <padding>
             <Insets right="15.0" />
