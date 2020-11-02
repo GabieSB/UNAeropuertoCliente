@@ -32,8 +32,6 @@ public class ParamSistemaServicio {
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }
-            System.out.println(respuesta.body().toString());
-
             ParamSistemaDto paramSistemaDto = gson.fromJson(respuesta.body().toString(), ParamSistemaDto.class);
 
             return new Respuesta(true, "", "", "data", paramSistemaDto);

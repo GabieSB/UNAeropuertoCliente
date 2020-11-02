@@ -120,8 +120,8 @@ public class GestorVuelosController extends Controller implements Initializable 
     }
 
     private void activateResponsiveConfig() {
-        clSalida.prefWidthProperty().bind(tbVuelos.widthProperty().divide(5));
-        clLlegada.prefWidthProperty().bind(tbVuelos.widthProperty().divide(5));
+        clSalida.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4));
+        clLlegada.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4));
         clAerolinea.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));
         clAvion.prefWidthProperty().bind(tbVuelos.widthProperty().divide(11));
         clNombre.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.util.Pair;
 import org.una.unaeropuertoclient.utils.RequesUtils;
 import static org.una.unaeropuertoclient.utils.RequesUtils.isEmptyResult;
 import static org.una.unaeropuertoclient.utils.RequesUtils.isError;
@@ -146,14 +147,14 @@ public class AvionService {
 
     }
 
-    public Respuesta isAvionLibre(LocalDateTime start, LocalDateTime end, Long idVuelo, long idAvion) {
+    public Respuesta validarContratiemposVuelo(LocalDateTime start, LocalDateTime end, Long idVuelo, long idAvion) {
         try {
             idVuelo = idVuelo != null ? idVuelo : 0;
-            HttpResponse resp = new RequestHTTP().get("vuelos/isAvionLibre/" + start.toString() + "/" + end.toString() + "/" + idVuelo + "/" + idAvion);
+            HttpResponse resp = new RequestHTTP().get("vuelos/validarContratiemposVuelo/" + start.toString() + "/" + end.toString() + "/" + idVuelo + "/" + idAvion);
             if (isError(resp.statusCode())) {
                 return new Respuesta(false, "Error al consultar datos de avión, imposible saber si estará ocupado a en ese lapso.", "");
             }
-            return new Respuesta(true, "", "", "data", RequesUtils.<Boolean>asObject(resp, Boolean.class));
+            return new Respuesta(true, "", "", "data", RequesUtils.<Pair>asObject(resp, Pair.class));
         } catch (Exception ex) {
             return new Respuesta(false, "Error en conexión, imposible saber si estará ocupado a en ese lapso.", "");
         }

@@ -5,7 +5,6 @@
  */
 package org.una.unaeropuertoclient.controller;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -20,6 +19,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.model.LugarDto;
@@ -72,7 +72,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     @FXML
     private JFXComboBox<PistaDto> cbPistaAterrisage;
     @FXML
-    public JFXButton btnSave;
+    private VBox vbSalidaYLlegada;
     private boolean editionMode;
     private VueloDto vuelo;
     private List<ComboBox> cbList;
@@ -96,7 +96,7 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
-        btnSave.setDisable(true);
+        vbSalidaYLlegada.setDisable(true);
         cbAerolinea.setPromptText("Cargando...");
         cbAvion.setPromptText("Aviones(Vacío)");
         cbAvion.setDisable(true);
@@ -129,10 +129,12 @@ public class EditorVuelosController extends Controller implements Initializable 
     @FXML
     public void OnClickSave(ActionEvent event) {
         if (isAllFull()) {
-            if (estaElAvionLibre()) {
-                saveChanges();
-            } else {
-                new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "El avión que has seleccionado ya tiene un vuelo programado en esta fecha y hora");
+            if (sonCorrectosLugaresDeSalidaYLlegada()) {
+                if (validarContratiemposVuelo()) {
+                    //saveChanges();
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "El avión que has seleccionado ya tiene un vuelo programado en esta fecha y hora");
+                }
             }
         } else {
             new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "Quizá has dejado algún espacio sin rellenar.");
@@ -188,7 +190,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         Platform.runLater(() -> {
             if (resp.getEstado()) {
                 paramSistem = (ParamSistemaDto) resp.getResultado("data");
-                btnSave.setDisable(false);
+                vbSalidaYLlegada.setDisable(false);
             } else {
                 new Mensaje().showModal(Alert.AlertType.ERROR, "Error", this.getStage(), "No ha sido "
                         + "posible cargar los datos del aeropuerto, tal como hora de apertura y de "
@@ -391,17 +393,28 @@ public class EditorVuelosController extends Controller implements Initializable 
         oldFlyName = vuelo.getNombreVuelo();
     }
 
-    public boolean estaElAvionLibre() {
+    public boolean validarContratiemposVuelo() {
         LocalDateTime start = dpFechaSalida.getValue().atTime(Integer.valueOf(cbHoraSalida.getValue()),
                 Integer.valueOf(cbMinutosSalida.getValue()));
         LocalDateTime end = dpFechaLlegada.getValue().atTime(Integer.valueOf(cbHoraLlegada.getValue()),
                 Integer.valueOf(cbMinutosLlegada.getValue()));
-        Respuesta resp = new AvionService().isAvionLibre(start, end, vuelo.getId(), cbAvion.getValue().getId());
+        Respuesta resp = new AvionService().validarContratiemposVuelo(start, end, vuelo.getId(), cbAvion.getValue().getId());
         if (resp.getEstado()) {
             return (boolean) resp.getResultado("data");
         }
         new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
         return false;
+    }
+
+    public boolean sonCorrectosLugaresDeSalidaYLlegada() {
+        if (cbSitioSalida.getValue().equals(cbSitioLlegada.getValue())) {
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "El sitio de salida y de llegada no pueden ser los iguales");
+            return false;
+        } else if (!(cbSitioSalida.getValue().equals(paramSistem.getUbicacion()) || cbSitioLlegada.getValue().equals(paramSistem.getUbicacion()))) {
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "Este vuelo parece no despegar ni aterrizar en este aeropuerto. Revisa de nuevo el sitio de salida y el de llegada.");
+            return false;
+        }
+        return true;
     }
 
 }
