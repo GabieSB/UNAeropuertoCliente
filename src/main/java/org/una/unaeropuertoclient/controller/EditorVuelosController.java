@@ -7,6 +7,7 @@ package org.una.unaeropuertoclient.controller;
 
 import com.jfoenix.controls.JFXComboBox;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.util.Pair;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.model.LugarDto;
@@ -79,6 +81,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     private String oldFlyName;
     private AerolineaDto oldAerline;
     private ParamSistemaDto paramSistem;
+    private boolean isDangerous = false;
 
     /**
      * Initializes the controller class.
@@ -118,7 +121,8 @@ public class EditorVuelosController extends Controller implements Initializable 
     @FXML
     public void OnActionClear(ActionEvent event) {
         cbList.forEach(cb -> cb.setValue(null));
-        clearContextData();
+        vuelo = null;
+        AppContext.getInstance().delete("EditVuelo");
         tryActivEditionMode();
         lblNombreVuelo.setText("Nombre de vuelo:");
         dpFechaLlegada.setValue(null);
@@ -130,10 +134,10 @@ public class EditorVuelosController extends Controller implements Initializable 
     public void OnClickSave(ActionEvent event) {
         if (isAllFull()) {
             if (sonCorrectosLugaresDeSalidaYLlegada()) {
-                if (validarContratiemposVuelo()) {
-                    //saveChanges();
-                } else {
-                    new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "El avión que has seleccionado ya tiene un vuelo programado en esta fecha y hora");
+                if (sonFechasCorrectas() && esDuracionCorrecta()) {
+                    if (validarContratiemposVuelo()) {
+                        saveChanges();
+                    }
                 }
             }
         } else {
@@ -398,11 +402,27 @@ public class EditorVuelosController extends Controller implements Initializable 
                 Integer.valueOf(cbMinutosSalida.getValue()));
         LocalDateTime end = dpFechaLlegada.getValue().atTime(Integer.valueOf(cbHoraLlegada.getValue()),
                 Integer.valueOf(cbMinutosLlegada.getValue()));
-        Respuesta resp = new AvionService().validarContratiemposVuelo(start, end, vuelo.getId(), cbAvion.getValue().getId());
-        if (resp.getEstado()) {
-            return (boolean) resp.getResultado("data");
+        LocalDateTime exeDateTime = LocalDateTime.now();
+        if (cbSitioLlegada.getValue().equals(paramSistem.getUbicacion())) {
+            exeDateTime = dpFechaLlegada.getValue().atTime(Integer.valueOf(cbHoraLlegada.getValue()),
+                    Integer.valueOf(cbMinutosLlegada.getValue()));
+        } else {
+            exeDateTime = dpFechaSalida.getValue().atTime(Integer.valueOf(cbHoraSalida.getValue()),
+                    Integer.valueOf(cbMinutosSalida.getValue()));
         }
-        new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+        Respuesta resp = new AvionService().validarContratiemposVuelo(start, end, vuelo.getId(), cbAvion.getValue().getId(), exeDateTime);
+        if (resp.getEstado()) {
+            Pair<String, String> pair = (Pair) resp.getResultado("data");
+            if ("NoCorrect".equals(pair.getKey())) {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), pair.getValue());
+                return false;
+            } else if ("Dangerous".equals(pair.getKey())) {
+                isDangerous = true;
+                return new Mensaje().showConfirmation("Peligro", this.getStage(), pair.getValue(), "¿Desea permitir este vuelo igualmente?");
+            }
+            return true;
+        }
+        new Mensaje().showModal(Alert.AlertType.ERROR, "Error", this.getStage(), resp.getMensaje());
         return false;
     }
 
@@ -417,4 +437,22 @@ public class EditorVuelosController extends Controller implements Initializable 
         return true;
     }
 
+    public boolean sonFechasCorrectas() {
+        if (dpFechaSalida.getValue().isBefore(LocalDate.now().minusDays(1))
+                || dpFechaLlegada.getValue().isBefore(LocalDate.now().minusDays(1))) {
+            return new Mensaje().showConfirmation("Fecha confusa", this.getStage(), "La fecha de "
+                    + "este vuelo es de antes de ayer, lo que podría ser un error al selecciona la fecha.",
+                    "¿Desea guardar los cambios a pesar de todo?");
+        }
+        return true;
+    }
+
+    public boolean esDuracionCorrecta() {
+        if (Math.abs(dpFechaSalida.getValue().until(dpFechaLlegada.getValue()).getDays()) > 1) {
+            return new Mensaje().showConfirmation("Duración de vuelo", this.getStage(), "Este vuelo tiene una "
+                    + "duración de más de 24 horas, lo cual podría deberse a un error al digitar las fechas.",
+                    "¿Desea guardar los cambios a pesar de todo?");
+        }
+        return true;
+    }
 }

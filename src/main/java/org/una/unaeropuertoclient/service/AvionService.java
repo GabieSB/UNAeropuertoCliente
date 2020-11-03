@@ -20,6 +20,7 @@ public class AvionService {
 
     Gson g = new GsonBuilder().setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
 
+    @SuppressWarnings("UseSpecificCatch")
     public Respuesta getByMatricula(String id) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
@@ -39,6 +40,7 @@ public class AvionService {
         }
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     public Respuesta getById(String id) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
@@ -58,6 +60,7 @@ public class AvionService {
         }
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     public Respuesta getByMatriculaLike(String id) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
@@ -78,6 +81,7 @@ public class AvionService {
         }
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     public Respuesta getByAerolinaNombre(String id) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
@@ -147,16 +151,16 @@ public class AvionService {
 
     }
 
-    public Respuesta validarContratiemposVuelo(LocalDateTime start, LocalDateTime end, Long idVuelo, long idAvion) {
+    public Respuesta validarContratiemposVuelo(LocalDateTime start, LocalDateTime end, Long idVuelo, long idAvion, LocalDateTime executionTime) {
         try {
             idVuelo = idVuelo != null ? idVuelo : 0;
-            HttpResponse resp = new RequestHTTP().get("vuelos/validarContratiemposVuelo/" + start.toString() + "/" + end.toString() + "/" + idVuelo + "/" + idAvion);
+            HttpResponse resp = new RequestHTTP().get("vuelos/validarContratiemposVuelo/" + start.toString() + "/" + end.toString() + "/" + executionTime.toString() + "/" + idVuelo + "/" + idAvion);
             if (isError(resp.statusCode())) {
-                return new Respuesta(false, "Error al consultar datos de avión, imposible saber si estará ocupado a en ese lapso.", "");
+                return new Respuesta(false, "Error al consultar datos de avión y vuelos programados, averiguar saber si es posible reaizar este vuelo.", "");
             }
             return new Respuesta(true, "", "", "data", RequesUtils.<Pair>asObject(resp, Pair.class));
         } catch (Exception ex) {
-            return new Respuesta(false, "Error en conexión, imposible saber si estará ocupado a en ese lapso.", "");
+            return new Respuesta(false, "Error en conexión, imposible averiguar si se puede reaizar este vuelo.", "");
         }
     }
 
