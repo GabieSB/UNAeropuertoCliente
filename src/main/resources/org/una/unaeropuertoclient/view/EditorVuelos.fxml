@@ -30,7 +30,7 @@
                   <Insets top="20.0" />
                </padding></VBox>
             <Separator orientation="VERTICAL" styleClass="air-searchSeparator" />
-            <VBox maxWidth="360.0" HBox.hgrow="ALWAYS">
+            <VBox fx:id="vbSalidaYLlegada" maxWidth="360.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label styleClass="air-module-subtittle" text="Salida" />
                   <HBox alignment="TOP_CENTER" prefHeight="100.0" spacing="15.0" styleClass="air-glass-efect-color">
@@ -100,7 +100,7 @@
          <children>
             <JFXButton id="dangerous-button-efect" onAction="#onActionCancel" text="Cancelar" />
             <JFXButton onAction="#OnActionClear" text="Limpiar campos" />
-            <JFXButton fx:id="btnSave" onAction="#OnClickSave" text="Guardar" />
+            <JFXButton onAction="#OnClickSave" text="Guardar" />
          </children>
          <padding>
             <Insets right="15.0" />
