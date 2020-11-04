@@ -38,6 +38,15 @@
             <Insets top="50.0" />
          </padding>
       </VBox>
-      <JFXToggleButton fx:id="togNotificacion" layoutX="588.0" layoutY="29.0" onAction="#toggBuscar" selected="true" text="Notificaciones Activas" unToggleColor="#800000" viewOrder="5.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <HBox alignment="CENTER_RIGHT" layoutX="141.0" layoutY="26.0" prefHeight="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+         <children>
+            <Label styleClass="air-module-subtittle" text="Solo atendidas" />
+            <JFXToggleButton fx:id="togNotificacion" onAction="#toggBuscar" selected="true" text=" " unToggleColor="#800000" viewOrder="5.0" />
+            <Label styleClass="air-module-subtittle" text="Solo pendientes" />
+         </children>
+         <padding>
+            <Insets right="25.0" />
+         </padding>
+      </HBox>
    </children>
 </AnchorPane>

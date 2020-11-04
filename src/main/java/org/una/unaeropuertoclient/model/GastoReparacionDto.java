@@ -8,9 +8,10 @@ package org.una.unaeropuertoclient.model;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.List;
 
 public class GastoReparacionDto {
 
@@ -39,7 +40,7 @@ public class GastoReparacionDto {
         this.observaciones = observaciones;
         this.areasId = areasId;
         this.tiposId = tiposId;
-        this.provedoresId  = null;
+        this.provedoresId = null;
         this.activo = true;
     }
 
@@ -55,7 +56,7 @@ public class GastoReparacionDto {
         return fechaRegistro;
     }
 
-    public String getFechaServicioFormateada(){
+    public String getFechaServicioFormateada() {
         DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
         String strDate = dateFormat.format(fechaRegistro);
         return strDate;
@@ -127,5 +128,15 @@ public class GastoReparacionDto {
 
     public void setTiposId(TipoReparacionDto tiposId) {
         this.tiposId = tiposId;
+    }
+
+    public String toCompresionHumana() {
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd-MM-uuuu");
+        LocalDateTime ldt = LocalDateTime.ofInstant(fechaRegistro.toInstant(), ZoneId.systemDefault());
+        LocalDate dia = ldt.toLocalDate();
+        String diasText = dia.format(formatters);
+        String ret = diasText + " a la" + (ldt.getHour() != 1 ? "s" : "");
+        ret += " " + ldt.toLocalTime().toString();
+        return ret;
     }
 }

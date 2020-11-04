@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +37,7 @@ import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -67,7 +69,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
     @FXML
     private TableColumn<RecolectorInfoNotas, String> tabFechaSolicitud;
     @FXML
-    private TableColumn<RecolectorInfoNotas, Boolean> tabEstado;
+    private TableColumn<RecolectorInfoNotas, String> tabEstado;
     private long numeroArea;
     private List<NotificacionDto> listNotificaciones = new ArrayList<>();
     private final List<ServicioMantenimientoDto> listServicio = new ArrayList<>();
@@ -76,13 +78,14 @@ public class AutorizarNotificacionesController extends Controller implements Ini
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        tbvNotificaciones.setPlaceholder(new Label("Estás al día, no hay nuevas solicitudes de inhabilitación que mostrar"));
     }
 
     @Override
     public void initialize() {
         AuthenticationResponse aux = (AuthenticationResponse) AppContext.getInstance().get("token");
         numeroArea = aux.getUsuario().getAreasId().getId();
+        FlowController.changeSuperiorTittle("Notificaciones (peticiones de inhabilitación)");
         prepareTable();
         togNotificacion.setSelected(true);
         toggBuscar(new ActionEvent());
@@ -105,33 +108,44 @@ public class AutorizarNotificacionesController extends Controller implements Ini
             clNumber4.setText("Destino");
             clNumber1.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(10));
             clNumber2.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(10));
-            clNumer3.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(4.3));
-            clNumber4.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(4.3));
+            clNumer3.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(4.5));
+            clNumber4.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(4.5));
         } else if (numeroArea == 2) {
             clNumber1.setText("Matrícula");
             clNumber2.setText("N° factura");
             clNumer3.setText("Tipo de servicio");
             clNumber4.setText("Fecha de servico");
+            clNumber1.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(12));
+            clNumber2.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(12));
+            clNumer3.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(6));
+            clNumber4.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(5));
         } else {
-
+            clNumber1.setText("Nº contrato");
+            clNumber2.setText("Tipo de reparación");
+            clNumer3.setText("Observaciones");
+            clNumber4.setText("Fecha registro reparación");
+            clNumber1.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(12));
+            clNumber2.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(6));
+            clNumer3.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(4));
+            clNumber4.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(8));
         }
         columnId.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(20));
         tabOpciones.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(8));
         tabEstado.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(18));
-        tabFechaSolicitud.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(10));
+        tabFechaSolicitud.prefWidthProperty().bind(tbvNotificaciones.widthProperty().divide(8));
         columnId.setCellValueFactory(new PropertyValueFactory("idNota"));
         clNumber2.setCellValueFactory(new PropertyValueFactory("numeroFactura"));
         clNumer3.setCellValueFactory(new PropertyValueFactory("tipoServicio"));
         clNumber4.setCellValueFactory(new PropertyValueFactory("fechaServico"));
         clNumber1.setCellValueFactory(new PropertyValueFactory("matricula"));
-        tabEstado.setCellValueFactory(new PropertyValueFactory("estado"));
+        tabEstado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstadoEnFormatoHumano()));
         tabFechaSolicitud.setCellValueFactory(new PropertyValueFactory("fecha"));
     }
 
     private void cargarDatos(boolean estado) {
         listNotificaciones.clear();
         tbvNotificaciones.getItems().clear();
-        lblTableTittle.setText(estado ? "Solo notificaciones activas" : "Todas las notificaciones");
+        lblTableTittle.setText(estado ? "Mostrando solo notificaciones pendientes" : "Mostrando solo notificaciones atendidas");
         Thread th = new Thread(() -> {
             NotificacionService notificacionService = new NotificacionService();
             Respuesta resp = notificacionService.getIDandEstado(numeroArea, estado);
@@ -158,35 +172,15 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                             });
                         }
                     } else {
-
+                        Respuesta vResp = new GastoReparacionService().findByIdUsingListParam(idList);
+                        if (vResp.getEstado()) {
+                            ((List<GastoReparacionDto>) vResp.getResultado("data")).forEach(gastoR -> {
+                                listGastoReparacion.add(gastoR);
+                                RecolectorInfoNotas colectorInfoNotas = new RecolectorInfoNotas(gastoR, listNotificaciones);
+                                tbvNotificaciones.getItems().add(colectorInfoNotas);
+                            });
+                        }
                     }
-
-//                    for (NotificacionDto notificacionDto : listNotificaciones) {
-//                        if (n == 2) {
-//                            ServicioMantenimientoService serv = new ServicioMantenimientoService();
-//                            Respuesta r = serv.buscarPorID(notificacionDto.getIdObjeto().toString());
-//                            ServicioMantenimientoDto servicioMantenimientoDto = (ServicioMantenimientoDto) r.getResultado("data");
-//                            listServicio.add(servicioMantenimientoDto);
-//                            RecolectorInfoNotas recolectarInformacionNotas = new RecolectorInfoNotas(notificacionDto.getId(), servicioMantenimientoDto.getAvionesId().getMatricula(), servicioMantenimientoDto.getFechaServicio().toString(), notificacionDto.getAreasId().toString(), servicioMantenimientoDto.getFechaServicio().toString(), servicioMantenimientoDto.getNumeroFactura().toString(), servicioMantenimientoDto.getTiposServiciosId().getNombre(), notificacionDto.isActivo());
-//                            tbvNotificaciones.getItems().add(recolectarInformacionNotas);
-//                        } else {
-//                            if (n == 3) {
-//                                GastoReparacionService gastoReparacionService = new GastoReparacionService();
-//                                Respuesta r = gastoReparacionService.buscarPorID(notificacionDto.getIdObjeto().toString());
-//                                GastoReparacionDto gasto = (GastoReparacionDto) r.getResultado("data");
-//                                listGastoReparacion.add(gasto);
-//                                RecolectorInfoNotas recolectarInformacionNotas = new RecolectorInfoNotas(notificacionDto.getId(), gasto.getNumeroContrato().toString(), notificacionDto.getFechaRegistro().toString(), notificacionDto.getAreasId().toString(), gasto.getFechaRegistro().toString(), gasto.getTiposId().getNombre(), gasto.getObservaciones(), notificacionDto.isActivo());
-//                                tbvNotificaciones.getItems().add(recolectarInformacionNotas);
-//                            } else {
-//                                VueloService vueloService = new VueloService();
-//                                Respuesta r = vueloService.buscarPorID(notificacionDto.getIdObjeto().toString());
-//                                VueloDto vuelo = (VueloDto) r.getResultado("data");
-//                                listVuelo.add(vuelo);
-//                                RecolectorInfoNotas recolectarInformacionNotas = new RecolectorInfoNotas(notificacionDto.getId(), vuelo.getNombreVuelo(), notificacionDto.getFechaRegistro().toString(), notificacionDto.getAreasId().toString(), vuelo.getSitioYFechaLLegada(), vuelo.getAvionesId().getMatricula(), vuelo.getSitioYFechaSalida(), notificacionDto.isActivo());
-//                                tbvNotificaciones.getItems().add(recolectarInformacionNotas);
-//                            }
-//                        }
-//                    }
                     addButtonToTable();
                 }
             });

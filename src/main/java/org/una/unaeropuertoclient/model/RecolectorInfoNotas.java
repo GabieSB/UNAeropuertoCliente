@@ -20,7 +20,7 @@ public class RecolectorInfoNotas {
     private String fechaServico;
     private String numeroFactura;
     private String tipoServicio;
-    private Boolean estado;
+    private boolean estado;
 
     public RecolectorInfoNotas() {
     }
@@ -30,7 +30,7 @@ public class RecolectorInfoNotas {
             if (notif.getIdObjeto().equals(vuelo.getId())) {
                 this.idNota = notif.getId();
                 this.matricula = vuelo.getNombreVuelo();
-                this.fecha = notif.getFechaRegistro().toString();
+                this.fecha = notif.getFechaEnFormatoHumano();
                 this.idArea = notif.getAreasId().toString();
                 this.fechaServico = vuelo.getSitioYFechaLLegada();
                 this.numeroFactura = vuelo.getAvionesId().getMatricula();
@@ -40,15 +40,19 @@ public class RecolectorInfoNotas {
         });
     }
 
-    public RecolectorInfoNotas(Long idNota, String matricula, String fecha, String idArea, String fechaServico, String numeroFeactura, String tipoServicio, boolean estado) {
-        this.idNota = idNota;
-        this.matricula = matricula;
-        this.fecha = fecha;
-        this.idArea = idArea;
-        this.fechaServico = fechaServico;
-        this.numeroFactura = numeroFeactura;
-        this.tipoServicio = tipoServicio;
-        this.estado = estado;
+    public RecolectorInfoNotas(GastoReparacionDto gastoRepar, List<NotificacionDto> notifList) {
+        notifList.forEach(notif -> {
+            if (notif.getIdObjeto().equals(gastoRepar.getId())) {
+                this.idNota = notif.getId();
+                this.matricula = gastoRepar.getNumeroContrato().toString();
+                this.fecha = notif.getFechaEnFormatoHumano();
+                this.idArea = notif.getAreasId().toString();
+                this.fechaServico = gastoRepar.getFechaServicioFormateada();
+                this.numeroFactura = gastoRepar.getTiposId().getNombre();
+                this.tipoServicio = gastoRepar.getObservaciones();
+                this.estado = notif.isActivo();
+            }
+        });
     }
 
     public RecolectorInfoNotas(ServicioMantenimientoDto servicioM, List<NotificacionDto> notifList) {
@@ -56,9 +60,9 @@ public class RecolectorInfoNotas {
             if (notif.getIdObjeto().equals(servicioM.getId())) {
                 this.idNota = notif.getId();
                 this.matricula = servicioM.getAvionesId().getMatricula();
-                this.fecha = notif.getFechaRegistro().toString();
+                this.fecha = notif.getFechaEnFormatoHumano();
                 this.idArea = notif.getAreasId().toString();
-                this.fechaServico = servicioM.getFechaServicio().toString();
+                this.fechaServico = servicioM.getFechaEnFormatoHumano();
                 this.numeroFactura = servicioM.getNumeroFactura().toString();
                 this.tipoServicio = servicioM.getTiposServiciosId().getNombre();
                 this.estado = notif.isActivo();
@@ -104,6 +108,10 @@ public class RecolectorInfoNotas {
 
     public String getNumeroFeactura() {
         return numeroFactura;
+    }
+
+    public String getEstadoEnFormatoHumano() {
+        return estado ? "Pendiente" : "Atendida";
     }
 
 }
