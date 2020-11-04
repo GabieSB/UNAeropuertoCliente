@@ -25,6 +25,21 @@ public class RecolectorInfoNotas {
     public RecolectorInfoNotas() {
     }
 
+    public RecolectorInfoNotas(VueloDto vuelo, List<NotificacionDto> notifList) {
+        notifList.forEach(notif -> {
+            if (notif.getIdObjeto().equals(vuelo.getId())) {
+                this.idNota = notif.getId();
+                this.matricula = vuelo.getNombreVuelo();
+                this.fecha = notif.getFechaRegistro().toString();
+                this.idArea = notif.getAreasId().toString();
+                this.fechaServico = vuelo.getSitioYFechaLLegada();
+                this.numeroFactura = vuelo.getAvionesId().getMatricula();
+                this.tipoServicio = vuelo.getSitioYFechaSalida();
+                this.estado = notif.isActivo();
+            }
+        });
+    }
+
     public RecolectorInfoNotas(Long idNota, String matricula, String fecha, String idArea, String fechaServico, String numeroFeactura, String tipoServicio, boolean estado) {
         this.idNota = idNota;
         this.matricula = matricula;
@@ -36,16 +51,16 @@ public class RecolectorInfoNotas {
         this.estado = estado;
     }
 
-    public RecolectorInfoNotas(VueloDto vuelo, List<NotificacionDto> notifList) {
+    public RecolectorInfoNotas(ServicioMantenimientoDto servicioM, List<NotificacionDto> notifList) {
         notifList.forEach(notif -> {
-            if (notif.getIdObjeto().equals(vuelo.getId())) {
+            if (notif.getIdObjeto().equals(servicioM.getId())) {
                 this.idNota = notif.getId();
-                this.matricula = vuelo.getNombreVuelo();
+                this.matricula = servicioM.getAvionesId().getMatricula();
                 this.fecha = notif.getFechaRegistro().toString();
                 this.idArea = notif.getAreasId().toString();
-                this.fechaServico = vuelo.getSitioYFechaLLegada();
-                this.numeroFactura = vuelo.getAvionesId().getMatricula();
-                this.tipoServicio = vuelo.getSitioYFechaSalida();
+                this.fechaServico = servicioM.getFechaServicio().toString();
+                this.numeroFactura = servicioM.getNumeroFactura().toString();
+                this.tipoServicio = servicioM.getTiposServiciosId().getNombre();
                 this.estado = notif.isActivo();
             }
         });
