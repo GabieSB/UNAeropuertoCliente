@@ -10,14 +10,10 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTimePicker;
 import java.net.URL;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -58,17 +54,21 @@ public class ParametrosSistemaController extends Controller implements Initializ
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        desactivarComponentes();
-        CargarDatosComboBox();
-        cargarDatos();
-
     }
 
     @Override
     public void initialize() {
+        cbxTiempoInactivo.getItems().clear();
+        cbxVuelos.getItems().clear();
+        desactivarComponentes();
+        cargarDatosComboBox();
+        cargarDatos();
     }
 
     @FXML
@@ -107,10 +107,10 @@ public class ParametrosSistemaController extends Controller implements Initializ
         txtCorreo.setEditable(false);
         txtRepresentante.setEditable(false);
         txtTelefono.setEditable(false);
-        cbxTiempoInactivo.setEditable(false);
-        cbxVuelos.setEditable(false);
-        tpkApertura.setEditable(false);
-        tpkCierre.setEditable(false);
+        cbxTiempoInactivo.setDisable(true);
+        cbxVuelos.setDisable(true);
+        tpkApertura.setDisable(true);
+        tpkCierre.setDisable(true);
         btnGuardar.setDisable(true);
     }
 
@@ -118,49 +118,62 @@ public class ParametrosSistemaController extends Controller implements Initializ
         txtCorreo.setEditable(true);
         txtRepresentante.setEditable(true);
         txtTelefono.setEditable(true);
-        cbxTiempoInactivo.setEditable(true);
-        cbxVuelos.setEditable(true);
-        tpkApertura.setEditable(true);
-        tpkCierre.setEditable(true);
+        cbxTiempoInactivo.setDisable(false);
+        cbxVuelos.setDisable(false);
+        tpkApertura.setDisable(false);
+        tpkCierre.setDisable(false);
         btnGuardar.setDisable(false);
     }
 
     @FXML
     public void onActionGuardar(ActionEvent event) {
-        LocalDateTime ltApertura = LocalDateTime.of(LocalDate.now(), tpkApertura.getValue());
-        LocalDateTime ltCierre = LocalDateTime.of(LocalDate.now(), tpkCierre.getValue());
-        ParamSistemaDto p = new ParamSistemaDto();
-        p.setAperturaOficina(Timestamp.valueOf(ltApertura));
-        p.setCierreOficina(Timestamp.valueOf(ltCierre));
-        p.setTelefonoAeropuerto(txtTelefono.getText());
-        p.setEmailAeropuerto(txtCorreo.getText());
-        p.setNombreRepresentante(txtRepresentante.getText());
-        p.setVuelosHora(cbxVuelos.getValue());
-        p.setTiempoInactividad(cbxTiempoInactivo.getValue());
-        p.setId(1);
-        ParamSistemaServicio paramSistemaServicio = new ParamSistemaServicio();
-        Respuesta res = paramSistemaServicio.update(p);
-        if (res.getEstado()) {
-            new Mensaje().showModal(Alert.AlertType.INFORMATION, "Correcto", this.getStage(), "Datos Guardados de forma ");
-            btnGuardar.setDisable(false);
+        if (camposTextLlenos() && combBoxYPikersLlenos()) {
+            LocalDateTime ltApertura = LocalDateTime.of(LocalDate.now(), tpkApertura.getValue());
+            LocalDateTime ltCierre = LocalDateTime.of(LocalDate.now(), tpkCierre.getValue());
+            ParamSistemaDto p = new ParamSistemaDto();
+            p.setAperturaOficina(Timestamp.valueOf(ltApertura));
+            p.setCierreOficina(Timestamp.valueOf(ltCierre));
+            p.setTelefonoAeropuerto(txtTelefono.getText());
+            p.setEmailAeropuerto(txtCorreo.getText());
+            p.setNombreRepresentante(txtRepresentante.getText());
+            p.setVuelosHora(cbxVuelos.getValue());
+            p.setTiempoInactividad(cbxTiempoInactivo.getValue());
+            p.setId(1);
+            p.setUbicacion(paramSistemaDto.getUbicacion());
+            ParamSistemaServicio paramSistemaServicio = new ParamSistemaServicio();
+            Respuesta res = paramSistemaServicio.update(p);
+            if (res.getEstado()) {
+                new Mensaje().showModal(Alert.AlertType.INFORMATION, "Correcto", this.getStage(), "Los parámetros fueron actualizados exitosamente");
+                btnGuardar.setDisable(false);
+            } else {
+                new Mensaje().showModal(Alert.AlertType.ERROR, "Error", this.getStage(), res.getMensaje());
+            }
         }
+
     }
 
-    public void CargarDatosComboBox() {
-        List<Integer> tiempo = new ArrayList<Integer>();
-        tiempo.addAll(Arrays.asList(5, 10, 20, 25, 30));
-        tiempo.forEach(tiem -> {
-            cbxTiempoInactivo.getItems().add(tiem);
-        });
-        List<Short> vuelosHo = new ArrayList();
-        for (Short i = 1; i < 13; i++) {
-            Short q = i;
-            vuelosHo.add(q);
+    public void cargarDatosComboBox() {
+        cbxTiempoInactivo.getItems().addAll(5, 10, 20, 25, 30);
+        Short timeList[] = {1, 2, 3, 4, 5, 6, 10, 12};
+        cbxVuelos.getItems().addAll(timeList);
+    }
 
+    public boolean camposTextLlenos() {
+        if (txtCorreo.getText().isBlank() || txtRepresentante.getText().isBlank() || txtTelefono.getText().isBlank()) {
+            new Mensaje().show(Alert.AlertType.WARNING, "Quizá olvidas algo", "Revisa los campos de texto, al menos uno se encuentra vacío");
+            return false;
         }
-        vuelosHo.addAll(vuelosHo);
-        vuelosHo.forEach(vuel -> {
-            cbxVuelos.getItems().add(vuel);
-        });
+        return true;
+    }
+
+    public boolean combBoxYPikersLlenos() {
+        if (tpkApertura.getValue() == null || tpkCierre.getValue() == null) {
+            new Mensaje().show(Alert.AlertType.WARNING, "Quizá olvidas algo", "Revisa los campos de hora, al menos uno se encuentra vacío");
+            return false;
+        } else if (cbxTiempoInactivo.getValue() == null || cbxVuelos.getValue() == null) {
+            new Mensaje().show(Alert.AlertType.WARNING, "Quizá olvidas algo", "Revisa los campos desplegables, al menos uno se encuentra vacío");
+            return false;
+        }
+        return true;
     }
 }
