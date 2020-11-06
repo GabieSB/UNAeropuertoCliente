@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -85,6 +86,7 @@ public class GestorPistasController extends Controller implements Initializable 
     }
 
     private void prepareTable() {
+        tbPistas.setPlaceholder(new Label("No hay pistas para mostrar por el momento"));
         activateResponsiveConfig();
         clNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroPista()));
         clLongitud.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getLongitud().toString() + "m"));

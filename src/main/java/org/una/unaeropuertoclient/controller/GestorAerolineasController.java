@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -77,6 +78,7 @@ public class GestorAerolineasController extends Controller implements Initializa
     }
 
     private void prepareTable() {
+        tbAerolineas.setPlaceholder(new Label("No hay aerolineas para mostrar por el momento"));
         activateResponsiveConfig();
         clNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombre()));
         clEstado.setCellValueFactory(x -> new SimpleStringProperty((x.getValue().getActiov()) ? "En operación" : "Operación suspendida"));

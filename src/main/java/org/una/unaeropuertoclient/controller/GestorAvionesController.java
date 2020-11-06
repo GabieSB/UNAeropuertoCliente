@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -84,6 +85,7 @@ public class GestorAvionesController extends Controller implements Initializable
     }
 
     private void prepareTable() {
+        tbAerolineas.setPlaceholder(new Label("No hay aviones para mostrar por el momento"));
         activateResponsiveConfig();
         clAerolinea.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAerolineasId().getNombre()));
         clMatricula.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getMatricula()));

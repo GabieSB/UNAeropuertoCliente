@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 package org.una.unaeropuertoclient.model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,11 +36,10 @@ public class ServicioMantenimientoDto {
     }
 
     public Date getFechaServicio() {
-
         return fechaServicio;
     }
 
-    public String getFechaServicioFormateada(){
+    public String getFechaServicioFormateada() {
         DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
         String strDate = dateFormat.format(fechaServicio);
         return strDate;
@@ -106,16 +105,16 @@ public class ServicioMantenimientoDto {
         this.cobroList = cobroList;
     }
 
-    public void agregarCobro(CobroDto cobroDto){
-        if(cobroList == null){
+    public void agregarCobro(CobroDto cobroDto) {
+        if (cobroList == null) {
             cobroList = new ArrayList<>();
-        }else{
+        } else {
             cobroList.add(cobroDto);
         }
     }
 
     public ServicioMantenimientoDto(LocalDate fechaServicio, Long numeroFactura, Boolean estadoPago, Boolean estaFinalizacion, AvionDto avionesId, TipoServicioDto tiposServiciosId) {
-        this.fechaServicio =  Date.from(fechaServicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        this.fechaServicio = Date.from(fechaServicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
         this.numeroFactura = numeroFactura;
         this.estadoPago = estadoPago;
         this.estaFinalizacion = estaFinalizacion;
@@ -123,5 +122,15 @@ public class ServicioMantenimientoDto {
         this.avionesId = avionesId;
         this.tiposServiciosId = tiposServiciosId;
         this.cobroList = null;
+    }
+
+    public String getFechaEnFormatoHumano() {
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd-MM-uuuu");
+        LocalDateTime ldt = LocalDateTime.ofInstant(this.fechaServicio.toInstant(), ZoneId.systemDefault());
+        LocalDate dia = ldt.toLocalDate();
+        String diasText = dia.format(formatters);
+        String ret = diasText + " a la" + (ldt.getHour() != 1 ? "s" : "");
+        ret += " " + ldt.toLocalTime().toString();
+        return ret;
     }
 }
