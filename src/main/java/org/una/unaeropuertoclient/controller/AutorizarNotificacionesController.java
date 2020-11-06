@@ -25,6 +25,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
 import org.una.unaeropuertoclient.model.GastoReparacionDto;
