@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="319.0" prefWidth="427.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.RegistrarTipoServicioController">
+   <children>
+      <VBox prefHeight="326.0" prefWidth="426.0">
+         <children>
+            <TabPane fx:id="tabServicios" prefHeight="326.0" prefWidth="426.0">
+               <tabs>
+                  <Tab text="Registrar">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Label layoutX="104.0" layoutY="14.0" prefHeight="38.0" prefWidth="218.0" styleClass="air-module-tittle" text="Registrar Tipo de Servicio" />
+                              <JFXTextField fx:id="txtNombreRegistrar" layoutX="111.0" layoutY="89.0" prefHeight="24.0" prefWidth="232.0" promptText="Nombre" text="Nombre" />
+                              <JFXTextField fx:id="txtDescripcionRegistrar" layoutX="112.0" layoutY="146.0" prefHeight="24.0" prefWidth="230.0" promptText="Descripción" />
+                              <JFXButton fx:id="registrarButton" alignment="CENTER" layoutX="167.0" layoutY="232.0" onAction="#registrarButtonOnAction" prefHeight="30.0" prefWidth="92.0" text="Registrar" />
+                              <Label layoutX="46.0" layoutY="93.0" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+                  <Tab onSelectionChanged="#tabSelected" text="Editar">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="293.0" prefWidth="426.0">
+                           <children>
+                              <JFXComboBox fx:id="comboTipoServicio" layoutX="133.0" layoutY="59.0" onAction="#onActionComboBox" prefHeight="32.0" prefWidth="226.0" promptText="Tipo de servicio a modificar" />
+                              <JFXTextField fx:id="txtNombreEditar" layoutX="135.0" layoutY="110.0" prefHeight="28.0" prefWidth="230.0" text="Nuevo nombre" />
+                              <JFXTextField fx:id="txtDescripcionEditar" layoutX="135.0" layoutY="185.0" prefHeight="24.0" prefWidth="230.0" text="Descripción" />
+                              <JFXButton fx:id="modificarButton" alignment="CENTER" layoutX="169.0" layoutY="251.0" onAction="#editarButtonOnAction" prefHeight="42.0" prefWidth="111.0" text="Modificar" />
+                              <Label layoutX="118.0" layoutY="14.0" styleClass="air-module-tittle" text="Editar Tipo de Servicio" />
+                              <Label layoutX="33.0" layoutY="115.0" text="Nuevo nombre:" />
+                              <Label layoutX="54.0" layoutY="189.0" text="Descripción" />
+                              <Label layoutX="70.0" layoutY="66.0" text="Servicio:" />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

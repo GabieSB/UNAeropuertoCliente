@@ -30,4 +30,14 @@ public class RolUsuarioService {
         }
         return new Respuesta(true, "", "", "data", RequesUtils.<RolUsuarioDto>asObject(resp, RolUsuarioDto.class));
     }
+
+    public Respuesta update( RolUsuarioDto rolUsuarioDto) {
+
+        HttpResponse resp = new RequestHTTP().put("rolesUsuarios/update", gson.toJson(rolUsuarioDto));
+        System.out.println(resp.body().toString());
+        if (isError(resp.statusCode())) {
+            return new Respuesta(false, "Error al crear un usuario con rol", "");
+        }
+        return new Respuesta(true, "", "", "data", RequesUtils.<RolUsuarioDto>asObject(resp, RolUsuarioDto.class));
+    }
 }

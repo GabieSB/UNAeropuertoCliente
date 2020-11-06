@@ -77,5 +77,7 @@ public class PistaService {
         } catch (Exception ex) {
             return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
+
+
     }
 }

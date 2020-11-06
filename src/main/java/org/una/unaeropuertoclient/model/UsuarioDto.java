@@ -6,6 +6,8 @@
 package org.una.unaeropuertoclient.model;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -24,14 +26,14 @@ public class UsuarioDto {
     private List<RolUsuarioDto> rolUsuarioList;
     private AreaDto areasId;
 
-    public UsuarioDto(String cedula, String nombre, String apellidos, String contrasenna, Timestamp fechaNacimiento, Timestamp fechaIngreso, Timestamp fechaModificacion, Boolean activo, AreaDto areaDto) {
+    public UsuarioDto(String cedula, String nombre, String apellidos, String contrasenna, Timestamp fechaNacimiento, Boolean activo, AreaDto areaDto) {
         this.cedula = cedula;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.contrasenna = contrasenna;
         this.fechaNacimiento = fechaNacimiento;
-        this.fechaIngreso = fechaIngreso;
-        this.fechaModificacion = fechaModificacion;
+        this.fechaIngreso = new Timestamp(System.currentTimeMillis());
+        this.fechaModificacion = new Timestamp(System.currentTimeMillis());
         this.activo = activo;
         areasId = areaDto;
     }
@@ -46,6 +48,24 @@ public class UsuarioDto {
 
     public Date getFechaNacimiento() {
         return fechaNacimiento;
+    }
+
+    public String getFechaNacimientoFormateada(){
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        String strDate = dateFormat.format(fechaNacimiento);
+        return strDate;
+    }
+
+    public String getFechaIngresoFormateada(){
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        String strDate = dateFormat.format(fechaNacimiento);
+        return strDate;
+    }
+
+    public String getFechaModificacionFormateada(){
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+        String strDate = dateFormat.format(fechaModificacion);
+        return strDate;
     }
 
     public void setFechaNacimiento(Timestamp fechaNacimiento) {
@@ -84,9 +104,28 @@ public class UsuarioDto {
         this.cedula = cedula;
     }
 
+    public String getEstadoNombre (){
+        if(activo) return "Activo";
+        else return "Inactivo";
+    }
+
     public String getNombre() {
         return nombre;
     }
+
+    public String getRolNombre() {
+        if(rolUsuarioList!=null && !rolUsuarioList.isEmpty()){
+            return  rolUsuarioList.get(0).getRolesId().getNombre();
+        }else {
+            return "";
+        }
+    }
+
+    public RolDto getRol(){
+        return rolUsuarioList.get(0).getRolesId();
+    }
+
+
 
     public void setNombre(String nombre) {
         this.nombre = nombre;

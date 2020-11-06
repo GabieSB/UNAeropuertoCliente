@@ -13,6 +13,7 @@ public class RequestHTTP {
     private final String urlApi = "http://localhost:1820/";
     private HttpResponse respuesta = null;
     private HttpRequest.Builder requestBuilder;
+
     HttpClient client;
 
     public void request(String url) {

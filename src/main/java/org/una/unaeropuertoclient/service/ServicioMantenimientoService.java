@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.una.unaeropuertoclient.model.*;
 import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.RequesUtils;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -16,6 +17,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.una.unaeropuertoclient.utils.RequesUtils;
+
+import static org.una.unaeropuertoclient.utils.RequesUtils.isEmptyResult;
+import static org.una.unaeropuertoclient.utils.RequesUtils.isError;
 
 public class ServicioMantenimientoService {
 
@@ -54,6 +58,7 @@ public class ServicioMantenimientoService {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.put("servicios_mantenimientos/update", gson.toJson(servicio));
+            System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
                 if (respuesta.statusCode() == 204) {
                     return new Respuesta(false, "Parece que no hay resultados en la búsqueda", String.valueOf(requestHTTP.getStatus()));
@@ -207,7 +212,7 @@ public class ServicioMantenimientoService {
         }
     }
 
-    public Respuesta buscarPorNumeroFactura(Long numero){
+    public Respuesta buscarPorNumeroFactura(String numero){
         try {
             System.out.printf("En crear servicio");
             RequestHTTP requestHTTP = new RequestHTTP();
@@ -220,7 +225,7 @@ public class ServicioMantenimientoService {
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }
 
-            List<ServicioMantenimientoDto> servicioMantenimientoDto = new Gson().fromJson(respuesta.body().toString(), new TypeToken<List<ServicioMantenimientoDto>>() {}.getType());
+            ServicioMantenimientoDto servicioMantenimientoDto = gson.fromJson(respuesta.body().toString(), ServicioMantenimientoDto.class);
             return new Respuesta(true, "", "", "data", servicioMantenimientoDto);
 
         } catch (Exception ex) {
@@ -249,6 +254,26 @@ public class ServicioMantenimientoService {
             Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
+        }
+    }
+
+    public Respuesta filter(String matricula, String tipo, String numFactura, String activo,  String pago, String finalizacion, String fechaI, String fechaF) {
+        try {
+            RequestHTTP requestHTTP = new RequestHTTP();
+            matricula = (matricula.isBlank()) ? "none" : matricula.trim();
+            tipo = (tipo.isBlank()) ? "none" : tipo.trim();
+            numFactura = (numFactura.isBlank())? "none" : numFactura.trim();
+
+            HttpResponse respuesta = requestHTTP.get("servicios_mantenimientos/filter/" + matricula + "/" + tipo + "/" + numFactura + "/"+ activo + "/" + pago  + "/" + finalizacion + "/" + fechaI + "/" + fechaF  );
+            if (isError(respuesta.statusCode())) {
+                return new Respuesta(false, "Error interno al consultar los servicios, considera reportar esta falla.", "");
+            }
+            if (isEmptyResult(respuesta.statusCode())) {
+                return new Respuesta(false, "No hay servicios que coincidan con lo que buscas.", "");
+            }
+            return new Respuesta(true, "", "", "data", RequesUtils.asList(respuesta, ServicioMantenimientoDto.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
     }
 

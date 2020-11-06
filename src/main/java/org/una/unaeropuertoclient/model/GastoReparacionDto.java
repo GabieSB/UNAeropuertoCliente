@@ -26,12 +26,13 @@ public class GastoReparacionDto {
     private AreaDto areasId;
     private TipoReparacionDto tiposId;
     private ProvedorDto provedoresId;
+    private Float monto;
 
     public GastoReparacionDto() {
 
     }
 
-    public GastoReparacionDto(LocalDate fechaRegistro, Boolean estadoPago, Long numeroContrato, Integer duracion, Integer periodicidad, String observaciones, AreaDto areasId, TipoReparacionDto tiposId) {
+    public GastoReparacionDto(LocalDate fechaRegistro, Boolean estadoPago, Long numeroContrato, Integer duracion, Integer periodicidad, String observaciones, AreaDto areasId, TipoReparacionDto tiposId, ProvedorDto proveedor, Float monto) {
         this.fechaRegistro = Date.from(fechaRegistro.atStartOfDay(ZoneId.systemDefault()).toInstant());
         this.estadoPago = estadoPago;
         this.numeroContrato = numeroContrato;
@@ -40,8 +41,13 @@ public class GastoReparacionDto {
         this.observaciones = observaciones;
         this.areasId = areasId;
         this.tiposId = tiposId;
-        this.provedoresId = null;
+        this.provedoresId  = proveedor;
         this.activo = true;
+        this.monto = monto;
+    }
+
+    public ProvedorDto getProvedoresId() {
+        return provedoresId;
     }
 
     public Long getId() {
@@ -62,10 +68,6 @@ public class GastoReparacionDto {
         return strDate;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
-
     public Boolean getEstadoPago() {
         return estadoPago;
     }
@@ -78,9 +80,6 @@ public class GastoReparacionDto {
         return numeroContrato;
     }
 
-    public void setNumeroContrato(Long numeroContrato) {
-        this.numeroContrato = numeroContrato;
-    }
 
     public Integer getDuracion() {
         return duracion;
@@ -128,6 +127,10 @@ public class GastoReparacionDto {
 
     public void setTiposId(TipoReparacionDto tiposId) {
         this.tiposId = tiposId;
+    }
+
+    public Float getMonto() {
+        return  monto;
     }
 
     public String toCompresionHumana() {

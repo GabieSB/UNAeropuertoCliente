@@ -45,36 +45,34 @@ public class ServicioMantenimientoDto {
         return strDate;
     }
 
-    public void setFechaServicio(Date fechaServicio) {
-        this.fechaServicio = fechaServicio;
-    }
-
     public Long getNumeroFactura() {
         return numeroFactura;
     }
 
-    public void setNumeroFactura(Long numeroFactura) {
-        this.numeroFactura = numeroFactura;
-    }
 
     public Boolean getEstadoPago() {
         return estadoPago;
     }
 
-    public void setEstadoPago(Boolean estadoPago) {
-        this.estadoPago = estadoPago;
+    public String getEstadoPagoPalabra(){
+        return  (estadoPago)?"Pagado":"Pendiente";
     }
 
     public Boolean getEstaFinalizacion() {
         return estaFinalizacion;
     }
 
-    public void setEstaFinalizacion(Boolean estaFinalizacion) {
-        this.estaFinalizacion = estaFinalizacion;
+    public String getEstadoFinalizacionPalabra(){
+        return  (estaFinalizacion)?"Finalizado":"Pendiente";
     }
+
 
     public Boolean getActivo() {
         return activo;
+    }
+
+    public String getActivoPalabra(){
+        return  (activo)?"Activo":"Inactivo";
     }
 
     public void setActivo(Boolean activo) {
@@ -85,32 +83,19 @@ public class ServicioMantenimientoDto {
         return avionesId;
     }
 
-    public void setAvionesId(AvionDto avionesId) {
-        this.avionesId = avionesId;
-    }
-
     public TipoServicioDto getTiposServiciosId() {
         return tiposServiciosId;
-    }
-
-    public void setTiposServiciosId(TipoServicioDto tiposServiciosId) {
-        this.tiposServiciosId = tiposServiciosId;
     }
 
     public List<CobroDto> getCobroList() {
         return cobroList;
     }
 
-    public void setCobroList(List<CobroDto> cobroList) {
-        this.cobroList = cobroList;
-    }
-
-    public void agregarCobro(CobroDto cobroDto) {
-        if (cobroList == null) {
-            cobroList = new ArrayList<>();
-        } else {
-            cobroList.add(cobroDto);
+    public String getCobro(){
+        if(cobroList!=null && !cobroList.isEmpty()){
+            return cobroList.get(0).getMonto().toString();
         }
+        return "No registrado";
     }
 
     public ServicioMantenimientoDto(LocalDate fechaServicio, Long numeroFactura, Boolean estadoPago, Boolean estaFinalizacion, AvionDto avionesId, TipoServicioDto tiposServiciosId) {

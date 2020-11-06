@@ -102,6 +102,8 @@ public class MenuPrincipalController extends Controller implements Initializable
         FlowController.getInstance().goView("BuscarBitacoras");
     }
 
+
+
     public void extraerOpcionesProhibidas() {
         List<RolUsuarioDto> rList = ((AuthenticationResponse) AppContext.getInstance().get("token")).getUsuario().getRolUsuarioList();
         List<Node> flowChildrenList = new ArrayList();
@@ -112,6 +114,7 @@ public class MenuPrincipalController extends Controller implements Initializable
                 case "ADMINISTRADOR":
                     flow.getChildren().add(getButtonFromList("Registrar Usuario", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Parametros Sistema", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Modificar Usuario", flowChildrenList));
                     break;
                 case "GESTOR_CONTROL_VUELOS":
                     flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
@@ -151,5 +154,10 @@ public class MenuPrincipalController extends Controller implements Initializable
             }
         }
         return null;
+    }
+
+
+    public void goModificarUsuario(ActionEvent actionEvent) {
+        FlowController.getInstance().goView("BuscarUsuario");
     }
 }

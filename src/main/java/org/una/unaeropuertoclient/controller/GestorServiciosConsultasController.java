@@ -1,5 +1,9 @@
 package org.una.unaeropuertoclient.controller;
 
+import com.jfoenix.controls.*;
+import javafx.application.Platform;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
@@ -17,6 +21,7 @@ import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.utils.*;
 import java.net.URL;
+import java.sql.SQLOutput;
 import java.util.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -25,21 +30,33 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class GestorServiciosConsultasController  extends Controller implements Initializable {
-    public JFXComboBox comboxParametros;
     public JFXTextField txtValorBuscado;
     public JFXButton btonBuscarParametro;
-    public JFXButton btnBuscarFecha;
     public TableView<ServicioMantenimientoDto> tableResultados;
-    public TableColumn<ServicioMantenimientoDto, String> columId;
     public TableColumn<ServicioMantenimientoDto, String> columFecha;
     public TableColumn<ServicioMantenimientoDto, String> columFactura;
-    public TableColumn<ServicioMantenimientoDto, Boolean> columEstadoPago;
-    public TableColumn<ServicioMantenimientoDto,  Boolean> columServicioFinalizado;
+    public TableColumn<ServicioMantenimientoDto, String> columEstadoPago;
+    public TableColumn<ServicioMantenimientoDto, String> columServicioFinalizado;
     public TableColumn<ServicioMantenimientoDto, String> columTipoServicio;
     public TableColumn<ServicioMantenimientoDto, String> columAvion;
-    public TableColumn<ServicioMantenimientoDto, Boolean> columEstadoServicio;
+    public TableColumn<ServicioMantenimientoDto, String> columEstadoServicio;
     public TableColumn<ServicioMantenimientoDto, Void> columAcciones;
     public TableColumn<ServicioMantenimientoDto, String> columMonto;
+    public RadioButton finalizacionFinalizadaRadioButton;
+    public RadioButton finalizacionPendienteRadioButton;
+    public RadioButton estadoActivoRadioButton;
+    public RadioButton estadoInactivoRadioButton;
+    public RadioButton pagoPagadoRadioButton;
+    public RadioButton pagoPendienteRadioButton;
+    public JFXTextField txtNumeroFactura;
+    public JFXTextField txtTipoServicio;
+    public JFXTextField txtMatricula;
+    public JFXToggleButton pagoToggleButton;
+    public JFXToggleButton finalizacionToggleButton;
+    public JFXToggleButton servicioToggleButton;
+    ToggleGroup estadoPagoToggleGroup = new ToggleGroup();
+    ToggleGroup estadoFinalizacionToggleGroup = new ToggleGroup();
+    ToggleGroup estadoServicioToggleGroup = new ToggleGroup();
 
     public DatePicker dateInicio;
     public DatePicker dateFin;
@@ -52,6 +69,14 @@ public class GestorServiciosConsultasController  extends Controller implements I
     Mensaje mensaje = new Mensaje();
 
 
+    private void  unirRadioButtons(){
+        estadoActivoRadioButton.setToggleGroup(estadoServicioToggleGroup);
+        estadoInactivoRadioButton.setToggleGroup(estadoServicioToggleGroup);
+        pagoPagadoRadioButton.setToggleGroup(estadoPagoToggleGroup);
+        pagoPendienteRadioButton.setToggleGroup(estadoPagoToggleGroup);
+        finalizacionFinalizadaRadioButton.setToggleGroup(estadoFinalizacionToggleGroup);
+        finalizacionPendienteRadioButton.setToggleGroup(estadoFinalizacionToggleGroup);
+    }
     private void addButtonToTable() {
 
         Callback<TableColumn<ServicioMantenimientoDto, Void>, TableCell<ServicioMantenimientoDto, Void>> cellFactory = new Callback<>() {
@@ -108,61 +133,46 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
     }
 
-    private void  llenarComboBox(){
-        ObservableList<String> options =
-                FXCollections.observableArrayList(
-                        "ID",
-                        "Número Factura",
-                        "Estado Pago",
-                        "Estado Finalización",
-                        "Activo",
-                        "Tipo de servicio",
-                        "Matrícula"
-                );
-        comboxParametros.setItems(options);
+    private  void bindToggleButtonsConRadioButtons(){
+        estadoActivoRadioButton.visibleProperty().bind(servicioToggleButton.selectedProperty());
+        estadoInactivoRadioButton.visibleProperty().bind(servicioToggleButton.selectedProperty());
+        finalizacionPendienteRadioButton.visibleProperty().bind(finalizacionToggleButton.selectedProperty());
+        finalizacionFinalizadaRadioButton.visibleProperty().bind(finalizacionToggleButton.selectedProperty());
+        pagoPendienteRadioButton.visibleProperty().bind(pagoToggleButton.selectedProperty());
+        pagoPagadoRadioButton.visibleProperty().bind(pagoToggleButton.selectedProperty());
     }
 
     private void cargarPropertiesTable(){
-        columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
+        tableResultados.setPlaceholder(new Label("Realize una consulta para mostrar resultados"));
+        activateResponsiveConfig();
         columFactura.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroFactura().toString()));
         columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicioFormateada()));
-        columEstadoServicio.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getActivo()));
-        columEstadoServicio.setCellFactory( tc -> new TableCell<>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null :
-                        item.booleanValue() ? "Activo" : "Inactivo");
-            }
-        });
-        columEstadoPago.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getEstadoPago()));
-        columEstadoPago.setCellFactory( tc -> new TableCell<>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null :
-                        item.booleanValue() ? "Pagado" : "Pendiente");
-            }
-        });
+        columEstadoServicio.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getActivoPalabra()));
+        columEstadoPago.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstadoPagoPalabra()));
         columAvion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAvionesId().getMatricula()));
         columTipoServicio.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTiposServiciosId().getNombre()));
-        columMonto.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getCobroList().get(0).getMonto().toString()));
-        columServicioFinalizado.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getEstaFinalizacion()));
-        columServicioFinalizado.setCellFactory( tc -> new TableCell<>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null :
-                        item.booleanValue() ? "Finalizado" : "Pendiente");
-            }
-        });
+        columMonto.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getCobro()));
+        columServicioFinalizado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstadoFinalizacionPalabra()));
+    }
+
+    private void activateResponsiveConfig() {
+
+        columFactura.prefWidthProperty().bind(tableResultados.widthProperty().divide(10));
+        columFecha.prefWidthProperty().bind(tableResultados.widthProperty().divide(8));
+        columEstadoServicio.prefWidthProperty().bind(tableResultados.widthProperty().divide(12));
+        columEstadoPago.prefWidthProperty().bind(tableResultados.widthProperty().divide(10));
+        columAvion.prefWidthProperty().bind(tableResultados.widthProperty().divide(15));
+        columTipoServicio.prefWidthProperty().bind(tableResultados.widthProperty().divide(8));
+        columMonto.prefWidthProperty().bind(tableResultados.widthProperty().divide(13));
+        columServicioFinalizado.prefWidthProperty().bind(tableResultados.widthProperty().divide(10));
+        columAcciones.prefWidthProperty().bind(tableResultados.widthProperty().divide(8));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        llenarComboBox();
+        unirRadioButtons();
+        bindToggleButtonsConRadioButtons();
         cargarPropertiesTable();
-
 
 
 
@@ -205,102 +215,80 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
 
     public void buscarPorFecha(ActionEvent actionEvent) {
-        Respuesta  respuesta = service.buscarEntreFechas(dateInicio.getValue(), dateFin.getValue());
-        if(respuesta.getEstado()){
-            serviciosResultados = (List<ServicioMantenimientoDto>) respuesta.getResultado("data");
-            llenarTabla();
-        }else{
-
-        }
-    }
-
-    public void busquedaSegunParametro(int selectedItem, String valor) {
-
-        Respuesta respuesta = null;
-
-        if(valor.isEmpty()){
-
-        }
-        switch (selectedItem) {
-            case 0: {
-                if(Validar.isLongNumber(valor)){  respuesta = service.buscarPorID(valor); }
-                else  mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser un número");
-                break;
-            }
-            case 1:
-                if(Validar.isLongNumber(valor)) respuesta = service.buscarPorNumeroFactura(Long.parseLong(valor));
-                else mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser un número");
-                break;
-            case 2:
-            {
-                if (valor.contains("pagado") || valor.contains("pendiente")){
-                    valor = (valor.contains("pagado"))? "true":"false";
-                    respuesta = service.buscarPorEstadoPago(Boolean.parseBoolean(valor));
-                }
-
-                else
-                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser pagado o pendiente");
-                break;
-            }
-
-            case 3:{
-                if (valor.contains("finalizado") || valor.contains("pendiente")){
-                    valor = (valor.contains("finalizado"))? "true":"false";
-                    respuesta = service.buscarPorEstadoFinalizacion(Boolean.parseBoolean(valor));
-                }
-
-                else
-                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser finalizado o pendiente");
-                break;
-            }
-            case 4:
-            {
-                if (valor.contains("activo")|| valor.contains("inactivo")){
-                    valor = (valor.contains("inactivo"))? "false":"true";
-                    respuesta = service.buscarPorEstado(Boolean.parseBoolean(valor));}
-                else
-                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser activo o inactivo");
-                break;
-            }
-            case 5: respuesta = service.buscarPorTipoNombre(valor); break;
-            case 6: respuesta = service.buscarPorMatricula(valor); break;
-        }
-
-
-        if(respuesta != null ){
-            if(respuesta.getEstado()){
-                if(selectedItem == 0) {
-                    ServicioMantenimientoDto service1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
-                    serviciosResultados.clear();
-                    serviciosResultados.add(service1);
-
-                }else{
+        if(dateFin.getValue() != null && dateInicio.getValue() != null){
+            if(dateFin.getValue().isBefore(dateInicio.getValue())) new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "La fecha final debería ser más reciente a la de inicio");
+           else{
+                Respuesta  respuesta = service.buscarEntreFechas(dateInicio.getValue(), dateFin.getValue());
+                if(respuesta.getEstado()){
                     serviciosResultados = (List<ServicioMantenimientoDto>) respuesta.getResultado("data");
+                    llenarTabla();
+                }else{
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), respuesta.getMensaje());
                 }
-
-                llenarTabla();
-            }else{
-                mensaje.show(Alert.AlertType.INFORMATION, "Respuesta", respuesta.getMensaje());
             }
-
-        }
+        }else
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "La ingresar fecha de inicio y fecha final");
 
     }
 
-    public void buscarPorParametro(ActionEvent actionEvent) {
-        int selectedItem = comboxParametros.getSelectionModel().getSelectedIndex();
-        String valor = txtValorBuscado.getText();
 
-        if(!valor.isEmpty()&& !comboxParametros.getSelectionModel().isEmpty()){
-            busquedaSegunParametro(selectedItem, valor);
 
-        }else{
-            mensaje.show(Alert.AlertType.INFORMATION,"ERROR DE DATOS", "Debe seleccionar el parámetro e ingresar un valor a consultar");
-        }
+    public void busquedaSegunParametro() {
+        String activo, pago, finalizacion, fechaInicio, fechaFinal;
+        if(servicioToggleButton.isSelected()) activo = estadoActivoRadioButton.isSelected()? "true":"false";
+        else activo = "none";
+        if(pagoToggleButton.isSelected()) pago= pagoPagadoRadioButton.isSelected()? "true":"false";
+        else pago = "none";
+        if(finalizacionToggleButton.isSelected()) finalizacion= finalizacionFinalizadaRadioButton.isSelected()? "true":"false";
+        else finalizacion = "none";
+        if(dateInicio.getValue() == null) fechaInicio = "none";
+        else fechaInicio = dateInicio.getValue().toString();
+        if(dateFin.getValue() == null) fechaFinal = "none";
+        else fechaFinal = dateFin.getValue().toString();
+
+
+
+       Respuesta respuesta =  service.filter(txtMatricula.getText(), txtTipoServicio.getText(), txtNumeroFactura.getText(),activo, pago, finalizacion, fechaInicio, fechaFinal );
+
+        Platform.runLater(()->{
+            if(respuesta.getEstado()){
+                serviciosResultados = (List<ServicioMantenimientoDto>) respuesta.getResultado("data");
+                llenarTabla();
+            }else {
+                new Mensaje().show(Alert.AlertType.ERROR, "Error al consultar", respuesta.getMensaje());
+            }
+            btonBuscarParametro.setText("Buscar");
+            btonBuscarParametro.setDisable(false);
+        });
+    }
+
+    public void buscarPorParametroOnAction(ActionEvent actionEvent) {
+        btonBuscarParametro.setText("Buscando...");
+        btonBuscarParametro.setDisable(true);
+        Thread t = new Thread(()-> busquedaSegunParametro());
+        t.start();
+
 
     }
 
     public void btnNuevo(ActionEvent actionEvent) {
         FlowController.getInstance().goView("GestorServicios");
+    }
+
+    public void avanzadoButtonOnAction(ActionEvent actionEvent) {
+        FlowController.getInstance().goViewInWindowModal("RegistrarTipoServicio",this.getStage(), false);
+    }
+
+
+
+    public void limpiarButtonOnAction(ActionEvent actionEvent) {
+        txtMatricula.clear();
+        txtNumeroFactura.clear();
+        txtTipoServicio.clear();
+        dateInicio.setValue(null);
+        dateFin.setValue(null);
+        servicioToggleButton.selectedProperty().set(false);
+        pagoToggleButton.selectedProperty().set(false);
+        finalizacionToggleButton.selectedProperty().set(false);
     }
 }

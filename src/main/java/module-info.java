@@ -16,5 +16,6 @@ module org.una.unaeropuertoclient {
     exports org.una.unaeropuertoclient.model;
     //  exports org.una.unaeropuertoclient;
     exports org.una.unaeropuertoclient.controller;
+
 //    requires javafx.sw
 }
