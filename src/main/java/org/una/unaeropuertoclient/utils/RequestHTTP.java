@@ -17,8 +17,7 @@ public class RequestHTTP {
     private String urlApi ="http://localhost:1820/";
     private HttpResponse respuesta = null;
     private HttpRequest.Builder requestBuilder;
-//    Gson gson = new GsonBuilder()
-//            .setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
+
     HttpClient client;
 
     public void request(String url){

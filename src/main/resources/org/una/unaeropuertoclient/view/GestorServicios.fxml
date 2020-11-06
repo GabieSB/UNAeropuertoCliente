@@ -5,32 +5,26 @@
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import java.net.URL?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="587.0" prefWidth="692.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorServiciosController">
    <children>
-      <VBox alignment="CENTER" prefHeight="587.0" prefWidth="692.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <VBox alignment="CENTER" prefHeight="587.0" prefWidth="692.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="44.0" prefWidth="692.0" spacing="100.0">
+            <Label fx:id="titleLabel" styleClass="air-module-tittle" text="REGISTRAR SERVICIO" />
+            <HBox alignment="CENTER" prefHeight="52.0" prefWidth="692.0" spacing="100.0">
                <children>
-                  <Label prefHeight="78.0" prefWidth="142.0" styleClass="air-module-dark-subtittle" text="FECHA DEL SERVICIO">
-                     <font>
-                        <Font size="1.0" />
-                     </font></Label>
-                  <DatePicker fx:id="dateServicio" prefHeight="18.0" prefWidth="198.0" />
+                  <DatePicker fx:id="dateServicio" prefHeight="26.0" prefWidth="198.0" promptText="Fecha del Servicio" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="92.0" prefWidth="691.0" spacing="100.0">
+            <HBox alignment="CENTER" prefHeight="61.0" prefWidth="692.0" spacing="100.0">
                <children>
-                  <Label prefHeight="78.0" prefWidth="169.0" styleClass="air-module-dark-subtittle" text="NÚMERO DE FACTURA" />
-                  <JFXTextField fx:id="txtNumeroFactura" prefHeight="24.0" prefWidth="197.0" unFocusColor="#4d4d4d" />
+                  <JFXTextField fx:id="txtNumeroFactura" prefHeight="24.0" prefWidth="197.0" promptText="Número de Matrícula" unFocusColor="#4d4d4d" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="76.0" prefWidth="505.0" spacing="50.0">
@@ -41,33 +35,34 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="81.0" prefWidth="505.0" spacing="100.0" stylesheets="@style.css">
                <children>
-                  <Label prefHeight="34.0" prefWidth="162.0" styleClass="air-module-dark-subtittle" text="MATRÍCULA DE AVIÓN" />
                   <Pane prefHeight="66.0" prefWidth="198.0">
                      <children>
-                        <Button layoutX="222.0" layoutY="25.0" mnemonicParsing="false" onAction="#buscarAvion" text="Buscar">
+                        <JFXButton layoutX="222.0" layoutY="25.0" mnemonicParsing="false" onAction="#buscarAvionOnAction" prefHeight="27.0" prefWidth="68.0" text="Buscar">
                            <stylesheets>
                               <URL value="@style.css" />
                               <URL value="@style.css" />
                            </stylesheets>
-                        </Button>
-                        <JFXTextField fx:id="txtAvion" layoutY="21.0" prefHeight="24.0" prefWidth="204.0" />
+                        </JFXButton>
+                        <JFXTextField fx:id="txtAvion" layoutY="21.0" prefHeight="24.0" prefWidth="204.0" promptText="Matrícula del Avión" />
                      </children>
                   </Pane>
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="67.0" prefWidth="505.0" spacing="100.0">
+            <HBox alignment="CENTER" prefHeight="88.0" prefWidth="692.0" spacing="100.0">
                <children>
-                  <Label contentDisplay="CENTER" prefHeight="38.0" prefWidth="166.0" styleClass="air-module-dark-subtittle" text="TIPO DE SERVICIO" />
-                  <JFXComboBox fx:id="comboxTipos" prefHeight="27.0" prefWidth="204.0" unFocusColor="#1d10cf" />
+                  <Pane prefHeight="46.0" prefWidth="514.0">
+                     <children>
+                        <JFXComboBox fx:id="comboxTipos" layoutX="157.0" layoutY="12.0" prefHeight="27.0" prefWidth="204.0" unFocusColor="#1d10cf" />
+                     </children>
+                  </Pane>
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="120.0">
+            <HBox alignment="CENTER" prefHeight="69.0" prefWidth="692.0" spacing="120.0">
                <children>
-                  <Label contentDisplay="CENTER" prefHeight="50.0" prefWidth="150.0" styleClass="air-module-dark-subtittle" text="MONTO DE COBRO" />
-                  <JFXTextField fx:id="txtCobro" prefHeight="24.0" prefWidth="197.0" unFocusColor="#4d4d4d" />
+                  <JFXTextField fx:id="txtCobro" prefHeight="24.0" prefWidth="197.0" promptText="Monto de Cobro" unFocusColor="#4d4d4d" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="692.0">
+            <HBox fx:id="editarButtonOnAction" alignment="CENTER" prefHeight="40.0" prefWidth="692.0">
                <children>
                   <JFXButton fx:id="btonRegistrar" alignment="CENTER" onAction="#registrarServicio" prefHeight="34.0" prefWidth="105.0" text="REGISTRAR" />
                </children>

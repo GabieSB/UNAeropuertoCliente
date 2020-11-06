@@ -12,6 +12,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -87,9 +89,9 @@ public class BuscarUsuarioController extends Controller implements Initializable
         tbcNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombre()));
         tbcApellido.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getApellidos()));
         tblCedula.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getCedula()));
-        tbcFechaIngreso.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaIngreso().toString()));
-        tbcFechaModificacion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaModificacion().toString()));
-        tbcEstado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getActivo().toString()));
+        tbcFechaIngreso.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaIngresoFormateada()));
+        tbcFechaModificacion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaModificacionFormateada()));
+        tbcEstado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstadoNombre()));
         addButtonToTable();
     }
 
@@ -100,6 +102,13 @@ public class BuscarUsuarioController extends Controller implements Initializable
 
     @FXML
     public void actionBuscarPersona(ActionEvent event) {
+        btnBuscar.setText("Buscando...");
+        btnBuscar.setDisable(true);
+       Thread thread = new Thread(()-> buscarUsuario());
+       thread.start();
+    }
+
+    private void buscarUsuario(){
         String pNombre = "none";
         String pApellido = "none";
         String pCedula = "none";
@@ -121,16 +130,22 @@ public class BuscarUsuarioController extends Controller implements Initializable
             pFechaIngresadas = true;
         }
         UsuarioService usuarioService = new UsuarioService();
-        Respuesta respuesta = usuarioService.getById(pNombre, pApellido, pCedula, pFechaIni, pFechaFinal, checkActivo.isSelected(), pFechaIngresadas);
+        Respuesta respuesta = usuarioService.busquedaMixta(pNombre, pApellido, pCedula, pFechaIni, pFechaFinal, checkActivo.isSelected(), pFechaIngresadas);
 
-        if (respuesta.getEstado()) {
-            usuarioList = (List<UsuarioDto>) respuesta.getResultado("data");
-            usuariosTabla = FXCollections.observableArrayList((List) respuesta.getResultado("data"));
-            tblUsuarios.setItems(usuariosTabla);
-        } else {
-            new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer los usuarios", this.getStage(), respuesta.getMensaje());
+        Platform.runLater(()->{
+            if (respuesta.getEstado()) {
+                usuarioList = (List<UsuarioDto>) respuesta.getResultado("data");
+                usuariosTabla = FXCollections.observableArrayList((List) respuesta.getResultado("data"));
+                tblUsuarios.setItems(usuariosTabla);
+            } else {
+                new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer los usuarios", this.getStage(), respuesta.getMensaje());
 
-        }
+            }
+
+            btnBuscar.setText("Buscar");
+            btnBuscar.setDisable(false);
+        });
+
     }
 
     @FXML
@@ -159,7 +174,7 @@ public class BuscarUsuarioController extends Controller implements Initializable
                             UsuarioDto usuarioDto = getTableView().getItems().get(getIndex());
                             System.out.println(usuarioDto.getNombre());
                             AppContext.getInstance().set("usuarioEdit", usuarioDto);
-                            FlowController.getInstance().goBack();
+                            FlowController.getInstance().goView("CrearUsuario");
                             
                         });
                     }

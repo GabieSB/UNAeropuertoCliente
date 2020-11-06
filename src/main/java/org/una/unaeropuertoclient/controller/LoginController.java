@@ -55,6 +55,7 @@ public class LoginController extends Controller implements Initializable {
 
     @FXML
     public void onActionIngresar(ActionEvent event) {
+
         if (!txtCedula.getText().isBlank() && !txtContrasenna.getText().isBlank()) {
             Respuesta resp = usuarioService.logIn(txtCedula.getText(), txtContrasenna.getText());
             if (resp.getEstado()) {

@@ -13,4 +13,14 @@ public class Validar {
             return  false;
         }
     }
+
+    public static boolean isFloatNumber(String numero){
+
+        try {
+            float a = Float.parseFloat(numero);
+            return  true;
+        }catch(NumberFormatException ex){
+            return  false;
+        }
+    }
 }

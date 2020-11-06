@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.util.converter.LocalDateStringConverter;
 import org.una.unaeropuertoclient.model.*;
 import org.una.unaeropuertoclient.service.AvionService;
@@ -39,13 +42,15 @@ public class GestorServiciosController extends Controller implements Initializab
     public JFXTextField txtCobro;
     public JFXToggleButton btonActivo;
     public JFXButton btonRegistrar;
+    public Hyperlink administarServiciosLink;
+    public Label titleLabel;
     List<TipoServicioDto> tiposServicios;
     TipoServicioService tipoServicioService = new TipoServicioService();
     ServicioMantenimientoService  service = new ServicioMantenimientoService();
     CobroService cobroService = new CobroService();
     ServicioMantenimientoDto servicioSelecionado  = null;
     Boolean componentesIniciados = false;
-    boolean isGestor;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         FlowController.changeSuperiorTittle("Registrar Servicio Mantenimiento de Aviones");
@@ -53,22 +58,28 @@ public class GestorServiciosController extends Controller implements Initializab
 
     }
     private void iniciarComponetes(){
-
-        Respuesta respuesta = tipoServicioService.getAll();
-        if( respuesta.getEstado()){
-            tiposServicios = (List<TipoServicioDto>) respuesta.getResultado("data");
-            llenarComboBoxTipos();
-        }
-
-        dateServicio.setValue(LocalDate.now());
+        comboxTipos.setPromptText("Cargando...");
+        Thread th = new Thread(() -> llenarComboBoxTipos());
+        th.start();
         dateServicio.setConverter(new LocalDateStringConverter(FormatStyle.FULL));
         componentesIniciados = true;
     }
-    private void llenarComboBoxTipos(){
-        ObservableList<String> items = FXCollections.observableArrayList();
-        tiposServicios.forEach(k-> items.add(k.getNombre()));
-        comboxTipos.getItems().addAll(items);
+    public void llenarComboBoxTipos(){
+        Respuesta respuesta = tipoServicioService.getAll();
 
+        Platform.runLater(()->{
+            if( respuesta.getEstado()){
+                tiposServicios = (List<TipoServicioDto>) respuesta.getResultado("data");
+                ObservableList<String> items = FXCollections.observableArrayList();
+                tiposServicios.forEach(k-> items.add(k.getNombre()));
+                comboxTipos.getItems().clear();
+                comboxTipos.getItems().addAll(items);
+                comboxTipos.setPromptText("Tipo de servicio");
+
+            }else{
+                comboxTipos.setPromptText(respuesta.getMensaje());
+            }
+        });
 
     }
     @Override
@@ -86,6 +97,8 @@ public class GestorServiciosController extends Controller implements Initializab
     }
 
     public void cargarServicioAModificar(){
+        FlowController.changeSuperiorTittle("Modificar Servicio Mantenimiento de Aviones");
+        titleLabel.setText("MODIFICAR SERVICIO");
         servicioSelecionado = (ServicioMantenimientoDto) AppContext.getInstance().get("servicioSeleccionado");
         if(servicioSelecionado!=null){
             if(!componentesIniciados) iniciarComponetes();
@@ -94,12 +107,12 @@ public class GestorServiciosController extends Controller implements Initializab
         }
     }
 
+
     public void cargarDatosServicio(){
         dateServicio.setValue(servicioSelecionado.getFechaServicio().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         txtNumeroFactura.setText(servicioSelecionado.getNumeroFactura().toString());
         btonFinalizado.setSelected(servicioSelecionado.getEstaFinalizacion());
         btnEstadoPago.setSelected(servicioSelecionado.getEstadoPago());
-        btonActivo.setSelected(servicioSelecionado.getActivo());
         txtAvion.setText(servicioSelecionado.getAvionesId().getMatricula());
         comboxTipos.getSelectionModel().select(servicioSelecionado.getTiposServiciosId().getNombre());
         txtCobro.setText(servicioSelecionado.getCobroList().get(0).getMonto().toString());
@@ -133,6 +146,9 @@ public class GestorServiciosController extends Controller implements Initializab
             new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Parece que el valor ingresado en el número de factura no es permitido, debería ser un número"); sePuedeCrear = false;}
         if(avion==null) {
             new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Parece que ha habido problemas al registrar la matrícula del avión"); sePuedeCrear = false;}
+        if(dateServicio.getValue()==null){
+            new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Parece que no has ingresado la fecha del servicio"); sePuedeCrear = false;}
+
 
 
         if (sePuedeCrear) {
@@ -145,27 +161,42 @@ public class GestorServiciosController extends Controller implements Initializab
 
     @FXML
     public void registrarServicio(ActionEvent actionEvent) {
+        btonRegistrar.setDisable(true);
+        if(servicioSelecionado==null) {
+            btonRegistrar.setText("Registrando...");
+            Thread t = new Thread(()->registrarServicio());
+            t.start();
+        }
+        else {
+            btonRegistrar.setText("Modificando...");
+            Thread t = new Thread(()->modificarServicio());
+            t.start();
 
-        if(servicioSelecionado==null) registrarServicio();
-        else  modificarServicio();
+        }
     }
     public void registrarServicio(){
         ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
-        if(servicioMantenimientoDto!=null){
-            Respuesta respuesta = service.create(servicioMantenimientoDto);
-            if(respuesta.getEstado()){
-                CobroDto cobroDto = new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
-                ServicioMantenimientoDto servicioMantenimientoDto1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
-                servicioMantenimientoDto.setId(servicioMantenimientoDto1.getId());
-                cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
-                Respuesta respuesta1 = cobroService.create(cobroDto);
-                System.out.println("antes de cobro");
-                if(respuesta1.getEstado()){
-                    new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Registrado Exitosamente");
-                }
-            }
-        }
+        if(servicioMantenimientoDto!=null) {
+            Platform.runLater(() -> {
+                Respuesta respuesta = service.create(servicioMantenimientoDto);
+                if (respuesta.getEstado()) {
+                    CobroDto cobroDto = new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
+                    ServicioMantenimientoDto servicioMantenimientoDto1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
+                    servicioMantenimientoDto.setId(servicioMantenimientoDto1.getId());
+                    cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
+                    Respuesta respuesta1 = cobroService.create(cobroDto);
+                    if (respuesta1.getEstado()) new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Registrado Exitosamente");
+                    else new Mensaje().show(Alert.AlertType.ERROR, "Error de registro de cobro", respuesta1.getMensaje());
 
+                } else {
+                     new Mensaje().show(Alert.AlertType.ERROR, "Error de registro de Servicio de Aeronave", respuesta.getMensaje());
+                }
+
+                btonRegistrar.setDisable(false);
+                btonRegistrar.setText("Registrar");
+
+            });
+        }
     }
 
     public void modificarServicio(){
@@ -173,23 +204,37 @@ public class GestorServiciosController extends Controller implements Initializab
         if(servicioMantenimientoDto!=null){
             servicioMantenimientoDto.setId(servicioSelecionado.getId());
             Respuesta respuesta = service.update(servicioMantenimientoDto);
-            if(respuesta.getEstado()){
-                CobroDto cobroDto =  new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
-                cobroDto.setId(servicioSelecionado.getCobroList().get(0).getId());
-                cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
-                Respuesta respuesta1 = cobroService.update(cobroDto);
-                if(respuesta1.getEstado()){
-                    new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Modificado Exitosamente");
-                }else{
-                    new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error en registrar el servicio");
-                }
-            }
+
+            Platform.runLater(()->{
+                if(respuesta.getEstado()){
+                    CobroDto cobroDto =  new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
+                    cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
+                    Respuesta respuesta1;
+                    if(servicioSelecionado.getCobroList() == null || servicioSelecionado.getCobroList().isEmpty()){
+                        respuesta1 = cobroService.create(cobroDto);
+                    }else {
+                        cobroDto.setId(servicioSelecionado.getCobroList().get(0).getId());
+                        respuesta1 = cobroService.update(cobroDto);
+                    }
+
+                    if(respuesta1.getEstado()){
+                        new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Modificado Exitosamente");
+                    }else{
+                        new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error al modificar el cobro del servicio");
+                    }
+                }else  new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error al modificar el servicio");
+
+                btonRegistrar.setText("MODIFICAR");
+                btonRegistrar.setDisable(false);
+            });
+
         }
 
     }
 
 
-    public void buscarAvion(ActionEvent actionEvent) {
+    public void buscarAvionOnAction(ActionEvent actionEvent) {
         FlowController.getInstance().goView("BuscarAvion");
     }
+
 }

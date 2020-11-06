@@ -55,4 +55,9 @@ public class Mensaje {
 
         return result.get() == ButtonType.OK;
     }
+
+    public  void showInformation(String  mensaje){
+        show(AlertType.INFORMATION, "Información", mensaje);
+
+    }
 }

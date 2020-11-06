@@ -317,4 +317,12 @@ public class GestorGastosConsultasController extends Controller implements Initi
     public void btnNuevo(ActionEvent actionEvent) {
         FlowController.getInstance().goView("RegistrarGastos");
     }
+
+    public void provedoresButtonOnAction(ActionEvent actionEvent) {
+        FlowController.getInstance().goViewInWindowModal("EditorProvedores", this.getStage(), false);
+    }
+
+    public void tiposDeReparacionButtonOnAction(ActionEvent actionEvent) {
+        FlowController.getInstance().goViewInWindowModal("EditorTipoReparaciones", this.getStage(), false);
+    }
 }

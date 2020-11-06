@@ -13,4 +13,35 @@ public class ProvedorDto {
     private String nombre;
     private Boolean activo;
     private List<GastoReparacionDto> gastoReparList;
+
+    public ProvedorDto(String text) {
+        this.nombre = text;
+        this.activo = true;
+        this.gastoReparList = null;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+
+
+    public ProvedorDto(Long id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+        this.activo = true;
+        this.gastoReparList = null;
+    }
+
+    public void setActivo(boolean b) {
+        this.activo = b;
+    }
 }

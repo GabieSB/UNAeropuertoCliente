@@ -56,6 +56,10 @@ and open the template in the editor.
 .jfx-button:hover{
     -fx-background-color: linear-gradient(#212121 0%, #37474F 100%);
 }
+.jfx-button:disabled{
+    -fx-background-color: linear-gradient(#212121 0%, #37474F 100%);
+    -fx-opacity: 1;
+}
 .jfx-text-field,
 .jfx-password-field,
 .jfx-text-area{
