@@ -64,12 +64,13 @@
             <TableView fx:id="tbVuelos" prefHeight="291.0" prefWidth="720.0" VBox.vgrow="ALWAYS">
               <columns>
                   <TableColumn fx:id="clEstado" prefWidth="60.0" text="Estado" />
-                <TableColumn fx:id="clNombre" prefWidth="105.0" text="Nombre" />
-                <TableColumn fx:id="clAerolinea" prefWidth="105.0" text="Aerolinea" />
-                  <TableColumn fx:id="clAvion" prefWidth="105.0" text="Avión" />
-                  <TableColumn fx:id="clSalida" prefWidth="129.0" text="Salida" />
-                  <TableColumn fx:id="clLlegada" prefWidth="151.0" text="Llegada" />
-                  <TableColumn fx:id="clAcciones" prefWidth="75.0" text="Acciones" />
+                  <TableColumn fx:id="clTipoVuelo" prefWidth="99.0" text="Tipo de vuelo" />
+                <TableColumn fx:id="clNombre" prefWidth="71.0" text="Nombre" />
+                <TableColumn fx:id="clAerolinea" prefWidth="77.0" text="Aerolinea" />
+                  <TableColumn fx:id="clAvion" prefWidth="87.0" text="Avión" />
+                  <TableColumn fx:id="clSalida" prefWidth="89.0" text="Salida" />
+                  <TableColumn fx:id="clLlegada" prefWidth="89.0" text="Llegada" />
+                  <TableColumn fx:id="clAcciones" prefWidth="233.0" text="Acciones" />
               </columns>
             </TableView>
          </children>

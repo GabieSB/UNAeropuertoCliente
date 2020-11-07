@@ -74,6 +74,8 @@ public class GestorVuelosController extends Controller implements Initializable 
     public TableColumn<VueloDto, String> clEstado;
     @FXML
     public TableColumn<VueloDto, Void> clAcciones;
+    @FXML
+    private TableColumn<VueloDto, String> clTipoVuelo;
 
     /**
      * Initializes the controller class.
@@ -121,13 +123,14 @@ public class GestorVuelosController extends Controller implements Initializable 
     }
 
     private void activateResponsiveConfig() {
-        clSalida.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4));
-        clLlegada.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4));
-        clAerolinea.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));
-        clAvion.prefWidthProperty().bind(tbVuelos.widthProperty().divide(11));
-        clNombre.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));
-        clEstado.prefWidthProperty().bind(tbVuelos.widthProperty().divide(13));
+        clSalida.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4.4));
+        clLlegada.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4.4));
+        clAerolinea.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
+        clAvion.prefWidthProperty().bind(tbVuelos.widthProperty().divide(12));
+        clNombre.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
+        clEstado.prefWidthProperty().bind(tbVuelos.widthProperty().divide(18));
         clAcciones.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
+        clTipoVuelo.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
     }
 
     private void configureDataRepresentation() {
@@ -137,6 +140,7 @@ public class GestorVuelosController extends Controller implements Initializable 
         clAvion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAvionesId().getMatricula()));
         clNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombreVuelo()));
         clEstado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getStateAsWord()));
+        clTipoVuelo.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTipoVuelo().getNombre()));
     }
 
     private void chargeTodayData() {

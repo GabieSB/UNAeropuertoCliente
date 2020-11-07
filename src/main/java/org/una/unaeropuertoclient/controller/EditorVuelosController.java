@@ -27,12 +27,14 @@ import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.model.LugarDto;
 import org.una.unaeropuertoclient.model.ParamSistemaDto;
 import org.una.unaeropuertoclient.model.PistaDto;
+import org.una.unaeropuertoclient.model.TipoVueloDto;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.service.AerolineaService;
 import org.una.unaeropuertoclient.service.AvionService;
 import org.una.unaeropuertoclient.service.LugarService;
 import org.una.unaeropuertoclient.service.ParamSistemaServicio;
 import org.una.unaeropuertoclient.service.PistaService;
+import org.una.unaeropuertoclient.service.TipoVueloService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -72,6 +74,8 @@ public class EditorVuelosController extends Controller implements Initializable 
     @FXML
     public JFXComboBox<String> cbMinutosLlegada;
     @FXML
+    private JFXComboBox<TipoVueloDto> cbTipoVuelo;
+    @FXML
     private JFXComboBox<PistaDto> cbPistaAterrisage;
     @FXML
     private VBox vbSalidaYLlegada;
@@ -93,7 +97,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     public void initialize(URL url, ResourceBundle rb) {
         cbList = Arrays.asList(cbAerolinea, cbAvion, cbPistaAterrisage,
                 cbSitioLlegada, cbSitioSalida, cbEsadoVuelo, cbMinutosSalida,
-                cbHoraSalida, cbMinutosLlegada, cbHoraLlegada);
+                cbHoraSalida, cbMinutosLlegada, cbHoraLlegada, cbTipoVuelo);
         cargarFuncionalidadesVentana();
     }
 
@@ -106,6 +110,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         cbPistaAterrisage.setPromptText("Cargando...");
         cbSitioSalida.setPromptText("Cargando...");
         cbSitioLlegada.setPromptText("Cargando...");
+        cbTipoVuelo.setPromptText("Cargando...");
         chargeExternalData();
         tryActivEditionMode();
     }
@@ -173,13 +178,15 @@ public class EditorVuelosController extends Controller implements Initializable 
         th3.start();
         Thread th4 = new Thread(() -> chargeParamSistema());
         th4.start();
+        Thread th5 = new Thread(() -> chargeTiposVuelos());
+        th5.start();
     }
 
     private void chargePistas() {
         Respuesta resp = new PistaService().findAll();
         Platform.runLater(() -> {
             if (resp.getEstado()) {
-                List<PistaDto> pList = (List<PistaDto>) resp.getResultado("data");
+                List<PistaDto> pList = (List) resp.getResultado("data");
                 pList.removeIf(elemnt -> elemnt.equals(cbPistaAterrisage.getValue()));
                 cbPistaAterrisage.getItems().addAll(pList);
                 cbPistaAterrisage.setPromptText("Pistas");
@@ -189,7 +196,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         });
     }
 
-    public void chargeParamSistema() {
+    private void chargeParamSistema() {
         Respuesta resp = new ParamSistemaServicio().getById();
         Platform.runLater(() -> {
             if (resp.getEstado()) {
@@ -207,7 +214,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         Respuesta resp = new LugarService().findByEstado(true);
         Platform.runLater(() -> {
             if (resp.getEstado()) {
-                List<LugarDto> pList = (List<LugarDto>) resp.getResultado("data");
+                List<LugarDto> pList = (List) resp.getResultado("data");
                 pList.removeIf(elemnt -> elemnt.equals(cbSitioSalida.getValue()));
                 cbSitioSalida.getItems().addAll(pList);
                 cbSitioSalida.setPromptText("Lugar de salida");
@@ -228,7 +235,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         Respuesta resp = new AerolineaService().findByEstado(true);
         Platform.runLater(() -> {
             if (resp.getEstado()) {
-                List<AerolineaDto> aeroList = (List<AerolineaDto>) resp.getResultado("data");
+                List<AerolineaDto> aeroList = (List) resp.getResultado("data");
                 aeroList.removeIf(elemnt -> elemnt.equals(cbAerolinea.getValue()));
                 cbAerolinea.setPromptText("Aerolinas");
                 cbAerolinea.getItems().addAll(aeroList);
@@ -238,7 +245,21 @@ public class EditorVuelosController extends Controller implements Initializable 
         });
     }
 
-    public void chargeAviones(boolean clearItems) {
+    private void chargeTiposVuelos() {
+        Respuesta resp = new TipoVueloService().findByEstado(true);
+        Platform.runLater(() -> {
+            if (resp.getEstado()) {
+                List<TipoVueloDto> tvList = (List) resp.getResultado("data");
+                tvList.removeIf(elemnt -> elemnt.equals(cbTipoVuelo.getValue()));
+                cbTipoVuelo.getItems().addAll(tvList);
+                cbTipoVuelo.setPromptText("Tipos de vuelos");
+            } else {
+                cbTipoVuelo.setPromptText(resp.getMensaje());
+            }
+        });
+    }
+
+    private void chargeAviones(boolean clearItems) {
         Thread th = new Thread(() -> {
             Platform.runLater(() -> {
                 cbAvion.setDisable(false);
@@ -280,6 +301,7 @@ public class EditorVuelosController extends Controller implements Initializable 
             cbSitioLlegada.getItems().add(vuelo.getLugarLlegada());
             cbSitioSalida.getItems().add(vuelo.getLugarSalida());
             cbPistaAterrisage.getItems().add(vuelo.getPistasId());
+            cbTipoVuelo.getItems().add(vuelo.getTipoVuelo());
             copyUnmodificableFlyData();
             chargeData();
             chargeAviones(false);
@@ -303,6 +325,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         vuelo.setLugarSalida(cbSitioSalida.getValue());
         vuelo.setPistasId(cbPistaAterrisage.getValue());
         vuelo.setStateAsWord(cbEsadoVuelo.getValue());
+        vuelo.setTipoVuelo(cbTipoVuelo.getValue());
         vuelo.setHoraLlegada(toDate(dpFechaLlegada, cbHoraLlegada.getValue(), cbMinutosLlegada.getValue()));
         vuelo.setHoraSalida(toDate(dpFechaSalida, cbHoraSalida.getValue(), cbMinutosSalida.getValue()));
     }
@@ -313,7 +336,7 @@ public class EditorVuelosController extends Controller implements Initializable 
                 if (cbMinutosLlegada.getValue() != null && cbHoraLlegada.getValue() != null) {
                     if (cbMinutosSalida.getValue() != null && cbHoraSalida.getValue() != null) {
                         if (cbEsadoVuelo.getValue() != null && cbPistaAterrisage.getValue() != null) {
-                            return true;
+                            return cbTipoVuelo.getValue() != null;
                         }
                     }
                 }
@@ -340,6 +363,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void chargeData() {
+        cbTipoVuelo.getSelectionModel().select(vuelo.getTipoVuelo());
         cbAerolinea.getSelectionModel().select(vuelo.getAvionesId().getAerolineasId());
         cbAvion.getSelectionModel().select(vuelo.getAvionesId());
         lblNombreVuelo.setText("Vuelo: " + vuelo.getNombreVuelo());

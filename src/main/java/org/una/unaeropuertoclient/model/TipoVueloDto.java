@@ -6,6 +6,7 @@
 package org.una.unaeropuertoclient.model;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -48,6 +49,30 @@ public class TipoVueloDto {
 
     public void setVueloList(List<VueloDto> vueloList) {
         this.vueloList = vueloList;
+    }
+
+    @Override
+    public String toString() {
+        return this.nombre;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null) {
+            if (obj instanceof TipoVueloDto) {
+                TipoVueloDto tipoV = (TipoVueloDto) obj;
+                return tipoV.getNombre().equals(nombre) && Objects.equals(tipoV.getId(), id);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        hash = 97 * hash + Objects.hashCode(this.nombre);
+        return hash;
     }
 
 }
