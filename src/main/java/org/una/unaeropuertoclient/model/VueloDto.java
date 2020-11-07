@@ -23,6 +23,7 @@ public class VueloDto {
     private LugarDto lugarSalida;
     private LugarDto lugarLlegada;
     private AlertaDto alerta;
+    private TipoVueloDto tipoVuelo;
 
     public String getSitioYFechaLLegada() {
         return lugarLlegada.getNombre() + " el " + toCompresionHumana(horaLlegada);
@@ -151,4 +152,13 @@ public class VueloDto {
         ret += " " + ldt.toLocalTime().toString();
         return ret;
     }
+
+    public TipoVueloDto getTipoVuelo() {
+        return tipoVuelo;
+    }
+
+    public void setTipoVuelo(TipoVueloDto tipoVuelo) {
+        this.tipoVuelo = tipoVuelo;
+    }
+    
 }
