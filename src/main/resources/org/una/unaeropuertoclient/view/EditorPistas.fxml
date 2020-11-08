@@ -7,14 +7,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="org.una.unaeropuertoclient.controller.EditorPistasController">
+<AnchorPane id="AnchorPane" prefHeight="260.0" prefWidth="420.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.EditorPistasController">
    <children>
       <Label layoutX="24.0" layoutY="24.0" styleClass="air-module-subtittle" text="Editor de pistas" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
-      <HBox alignment="CENTER_RIGHT" layoutX="416.0" layoutY="328.0" maxHeight="35.0" maxWidth="-Infinity" prefHeight="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox fx:id="controlContainer" alignment="CENTER_RIGHT" layoutX="416.0" layoutY="328.0" maxHeight="35.0" maxWidth="-Infinity" prefHeight="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <JFXButton onAction="#OnClickSave" text="Guadar cambios" />
             <JFXButton id="dangerous-button-efect" onAction="#OnClickCancel" text="Cancelar" />
+            <JFXButton fx:id="btnGuardar" onAction="#OnClickSave" text="Guadar cambios" />
          </children>
          <padding>
             <Insets right="10.0" />
@@ -25,6 +24,9 @@
             <JFXTextField fx:id="txtNumeroPista" labelFloat="true" prefWidth="190.0" promptText="Número de pista" />
             <JFXTextField fx:id="txtLongitud" labelFloat="true" prefWidth="160.0" promptText="Longitud (metros)" />
          </children>
+         <padding>
+            <Insets left="5.0" right="5.0" />
+         </padding>
       </HBox>
    </children>
 </AnchorPane>

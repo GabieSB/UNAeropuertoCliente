@@ -10,6 +10,7 @@ import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.PistaDto;
 import org.una.unaeropuertoclient.service.PistaService;
@@ -26,6 +28,7 @@ import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 
 /**
  * FXML Controller class
@@ -46,6 +49,10 @@ public class GestorPistasController extends Controller implements Initializable 
     public TableColumn<PistaDto, String> clLongitud;
     @FXML
     public TableColumn<PistaDto, Void> clAcciones;
+    @FXML
+    private HBox controlsContainer;
+    @FXML
+    private JFXButton btnBuscar;
 
     /**
      * Initializes the controller class.
@@ -65,13 +72,26 @@ public class GestorPistasController extends Controller implements Initializable 
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
-        Respuesta resp = new PistaService().filter(txtNumeroPista.getText(), txtLongitud.getText());
-        if (resp.getEstado()) {
-            tbPistas.getItems().clear();
-            tbPistas.getItems().addAll((List) resp.getResultado("data"));
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        aModoEspera(btnBuscar);
+        controlsContainer.setDisable(true);
+        buscar();
+    }
+
+    private void buscar() {
+        Thread th = new Thread(() -> {
+            Respuesta resp = new PistaService().filter(txtNumeroPista.getText(), txtLongitud.getText());
+            Platform.runLater(() -> {
+                salirModoEspera(btnBuscar, "Buscar");
+                controlsContainer.setDisable(false);
+                if (resp.getEstado()) {
+                    tbPistas.getItems().clear();
+                    tbPistas.getItems().addAll((List) resp.getResultado("data"));
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     @FXML

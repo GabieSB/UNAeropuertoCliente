@@ -5,6 +5,7 @@
  */
 package org.una.unaeropuertoclient.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
@@ -15,11 +16,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.HBox;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.service.AerolineaService;
 import org.una.unaeropuertoclient.service.AvionService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -36,6 +40,11 @@ public class EditorAvionesController extends Controller implements Initializable
     public JFXComboBox<AerolineaDto> cbAerolinea;
     private AvionDto avion;
     private boolean editionMode;
+    @FXML
+    private HBox controlContainer;
+    @FXML
+    private JFXButton btnGuardar;
+    private boolean modoAuditor;
 
     /**
      * Initializes the controller class.
@@ -45,11 +54,12 @@ public class EditorAvionesController extends Controller implements Initializable
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
     }
 
     @Override
     public void initialize() {
+        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
+        btnGuardar.setDisable(modoAuditor);
         txtMatricula.setText("");
         cbAerolinea.getItems().clear();
         cbAerolinea.setPromptText("Cargando...");
@@ -59,6 +69,8 @@ public class EditorAvionesController extends Controller implements Initializable
     @FXML
     public void OnClickSave(ActionEvent event) {
         if (!txtMatricula.getText().isBlank() && cbAerolinea.getValue() != null) {
+            aModoEspera(btnGuardar);
+            controlContainer.setDisable(true);
             saveChanges();
         } else {
             new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "Quizá has dejado algún espacio sin rellenar.");
@@ -109,19 +121,26 @@ public class EditorAvionesController extends Controller implements Initializable
     }
 
     private void saveChanges() {
-        Respuesta resp;
-        AvionService serv = new AvionService();
-        chargeData();
-        resp = editionMode ? serv.update(avion) : serv.create(avion);
-        if (resp.getEstado()) {
-            new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
-            avion = (AvionDto) resp.getResultado("data");
-            unChargeData();
-            editionMode = true;
-            refreshBack();
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        Thread th = new Thread(() -> {
+            Respuesta resp;
+            AvionService serv = new AvionService();
+            chargeData();
+            resp = editionMode ? serv.update(avion) : serv.create(avion);
+            Platform.runLater(() -> {
+                salirModoEspera(btnGuardar, "Guardar cambios");
+                controlContainer.setDisable(false);
+                if (resp.getEstado()) {
+                    new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
+                    avion = (AvionDto) resp.getResultado("data");
+                    unChargeData();
+                    editionMode = true;
+                    refreshBack();
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     private void chargeData() {

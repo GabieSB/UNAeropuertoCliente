@@ -6,6 +6,7 @@
 package org.una.unaeropuertoclient.utils;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -31,6 +32,16 @@ public class ButtonWaitUtils {
         button.setDisable(false);
         button.setText(OldTittle);
         button.setGraphic(null);
+    }
+
+    public static void aModoEspera(ToggleButton button) {
+        button.setDisable(true);
+        button.setText("espera...");
+    }
+
+    public static void salirModoEspera(ToggleButton button, String OldTittle) {
+        button.setDisable(false);
+        button.setText(OldTittle);
     }
 
 }

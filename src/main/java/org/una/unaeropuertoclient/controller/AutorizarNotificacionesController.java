@@ -25,7 +25,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
 import org.una.unaeropuertoclient.model.GastoReparacionDto;
@@ -38,6 +37,8 @@ import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -76,14 +77,17 @@ public class AutorizarNotificacionesController extends Controller implements Ini
     private final List<ServicioMantenimientoDto> listServicio = new ArrayList<>();
     private final List<GastoReparacionDto> listGastoReparacion = new ArrayList<>();
     private final List<VueloDto> listVuelo = new ArrayList<>();
+    private boolean modoAuditor;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         tbvNotificaciones.setPlaceholder(new Label("Estás al día, no hay nuevas solicitudes de inhabilitación que mostrar"));
     }
 
     @Override
     public void initialize() {
+        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
         AuthenticationResponse aux = (AuthenticationResponse) AppContext.getInstance().get("token");
         numeroArea = aux.getUsuario().getAreasId().getId();
         FlowController.changeSuperiorTittle("Notificaciones (peticiones de inhabilitación)");
@@ -147,10 +151,12 @@ public class AutorizarNotificacionesController extends Controller implements Ini
         listNotificaciones.clear();
         tbvNotificaciones.getItems().clear();
         lblTableTittle.setText(estado ? "Mostrando solo notificaciones pendientes" : "Mostrando solo notificaciones atendidas");
+        aModoEspera(togNotificacion);
         Thread th = new Thread(() -> {
             NotificacionService notificacionService = new NotificacionService();
             Respuesta resp = notificacionService.getIDandEstado(numeroArea, estado);
             Platform.runLater(() -> {
+                salirModoEspera(togNotificacion,"");
                 if (resp.getEstado()) {
                     listNotificaciones = (List) resp.getResultado("data");
                     List<Long> idList = listNotificaciones.stream().map(nota -> nota.getIdObjeto()).collect(Collectors.toList());
@@ -195,6 +201,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                 public JFXButton acceptar = new JFXButton("Acceptar");
 
                 {
+                    acceptar.setDisable(modoAuditor);
                     acceptar.setOnAction((ActionEvent event) -> {
                         RecolectorInfoNotas recolectorInfoNotas = getTableView().getItems().get(getIndex());
                         if (recolectorInfoNotas.isEstado()) {
@@ -209,6 +216,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                 public JFXButton denegar = new JFXButton("Denegar");
 
                 {
+                    denegar.setDisable(modoAuditor);
                     denegar.setId("dangerous-button-efect");
                     denegar.setOnAction((ActionEvent event) -> {
                         RecolectorInfoNotas recolectorInfoNotas = getTableView().getItems().get(getIndex());

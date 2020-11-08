@@ -5,6 +5,7 @@
  */
 package org.una.unaeropuertoclient.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import java.net.URL;
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import org.una.unaeropuertoclient.model.AerolineaDto;
@@ -37,6 +39,7 @@ import org.una.unaeropuertoclient.service.PistaService;
 import org.una.unaeropuertoclient.service.TipoVueloService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -86,6 +89,13 @@ public class EditorVuelosController extends Controller implements Initializable 
     private AerolineaDto oldAerline;
     private ParamSistemaDto paramSistem;
     private boolean isDangerous = false;
+    @FXML
+    private HBox controlContainer1;
+    @FXML
+    private HBox controlContainer2;
+    @FXML
+    private JFXButton btnGuardar;
+    private boolean modoAuditor;
 
     /**
      * Initializes the controller class.
@@ -103,6 +113,8 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
+        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
+        btnGuardar.setDisable(modoAuditor);
         vbSalidaYLlegada.setDisable(true);
         cbAerolinea.setPromptText("Cargando...");
         cbAvion.setPromptText("Aviones(Vacío)");
@@ -141,6 +153,8 @@ public class EditorVuelosController extends Controller implements Initializable 
             if (sonCorrectosLugaresDeSalidaYLlegada()) {
                 if (sonFechasCorrectas() && esDuracionCorrecta()) {
                     if (validarContratiemposVuelo()) {
+                        aModoEspera(btnGuardar);
+                        controlContainer2.setDisable(true);
                         saveChanges();
                     }
                 }
@@ -346,20 +360,27 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void saveChanges() {
-        Respuesta resp;
-        VueloService serv = new VueloService();
-        unChargeData();
-        resp = editionMode ? serv.update(vuelo) : serv.create(vuelo);
-        if (resp.getEstado()) {
-            new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
-            vuelo = (VueloDto) resp.getResultado("data");
-            copyUnmodificableFlyData();
-            chargeData();
-            editionMode = true;
-            refreshBack();
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        Thread th = new Thread(() -> {
+            Respuesta resp;
+            VueloService serv = new VueloService();
+            unChargeData();
+            resp = editionMode ? serv.update(vuelo) : serv.create(vuelo);
+            Platform.runLater(() -> {
+                salirModoEspera(btnGuardar, "Guardar");
+                controlContainer2.setDisable(false);
+                if (resp.getEstado()) {
+                    new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
+                    vuelo = (VueloDto) resp.getResultado("data");
+                    copyUnmodificableFlyData();
+                    chargeData();
+                    editionMode = true;
+                    refreshBack();
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     private void chargeData() {

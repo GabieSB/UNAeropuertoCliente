@@ -17,7 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
-import org.una.unaeropuertoclient.model.RolDto;
 import org.una.unaeropuertoclient.model.RolUsuarioDto;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -102,13 +101,12 @@ public class MenuPrincipalController extends Controller implements Initializable
         FlowController.getInstance().goView("BuscarBitacoras");
     }
 
-
-
     public void extraerOpcionesProhibidas() {
         List<RolUsuarioDto> rList = ((AuthenticationResponse) AppContext.getInstance().get("token")).getUsuario().getRolUsuarioList();
         List<Node> flowChildrenList = new ArrayList();
         flow.getChildren().forEach(node -> flowChildrenList.add(node));
         flow.getChildren().clear();
+        AppContext.getInstance().set("auditMode", false);
         rList.forEach(rolU -> {
             switch (rolU.getRolesId().getNombre()) {
                 case "ADMINISTRADOR":
@@ -134,6 +132,11 @@ public class MenuPrincipalController extends Controller implements Initializable
                 case "GERENTE_CONTROL_VUELO":
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
                     break;
+                case "AUDITOR_CONTROL_VUELOS":
+                    AppContext.getInstance().set("auditMode", true);
+                    flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
+                    break;
 //                case "GERENTE_CONTROL_VUELO":
 //                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
 //                    break;
@@ -155,7 +158,6 @@ public class MenuPrincipalController extends Controller implements Initializable
         }
         return null;
     }
-
 
     public void goModificarUsuario(ActionEvent actionEvent) {
         FlowController.getInstance().goView("BuscarUsuario");

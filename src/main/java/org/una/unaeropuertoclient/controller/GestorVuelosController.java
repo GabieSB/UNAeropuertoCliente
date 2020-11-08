@@ -24,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.AreaDto;
@@ -33,6 +34,7 @@ import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -76,6 +78,15 @@ public class GestorVuelosController extends Controller implements Initializable 
     public TableColumn<VueloDto, Void> clAcciones;
     @FXML
     private TableColumn<VueloDto, String> clTipoVuelo;
+    @FXML
+    private AnchorPane controlsContainer;
+    @FXML
+    private JFXButton btnAvanzado;
+    @FXML
+    private JFXButton btnBuscar;
+    @FXML
+    private JFXButton btnLimpiar;
+    private boolean modoAuditor;
 
     /**
      * Initializes the controller class.
@@ -90,8 +101,11 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
+        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
         FlowController.changeSuperiorTittle("Módulo de vuelos");
-        clearScreen();
+        tbVuelos.getItems().clear();
+        onActionLimpiar(new ActionEvent());
+
     }
 
     @FXML
@@ -101,24 +115,34 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
+        controlsContainer.setDisable(true);
+        aModoEspera(btnBuscar);
         Thread th = new Thread(() -> {
-            Respuesta resp = new VueloService().filter(txtAerolinea.getText(),
-                    txtFlyName.getText(), txtMatriculaAvion.getText(), txtLlegada.getText(),
-                    txtSalida.getText(), dpDesde.getValue(), dpHasta.getValue());
-            Platform.runLater(() -> {
-                if (resp.getEstado()) {
-                    tbVuelos.getItems().clear();
-                    tbVuelos.getItems().addAll((List) resp.getResultado("data"));
-                } else {
-                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-                }
-            });
+            buscar();
         });
         th.start();
     }
 
+    private void buscar() {
+        Respuesta resp = new VueloService().filter(txtAerolinea.getText(),
+                txtFlyName.getText(), txtMatriculaAvion.getText(), txtLlegada.getText(),
+                txtSalida.getText(), dpDesde.getValue(), dpHasta.getValue());
+        Platform.runLater(() -> {
+            salirModoEspera(btnBuscar, "Buscar");
+            controlsContainer.setDisable(false);
+            if (resp.getEstado()) {
+                tbVuelos.getItems().clear();
+                tbVuelos.getItems().addAll((List) resp.getResultado("data"));
+            } else {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+            }
+        });
+    }
+
     @FXML
     public void onActionLimpiar(ActionEvent event) {
+        controlsContainer.setDisable(true);
+        aModoEspera(btnLimpiar);
         clearScreen();
     }
 
@@ -147,6 +171,8 @@ public class GestorVuelosController extends Controller implements Initializable 
         Thread th = new Thread(() -> {
             Respuesta resp = new VueloService().findVuelosDelDia();
             Platform.runLater(() -> {
+                controlsContainer.setDisable(false);
+                salirModoEspera(btnLimpiar, "Limpiar");
                 if (resp.getEstado()) {
                     tbVuelos.getItems().clear();
                     tbVuelos.getItems().addAll((List) resp.getResultado("data"));
@@ -197,6 +223,7 @@ public class GestorVuelosController extends Controller implements Initializable 
                 private final JFXButton delete = new JFXButton("Inactivar");
 
                 {
+                    delete.setDisable(modoAuditor);
                     delete.setId("dangerous-button-efect");
                     delete.setOnAction((ActionEvent event) -> {
                         AuthenticationResponse aut = (AuthenticationResponse) AppContext.getInstance().get("token");

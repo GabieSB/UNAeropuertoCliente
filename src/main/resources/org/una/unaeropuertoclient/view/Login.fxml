@@ -22,7 +22,7 @@
       <HBox alignment="CENTER_RIGHT" layoutX="-27.0" layoutY="104.0" prefWidth="200.0" spacing="13.0" AnchorPane.bottomAnchor="56.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
             <JFXButton id="dangerous-button-efect" minWidth="70.0" onAction="#onActionSalir" prefHeight="25.0" text="Salir" />
-            <JFXButton fx:id="btnIngresar" minWidth="70.0" onAction="#onActionIngresar" prefHeight="25.0" text="Ingrear" />
+            <JFXButton fx:id="btnIngresar" minWidth="70.0" onAction="#onActionIngresar" prefHeight="25.0" text="Ingresar" />
          </children>
          <padding>
             <Insets left="20.0" right="70.0" />

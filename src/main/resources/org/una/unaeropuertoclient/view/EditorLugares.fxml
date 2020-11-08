@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.EditorLugaresController">
+<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="360.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.EditorLugaresController">
    <children>
       <Label layoutX="24.0" layoutY="24.0" styleClass="air-module-subtittle" text="Editor de lugares" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
       <HBox alignment="CENTER" layoutX="210.0" layoutY="160.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
@@ -15,10 +15,10 @@
             <JFXTextField fx:id="txtNombre" labelFloat="true" prefHeight="25.0" prefWidth="296.0" promptText="Nombre" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_RIGHT" layoutX="426.0" layoutY="338.0" maxHeight="35.0" maxWidth="-Infinity" prefHeight="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox fx:id="controlContainer" alignment="CENTER_RIGHT" layoutX="426.0" layoutY="338.0" maxHeight="35.0" maxWidth="-Infinity" prefHeight="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <JFXButton onAction="#OnClickSave" text="Guadar cambios" />
             <JFXButton id="dangerous-button-efect" onAction="#OnClickCancel" text="Cancelar" />
+            <JFXButton fx:id="btnGuardar" minWidth="103.0" onAction="#OnClickSave" text="Guadar cambios" />
          </children>
          <padding>
             <Insets right="10.0" />
