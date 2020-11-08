@@ -21,6 +21,6 @@
             <Label fx:id="lblUsuarioLogeado" text="userName" />
          </children>
       </HBox>
-      <Label fx:id="lblPantallaActual" layoutX="162.0" layoutY="45.0" styleClass="menu-superior-subtittle" text="Pantalla actual" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="162.0" />
+      <Label fx:id="lblPantallaActual" layoutX="162.0" layoutY="45.0" styleClass="menu-superior-subtittle" text="Pantalla actual" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="162.0" />
    </children>
 </AnchorPane>

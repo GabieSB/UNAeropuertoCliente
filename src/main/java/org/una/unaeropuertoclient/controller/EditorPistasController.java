@@ -40,6 +40,7 @@ public class EditorPistasController extends Controller implements Initializable 
     private HBox controlContainer;
     @FXML
     private JFXButton btnGuardar;
+    private boolean modoAuditor;
 
     /**
      * Initializes the controller class.
@@ -49,11 +50,12 @@ public class EditorPistasController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
     }
 
     @Override
     public void initialize() {
+        modoAuditor = (boolean) AppContext.getInstance().get("vuelosAditMode");
+        btnGuardar.setDisable(modoAuditor);
         txtLongitud.setText("");
         txtNumeroPista.setText("");
         tryActivEditionMode();

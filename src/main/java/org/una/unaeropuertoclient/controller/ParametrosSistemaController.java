@@ -15,12 +15,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import org.una.unaeropuertoclient.model.ParamSistemaDto;
 import org.una.unaeropuertoclient.service.ParamSistemaServicio;
+import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -64,6 +69,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
 
     @Override
     public void initialize() {
+        FlowController.changeSuperiorTittle("Parámetros de sistema");
         cbxTiempoInactivo.getItems().clear();
         cbxVuelos.getItems().clear();
         desactivarComponentes();
@@ -83,24 +89,29 @@ public class ParametrosSistemaController extends Controller implements Initializ
     }
 
     public void cargarDatos() {
-        ParamSistemaServicio paramSistemaServicio = new ParamSistemaServicio();
-        Respuesta respuesta = paramSistemaServicio.getById();
-        if (respuesta.getEstado()) {
-            paramSistemaDto = (ParamSistemaDto) respuesta.getResultado("data");
-        } else {
-            new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer los parametros del sistema", this.getStage(), respuesta.getMensaje());
-
-        }
-        txtRepresentante.setText(paramSistemaDto.getNombreRepresentante());
-        txtCorreo.setText(paramSistemaDto.getEmailAeropuerto());
-        txtTelefono.setText(paramSistemaDto.getTelefonoAeropuerto());
-        LocalTime ltApertura = LocalTime.of(paramSistemaDto.getAperturaOficina().getHours(), paramSistemaDto.getAperturaOficina().getMinutes(), paramSistemaDto.getAperturaOficina().getSeconds());
-        LocalTime ltCiere = LocalTime.of(paramSistemaDto.getCierreOficina().getHours(), paramSistemaDto.getCierreOficina().getMinutes(), paramSistemaDto.getCierreOficina().getSeconds());
-        tpkApertura.setValue(ltApertura);
-        tpkCierre.setValue(ltCiere);
-        cbxTiempoInactivo.setValue(paramSistemaDto.getTiempoInactividad());
-        cbxVuelos.setValue(paramSistemaDto.getVuelosHora());
-
+        aModoEspera(btnEditar);
+        Thread th = new Thread(() -> {
+            ParamSistemaServicio paramSistemaServicio = new ParamSistemaServicio();
+            Respuesta respuesta = paramSistemaServicio.getById();
+            Platform.runLater(() -> {
+                salirModoEspera(btnEditar, "Editar");
+                if (respuesta.getEstado()) {
+                    paramSistemaDto = (ParamSistemaDto) respuesta.getResultado("data");
+                    txtRepresentante.setText(paramSistemaDto.getNombreRepresentante());
+                    txtCorreo.setText(paramSistemaDto.getEmailAeropuerto());
+                    txtTelefono.setText(paramSistemaDto.getTelefonoAeropuerto());
+                    LocalTime ltApertura = LocalTime.of(paramSistemaDto.getAperturaOficina().getHours(), paramSistemaDto.getAperturaOficina().getMinutes(), paramSistemaDto.getAperturaOficina().getSeconds());
+                    LocalTime ltCiere = LocalTime.of(paramSistemaDto.getCierreOficina().getHours(), paramSistemaDto.getCierreOficina().getMinutes(), paramSistemaDto.getCierreOficina().getSeconds());
+                    tpkApertura.setValue(ltApertura);
+                    tpkCierre.setValue(ltCiere);
+                    cbxTiempoInactivo.setValue(paramSistemaDto.getTiempoInactividad());
+                    cbxVuelos.setValue(paramSistemaDto.getVuelosHora());
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al extraer los parametros del sistema", this.getStage(), respuesta.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     public void desactivarComponentes() {

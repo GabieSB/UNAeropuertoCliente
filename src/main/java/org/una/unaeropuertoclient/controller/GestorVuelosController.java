@@ -86,6 +86,7 @@ public class GestorVuelosController extends Controller implements Initializable 
     private JFXButton btnBuscar;
     @FXML
     private JFXButton btnLimpiar;
+    private boolean modoAuditor;
 
     /**
      * Initializes the controller class.
@@ -100,6 +101,7 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
+        modoAuditor = (boolean) AppContext.getInstance().get("vuelosAditMode");
         FlowController.changeSuperiorTittle("Módulo de vuelos");
         tbVuelos.getItems().clear();
         onActionLimpiar(new ActionEvent());
@@ -221,6 +223,7 @@ public class GestorVuelosController extends Controller implements Initializable 
                 private final JFXButton delete = new JFXButton("Inactivar");
 
                 {
+                    delete.setDisable(modoAuditor);
                     delete.setId("dangerous-button-efect");
                     delete.setOnAction((ActionEvent event) -> {
                         AuthenticationResponse aut = (AuthenticationResponse) AppContext.getInstance().get("token");

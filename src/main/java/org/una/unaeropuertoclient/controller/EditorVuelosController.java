@@ -95,6 +95,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     private HBox controlContainer2;
     @FXML
     private JFXButton btnGuardar;
+    private boolean modoAuditor;
 
     /**
      * Initializes the controller class.
@@ -112,6 +113,8 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
+        modoAuditor = (boolean) AppContext.getInstance().get("vuelosAditMode");
+        btnGuardar.setDisable(modoAuditor);
         vbSalidaYLlegada.setDisable(true);
         cbAerolinea.setPromptText("Cargando...");
         cbAvion.setPromptText("Aviones(Vacío)");

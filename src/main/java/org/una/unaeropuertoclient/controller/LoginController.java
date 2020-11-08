@@ -75,7 +75,7 @@ public class LoginController extends Controller implements Initializable {
             Respuesta resp = usuarioService.logIn(txtCedula.getText(), txtContrasenna.getText());
             Platform.runLater(() -> {
                 if (resp.getEstado()) {
-                    ButtonWaitUtils.salirModoEspera(btnIngresar, "Ingesar");
+                    ButtonWaitUtils.salirModoEspera(btnIngresar, "Ingresar");
                     FlowController.getInstance().goMain();
                     FlowController.getInstance().goView("MenuSuperior", "Top", null);
                     FlowController.getInstance().goView("MenuPrincipal");
