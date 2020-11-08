@@ -17,7 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
-import org.una.unaeropuertoclient.model.RolDto;
 import org.una.unaeropuertoclient.model.RolUsuarioDto;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -107,7 +106,7 @@ public class MenuPrincipalController extends Controller implements Initializable
         List<Node> flowChildrenList = new ArrayList();
         flow.getChildren().forEach(node -> flowChildrenList.add(node));
         flow.getChildren().clear();
-        AppContext.getInstance().set("vuelosAditMode", false);
+        AppContext.getInstance().set("auditMode", false);
         rList.forEach(rolU -> {
             switch (rolU.getRolesId().getNombre()) {
                 case "ADMINISTRADOR":
@@ -135,7 +134,7 @@ public class MenuPrincipalController extends Controller implements Initializable
                     break;
                 case "AUDITOR_CONTROL_VUELOS":
                     flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
-                    AppContext.getInstance().set("vuelosAditMode", true);
+                    AppContext.getInstance().set("auditMode", true);
                     break;
 //                case "GERENTE_CONTROL_VUELO":
 //                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));

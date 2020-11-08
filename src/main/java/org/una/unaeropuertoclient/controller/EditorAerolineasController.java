@@ -52,7 +52,7 @@ public class EditorAerolineasController extends Controller implements Initializa
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("vuelosAditMode");
+        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
         btnGuardar.setDisable(modoAuditor);
         txtNombre.setText("");
         tryActivEditionMode();

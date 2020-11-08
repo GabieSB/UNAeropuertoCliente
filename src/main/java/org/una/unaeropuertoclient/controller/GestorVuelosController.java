@@ -101,7 +101,7 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("vuelosAditMode");
+        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
         FlowController.changeSuperiorTittle("Módulo de vuelos");
         tbVuelos.getItems().clear();
         onActionLimpiar(new ActionEvent());

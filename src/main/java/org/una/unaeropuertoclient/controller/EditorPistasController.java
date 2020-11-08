@@ -54,7 +54,7 @@ public class EditorPistasController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("vuelosAditMode");
+        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
         btnGuardar.setDisable(modoAuditor);
         txtLongitud.setText("");
         txtNumeroPista.setText("");

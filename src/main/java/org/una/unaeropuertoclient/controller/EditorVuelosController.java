@@ -113,7 +113,7 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("vuelosAditMode");
+        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
         btnGuardar.setDisable(modoAuditor);
         vbSalidaYLlegada.setDisable(true);
         cbAerolinea.setPromptText("Cargando...");
