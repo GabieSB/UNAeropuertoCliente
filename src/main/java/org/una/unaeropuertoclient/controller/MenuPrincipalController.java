@@ -133,8 +133,9 @@ public class MenuPrincipalController extends Controller implements Initializable
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
                     break;
                 case "AUDITOR_CONTROL_VUELOS":
-                    flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
                     AppContext.getInstance().set("auditMode", true);
+                    flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
                     break;
 //                case "GERENTE_CONTROL_VUELO":
 //                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
