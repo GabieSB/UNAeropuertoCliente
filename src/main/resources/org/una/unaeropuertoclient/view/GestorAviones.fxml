@@ -18,7 +18,7 @@
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="air-glass-efect-color">
                <children>
-                  <HBox alignment="CENTER" layoutX="260.0" layoutY="44.0" prefHeight="100.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox fx:id="controlContainer" alignment="CENTER" layoutX="260.0" layoutY="44.0" prefHeight="100.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <VBox alignment="CENTER" prefHeight="178.0" prefWidth="219.0" spacing="20.0">
                            <children>
@@ -33,7 +33,7 @@
                         <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
                            <children>
                               <JFXButton onAction="#OnClickNuevo" prefHeight="25.0" prefWidth="100.0" text="Nuevo" />
-                              <JFXButton minWidth="100.0" onAction="#onActionBuscar" text="Buscar" />
+                              <JFXButton fx:id="btnBuscar" minWidth="100.0" onAction="#onActionBuscar" text="Buscar" />
                               <JFXButton minWidth="100.0" onAction="#onActionClear" text="Limpiar campos" />
                            </children>
                         </VBox>

@@ -15,9 +15,9 @@
             <JFXTextField fx:id="txtNombre" labelFloat="true" prefHeight="25.0" prefWidth="296.0" promptText="Nombre" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_RIGHT" layoutX="426.0" layoutY="338.0" maxHeight="35.0" maxWidth="-Infinity" prefHeight="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <HBox fx:id="controlContainer" alignment="CENTER_RIGHT" layoutX="426.0" layoutY="338.0" maxHeight="35.0" maxWidth="-Infinity" prefHeight="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <JFXButton onAction="#OnClickSave" text="Guadar cambios" />
+            <JFXButton fx:id="btnGuardar" minWidth="103.0" onAction="#OnClickSave" text="Guadar cambios" />
             <JFXButton id="dangerous-button-efect" onAction="#OnClickCancel" text="Cancelar" />
          </children>
          <padding>
