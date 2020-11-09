@@ -34,6 +34,9 @@ public class LoginController extends Controller implements Initializable {
     public JFXTextField txtCedula;
     @FXML
     public JFXPasswordField txtContrasenna;
+    @FXML
+    private JFXButton btnIngresar;
+    private UsuarioService usuarioService = new UsuarioService();
 
     /**
      * Initializes the controller class.
@@ -41,10 +44,6 @@ public class LoginController extends Controller implements Initializable {
      * @param url
      * @param rb
      */
-    UsuarioService usuarioService = new UsuarioService();
-    @FXML
-    private JFXButton btnIngresar;
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         txtCedula.setText("admin2");
