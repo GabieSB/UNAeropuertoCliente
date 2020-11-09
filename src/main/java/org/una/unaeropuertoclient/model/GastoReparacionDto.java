@@ -46,8 +46,8 @@ public class GastoReparacionDto {
         this.monto = monto;
     }
 
-    public ProvedorDto getProvedoresId() {
-        return provedoresId;
+    public String getProvedorNombre() {
+        return provedoresId!=null? provedoresId.getNombre():"No registrado";
     }
 
     public Long getId() {
@@ -70,6 +70,9 @@ public class GastoReparacionDto {
 
     public Boolean getEstadoPago() {
         return estadoPago;
+    }
+    public String getEstadoPagoPalabra() {
+        return estadoPago?"Pagado":"Pendiente";
     }
 
     public void setEstadoPago(Boolean estadoPago) {
@@ -109,6 +112,12 @@ public class GastoReparacionDto {
         return activo;
     }
 
+    public String getActivoPalabra() {
+        return activo?"Activo":"Inactivo";
+    }
+
+
+
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
@@ -130,6 +139,7 @@ public class GastoReparacionDto {
     }
 
     public Float getMonto() {
+
         return  monto;
     }
 
@@ -141,5 +151,9 @@ public class GastoReparacionDto {
         String ret = diasText + " a la" + (ldt.getHour() != 1 ? "s" : "");
         ret += " " + ldt.toLocalTime().toString();
         return ret;
+    }
+
+    public ProvedorDto getProvedoresId() {
+        return provedoresId;
     }
 }

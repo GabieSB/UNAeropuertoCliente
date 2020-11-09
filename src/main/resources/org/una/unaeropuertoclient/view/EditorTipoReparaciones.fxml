@@ -33,16 +33,16 @@
                             <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="476.0" prefWidth="566.0" styleClass="air-module-fondo" stylesheets="@style.css">
                                     <children>
-                                        <TableView fx:id="tableProveedores" layoutX="23.0" layoutY="27.0" prefHeight="222.0" prefWidth="252.0">
+                                        <TableView fx:id="tableTipoReparaciones" layoutX="23.0" layoutY="27.0" prefHeight="222.0" prefWidth="252.0">
                                             <columns>
                                                 <TableColumn fx:id="columNombre" prefWidth="138.4000244140625" text="Nombre" />
                                                 <TableColumn fx:id="columAcciones" minWidth="5.5999755859375" prefWidth="98.39996337890625" text="Acción" />
                                             </columns>
                                         </TableView>
-                                        <JFXTextField fx:id="txtNombreProveedorBuscar" layoutX="315.0" layoutY="76.0" prefHeight="24.0" prefWidth="201.0" promptText="Nombre" />
+                                        <JFXTextField fx:id="txtNombreTipoReparacionBuscar" layoutX="315.0" layoutY="76.0" prefHeight="24.0" prefWidth="201.0" promptText="Nombre" />
                                         <JFXButton fx:id="buscarNombreButton" layoutX="312.0" layoutY="132.0" onAction="#buscarNombreButtonOnAction" prefHeight="27.0" prefWidth="82.0" stylesheets="@style.css" text="Buscar" />
                                         <Label layoutX="131.0" layoutY="276.0" styleClass="air-module-subtittle" stylesheets="@style.css" text="Tipo de mantenimiento Seleccionado a Editar:" />
-                                        <JFXTextField fx:id="txtNombreModifcar" layoutX="189.0" layoutY="346.0" prefHeight="26.0" prefWidth="214.0" promptText="Nuevo nombre" />
+                                        <JFXTextField fx:id="txtNombreModifcar" labelFloat="true" layoutX="189.0" layoutY="346.0" prefHeight="26.0" prefWidth="214.0" promptText="Nuevo nombre" />
                                         <Button fx:id="buscarTodosButton" layoutX="421.0" layoutY="133.0" mnemonicParsing="false" onAction="#buscarTodosButtonOnAction" prefHeight="26.0" prefWidth="92.0" styleClass="jfx-button" stylesheets="@style.css" text="Buscar Todos" />
                                         <Separator layoutX="278.0" layoutY="29.0" orientation="VERTICAL" prefHeight="218.0" prefWidth="10.0" styleClass="air-searchSeparator" />
                                         <Separator layoutY="255.0" prefHeight="15.0" prefWidth="565.0" styleClass="air-searchSeparator" />

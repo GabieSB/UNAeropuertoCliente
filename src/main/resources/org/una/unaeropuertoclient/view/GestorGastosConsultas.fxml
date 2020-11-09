@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXRadioButton?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,78 +16,140 @@
 
 <AnchorPane prefHeight="567.0" prefWidth="830.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorGastosConsultasController">
    <children>
-      <VBox alignment="CENTER" prefHeight="576.0" prefWidth="830.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <VBox alignment="CENTER" prefHeight="569.0" prefWidth="830.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox prefHeight="34.0" prefWidth="830.0">
+            <HBox alignment="CENTER" prefHeight="34.0" prefWidth="830.0">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="34.0" prefWidth="452.0" HBox.hgrow="ALWAYS">
                      <children>
                         <JFXButton fx:id="btonNuevo" alignment="CENTER" contentDisplay="BOTTOM" onAction="#btnNuevo" prefHeight="30.0" prefWidth="126.0" stylesheets="@style.css" text="Nuevo" />
+                        <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="434.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <JFXButton id="advance-button-efect" onAction="#provedoresButtonOnAction" prefHeight="30.0" prefWidth="93.0" text="Provedores" />
+                              <JFXButton id="advance-button-efect" onAction="#tiposDeReparacionButtonOnAction" prefHeight="30.0" prefWidth="146.0" text="Tipos de Mantenimiento" />
+                           </children>
+                        </HBox>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="434.0" spacing="10.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <JFXButton id="advance-button-efect" onAction="#provedoresButtonOnAction" prefHeight="30.0" prefWidth="93.0" text="Provedores" />
-                        <JFXButton id="advance-button-efect" onAction="#tiposDeReparacionButtonOnAction" prefHeight="30.0" prefWidth="146.0" text="Tipos de Mantenimiento" />
-                     </children>
-                  </HBox>
-               </children>
-               <padding>
-                  <Insets left="50.0" right="50.0" />
-               </padding>
-            </HBox>
-            <HBox alignment="CENTER" prefHeight="0.0" prefWidth="830.0" />
-            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="air-glass-efect-color">
+               </children></HBox>
+            <VBox alignment="CENTER" prefHeight="198.0" prefWidth="830.0" styleClass="air-glass-efect-color" VBox.vgrow="ALWAYS">
                <children>
-                  <HBox alignment="CENTER" prefHeight="28.0" prefWidth="830.0">
+                  <Label styleClass="air-module-tittle" text="Panel de Búsqueda" />
+                  <HBox prefHeight="206.0" prefWidth="830.0">
                      <children>
-                        <Label styleClass="air-module-tittle" text="Panel de Búsqueda" />
+                        <VBox prefHeight="206.0" prefWidth="727.0" spacing="20.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <JFXTextField fx:id="txtnumeroContrato" labelFloat="true" promptText="Número de Contrato" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets left="10.0" right="10.0" />
+                                 </padding>
+                              </JFXTextField>
+                              <JFXTextField fx:id="txtProveedor" promptText="Proveedor">
+                                 <padding>
+                                    <Insets left="10.0" right="10.0" />
+                                 </padding>
+                              </JFXTextField>
+                              <JFXTextField fx:id="txtTipo" promptText="Tipo de Mantenimiento">
+                                 <padding>
+                                    <Insets left="10.0" right="10.0" />
+                                 </padding>
+                              </JFXTextField>
+                              <HBox alignment="CENTER_LEFT" prefHeight="26.0" prefWidth="416.0" spacing="10.0">
+                                 <children>
+                                    <Label text="Duración">
+                                       <padding>
+                                          <Insets left="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <JFXTextField fx:id="txtDuracionDesde" labelFloat="true" prefHeight="24.0" prefWidth="113.0" promptText="Desde" />
+                                    <JFXTextField fx:id="txtDuracionHasta" labelFloat="true" prefHeight="24.0" prefWidth="114.0" promptText="Hasta" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="416.0" spacing="10.0">
+                                 <children>
+                                    <Label text="Pericidad">
+                                       <padding>
+                                          <Insets left="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <JFXTextField fx:id="txtPeriocidadDesde" labelFloat="true" prefHeight="24.0" prefWidth="114.0" promptText="Desde" />
+                                    <JFXTextField fx:id="txtPeriocidadHasta" labelFloat="true" prefHeight="24.0" prefWidth="114.0" promptText="Hasta" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="136.0" prefWidth="0.0" styleClass="air-searchSeparator" />
+                        <VBox prefHeight="174.0" prefWidth="715.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="31.0" prefWidth="517.0" spacing="10.0">
+                                 <children>
+                                    <Label text="Desde:" />
+                                    <DatePicker fx:id="dateInicio" prefHeight="26.0" prefWidth="109.0" />
+                                    <Label text="Hasta:" />
+                                    <DatePicker fx:id="dateFin" prefHeight="26.0" prefWidth="116.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="50.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="2.0" prefWidth="408.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <JFXToggleButton fx:id="estadoToggleButton" prefHeight="50.0" prefWidth="234.0" text="Estado Gasto Mantenimiento">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </JFXToggleButton>
+                                    <JFXRadioButton fx:id="estadoActivoRadioButton" text="Activo" />
+                                    <JFXRadioButton fx:id="estadoInactivoRadioButton" text="Inactivo" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="10.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="408.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <JFXToggleButton fx:id="estadoPagoToggleButton" prefHeight="50.0" prefWidth="190.0" text="Estado de Pago" />
+                                    <JFXRadioButton fx:id="pagadoRadioButton" prefHeight="46.0" prefWidth="92.0" text="Pagado" />
+                                    <JFXRadioButton fx:id="pendienteRadioButton" text="Pendiente" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                        </VBox>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="66.0" prefWidth="830.0" spacing="40.0">
+                  <HBox alignment="CENTER" prefHeight="25.0" prefWidth="830.0" spacing="50.0">
                      <children>
-                        <JFXComboBox fx:id="comboxParametros" prefHeight="24.0" prefWidth="204.0" promptText="Parámetro" />
-                        <JFXTextField fx:id="txtValorBuscado" prefHeight="24.0" prefWidth="323.0" />
-                        <JFXButton fx:id="btonBuscarParametro" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorParametro" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Buscar por Paramétro" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER" prefHeight="67.0" prefWidth="834.0" spacing="35.0">
-                     <children>
-                        <JFXComboBox fx:id="comboxParametros1" prefHeight="24.0" prefWidth="204.0" promptText="Parámetro" />
-                        <Label text="De:" />
-                        <JFXTextField fx:id="txtDiasInicio" prefHeight="24.0" prefWidth="62.0" />
-                        <Label text="hasta" />
-                        <JFXTextField fx:id="txtDiasFinal" prefHeight="24.0" prefWidth="62.0" />
-                        <Label text="días" />
-                        <JFXButton fx:id="btonBuscarEntreDias" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarEntreDias" prefHeight="30.0" prefWidth="121.0" stylesheets="@style.css" text="Buscar entre días" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER" prefHeight="59.0" prefWidth="834.0" spacing="50.0">
-                     <children>
-                        <Label styleClass="air-module-subtittle" text="Desde:" />
-                        <DatePicker fx:id="dateInicio" prefHeight="25.0" prefWidth="150.0" />
-                        <Label styleClass="air-module-subtittle" text="Hasta:" />
-                        <DatePicker fx:id="dateFin" prefHeight="26.0" prefWidth="160.0" />
-                        <JFXButton fx:id="btnBuscarFecha" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorFecha" prefHeight="30.0" prefWidth="124.0" stylesheets="@style.css" text="Buscar por fecha" />
+                        <JFXButton fx:id="limpiarButton" onAction="#limpiarOnAction" prefHeight="20.0" prefWidth="93.0" text="Limpiar" />
+                        <JFXButton fx:id="buscarButton" onAction="#buscarOnAction" prefHeight="20.0" prefWidth="90.0" text="Buscar" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>
             </VBox>
-            <HBox alignment="CENTER" prefHeight="312.0" prefWidth="830.0">
+            <HBox alignment="CENTER" prefHeight="262.0" prefWidth="830.0" VBox.vgrow="ALWAYS">
                <children>
-                  <TableView fx:id="tableResultados" prefHeight="307.0" prefWidth="798.0">
+                  <TableView fx:id="tableResultados" prefHeight="199.0" prefWidth="798.0" HBox.hgrow="ALWAYS">
                     <columns>
-                      <TableColumn fx:id="columId" prefWidth="39.20001373291018" text="ID" />
                       <TableColumn fx:id="columFecha" prefWidth="111.20001220703125" text="Fecha de registro" />
                         <TableColumn fx:id="columEstado" prefWidth="75.0" text="Estado Pago" />
+                        <TableColumn fx:id="columMonto" prefWidth="75.0" text="Monto" />
                         <TableColumn fx:id="columActivo" prefWidth="49.59999084472656" text="Activo" />
                         <TableColumn fx:id="columContrato" prefWidth="57.60003662109375" text="Contrato" />
                         <TableColumn fx:id="columDurabilidad" prefWidth="68.79998779296875" text="Duración" />
                         <TableColumn fx:id="columPeriocidad" prefWidth="61.60003662109375" text="Periocidad" />
                         <TableColumn fx:id="columTipo" prefWidth="64.0" text="Tipo" />
                         <TableColumn fx:id="columObservaciones" prefWidth="89.59991455078125" text="Observaciones" />
+                        <TableColumn fx:id="columProveedor" prefWidth="75.0" text="Proveedor" />
                         <TableColumn fx:id="columAcciones" prefWidth="258.4000244140625" text="Acciones" />
                     </columns>
+                     <padding>
+                        <Insets bottom="10.0" />
+                     </padding>
                   </TableView>
                </children>
             </HBox>
