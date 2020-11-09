@@ -184,13 +184,10 @@ public class RegistrarTipoServicioController extends Controller implements Initi
     }
 
     public void tabSelected(Event event) {
-        System.out.println("1");
         comboTipoServicio.setPromptText("Cargando...");
         if(tabServicios.getSelectionModel().isSelected(1) && tiposServicios == null){
-            System.out.println("2");
-            Thread th = new Thread(() -> cargarServicios());
+            Thread th = new Thread(this::cargarServicios);
             th.start();
-            System.out.println("Se sale");
         }
     }
 

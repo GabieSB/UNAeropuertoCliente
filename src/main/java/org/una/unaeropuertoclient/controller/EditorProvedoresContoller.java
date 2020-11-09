@@ -31,7 +31,6 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
     public TableView<ProvedorDto> tableProveedores;
     public TableColumn<ProvedorDto, String> columNombre;
     public JFXTextField txtNombreRegistrar;
-    public JFXTextField txtDescripcionRegistrar;
     public JFXButton buttonRegistrar;
     public JFXTextField txtNombreModifcar;
     public TableColumn<ProvedorDto, Void> columAcciones;
@@ -183,7 +182,7 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
     }
 
     private void cargarTablePropiedades(){
-        tableProveedores.setPlaceholder(new Label("Realize una búsqueda para mostrar proveedores"));
+        tableProveedores.setPlaceholder(new Label("Realice una búsqueda  para mostrar proveedores"));
         columNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombre()));
     }
 

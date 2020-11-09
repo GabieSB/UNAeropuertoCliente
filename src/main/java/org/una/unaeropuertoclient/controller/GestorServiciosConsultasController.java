@@ -17,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.*;
+import org.una.unaeropuertoclient.service.BitacoraService;
 import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.utils.*;
@@ -57,6 +58,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
     ToggleGroup estadoPagoToggleGroup = new ToggleGroup();
     ToggleGroup estadoFinalizacionToggleGroup = new ToggleGroup();
     ToggleGroup estadoServicioToggleGroup = new ToggleGroup();
+
 
     public DatePicker dateInicio;
     public DatePicker dateFin;
@@ -143,7 +145,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
     }
 
     private void cargarPropertiesTable(){
-        tableResultados.setPlaceholder(new Label("Realize una consulta para mostrar resultados"));
+        tableResultados.setPlaceholder(new Label("Realice una consulta para mostrar resultados"));
         activateResponsiveConfig();
         columFactura.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroFactura().toString()));
         columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicioFormateada()));
@@ -158,9 +160,9 @@ public class GestorServiciosConsultasController  extends Controller implements I
     private void activateResponsiveConfig() {
 
         columFactura.prefWidthProperty().bind(tableResultados.widthProperty().divide(10));
-        columFecha.prefWidthProperty().bind(tableResultados.widthProperty().divide(8));
+        columFecha.prefWidthProperty().bind(tableResultados.widthProperty().divide(9));
         columEstadoServicio.prefWidthProperty().bind(tableResultados.widthProperty().divide(12));
-        columEstadoPago.prefWidthProperty().bind(tableResultados.widthProperty().divide(10));
+        columEstadoPago.prefWidthProperty().bind(tableResultados.widthProperty().divide(12));
         columAvion.prefWidthProperty().bind(tableResultados.widthProperty().divide(15));
         columTipoServicio.prefWidthProperty().bind(tableResultados.widthProperty().divide(8));
         columMonto.prefWidthProperty().bind(tableResultados.widthProperty().divide(13));
@@ -201,37 +203,26 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
     void registrarNotificacion(ServicioMantenimientoDto selected){
 
-        AuthenticationResponse authentication = (AuthenticationResponse) AppContext.getInstance().get("token");
 
-//        NotificacionDto notificacionDto = new NotificacionDto(true, Math.toIntExact(selected.getId()), new Date(), authentication.getUsuario().getAreasId());
-  NotificacionDto notificacionDto = new NotificacionDto(true, selected.getId(),Timestamp.valueOf(LocalDateTime.now()), authentication.getUsuario().getAreasId());
-        Respuesta respuesta = notificacionService.create(notificacionDto);
+        Thread t = new Thread(()->{
+            AuthenticationResponse authentication = (AuthenticationResponse) AppContext.getInstance().get("token");
 
-        if(respuesta.getEstado()){
-            mensaje.show(Alert.AlertType.INFORMATION, "Información", "Se solicitó la anulacion del servicion con ID: " + selected.getId());
-        }
-    }
+            NotificacionDto notificacionDto = new NotificacionDto(true, selected.getId(),Timestamp.valueOf(LocalDateTime.now()), authentication.getUsuario().getAreasId());
+            Respuesta respuesta = notificacionService.create(notificacionDto);
 
-
-
-    public void buscarPorFecha(ActionEvent actionEvent) {
-        if(dateFin.getValue() != null && dateInicio.getValue() != null){
-            if(dateFin.getValue().isBefore(dateInicio.getValue())) new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "La fecha final debería ser más reciente a la de inicio");
-           else{
-                Respuesta  respuesta = service.buscarEntreFechas(dateInicio.getValue(), dateFin.getValue());
+            Platform.runLater(()->{
                 if(respuesta.getEstado()){
-                    serviciosResultados = (List<ServicioMantenimientoDto>) respuesta.getResultado("data");
-                    llenarTabla();
-                }else{
-                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), respuesta.getMensaje());
+                    new BitacoraService().create("Se solicitó la anulación de el servicio mantenimiento con ID: " + selected.getId());
+                    mensaje.show(Alert.AlertType.INFORMATION, "Información", "Se solicitó la anulacion del servicion con ID: " + selected.getId());
                 }
-            }
-        }else
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "La ingresar fecha de inicio y fecha final");
+            });
+
+        });
+
+        t.start();
+
 
     }
-
-
 
     public void busquedaSegunParametro() {
         String activo, pago, finalizacion, fechaInicio, fechaFinal;
@@ -290,5 +281,6 @@ public class GestorServiciosConsultasController  extends Controller implements I
         servicioToggleButton.selectedProperty().set(false);
         pagoToggleButton.selectedProperty().set(false);
         finalizacionToggleButton.selectedProperty().set(false);
+
     }
 }

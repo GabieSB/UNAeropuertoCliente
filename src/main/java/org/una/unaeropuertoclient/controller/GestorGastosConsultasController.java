@@ -1,8 +1,7 @@
 package org.una.unaeropuertoclient.controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -25,31 +24,42 @@ import java.util.*;
 public class GestorGastosConsultasController extends Controller implements Initializable {
     public TableColumn<GastoReparacionDto, String> columId;
     public TableColumn<GastoReparacionDto, String>  columFecha;
-    public TableColumn<GastoReparacionDto, Boolean>  columEstado;
+    public TableColumn<GastoReparacionDto, String>  columEstado;
     public TableColumn<GastoReparacionDto, String>  columContrato;
     public TableColumn<GastoReparacionDto, String>  columDurabilidad;
     public TableColumn<GastoReparacionDto, String>  columPeriocidad;
     public TableColumn<GastoReparacionDto, String>  columTipo;
     public TableColumn<GastoReparacionDto, String>  columObservaciones;
     public TableColumn<GastoReparacionDto, Void>  columAcciones;
-    public TableColumn<GastoReparacionDto, Boolean>  columActivo;
+    public TableColumn<GastoReparacionDto, String>  columActivo;
     public DatePicker dateInicio;
     public DatePicker dateFin;
-    public JFXButton btnBuscarFecha;
-    public JFXButton btonBuscarParametro1;
-    public JFXComboBox comboxParametros;
-    public JFXTextField txtValorBuscado;
-    public JFXButton btonBuscarParametro;
-    public JFXComboBox comboxParametros1;
-    public JFXTextField txtDiasInicio;
-    public JFXTextField txtDiasFinal;
-    public TableView tableResultados;
+    public TableView<GastoReparacionDto> tableResultados;
     public JFXButton btonNuevo;
+    public JFXTextField txtnumeroContrato;
+    public JFXTextField txtProveedor;
+    public JFXTextField txtTipo;
+    public JFXToggleButton estadoToggleButton;
+    public JFXRadioButton estadoInactivoRadioButton;
+    public JFXRadioButton estadoActivoRadioButton;
+    public JFXToggleButton estadoPagoToggleButton;
+    public JFXRadioButton pagadoRadioButton;
+    public JFXRadioButton pendienteRadioButton;
+    public JFXButton limpiarButton;
+    public JFXButton buscarButton;
+    public TableColumn<GastoReparacionDto, String> columProveedor;
+    public JFXTextField txtPeriocidadDesde;
+    public JFXTextField txtPeriocidadHasta;
+    public JFXTextField txtDuracionDesde;
+    public JFXTextField txtDuracionHasta;
+    public TableColumn<GastoReparacionDto, String>  columMonto;
     List<GastoReparacionDto> gastoReparacionList = new ArrayList<>();
     GastoReparacionService service = new GastoReparacionService();
     NotificacionService notificacionService = new NotificacionService();
     Mensaje mensaje = new Mensaje();
     boolean isGestor = false;
+    ToggleGroup estadoMantenimientoToggleGroup = new ToggleGroup() ;
+    ToggleGroup estadoPagoToggleGroup = new ToggleGroup();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -62,35 +72,36 @@ public class GestorGastosConsultasController extends Controller implements Initi
 
     private void iniciarComponentes(){
 
-        columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
+        setPropiedadesTable();
+        unirRadioButtons();
+        bindToggleButtonsConRadioButtons();
+    }
+
+    private void setPropiedadesTable(){
+        tableResultados.setPlaceholder(new Label("Realice una consulta para mostrar resultados"));
+        activateResponsiveConfig();
         columContrato.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroContrato().toString()));
         columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaServicioFormateada()));
-        columEstado.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getEstadoPago()));
-        columEstado.setCellFactory( tc -> new TableCell<>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null :
-                        item.booleanValue() ? "Pagado" : "Pendiente");
-            }
-        });
-
-        columActivo.setCellValueFactory(x -> new SimpleBooleanProperty(x.getValue().getActivo()));
-        columActivo.setCellFactory( tc -> new TableCell<>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null :
-                        item.booleanValue() ? "Activo" : "Inactivo");
-            }
-        });
-
-
+        columEstado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getEstadoPagoPalabra()));
+        columActivo.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getActivoPalabra()));
         columTipo.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTiposId().getNombre()));
         columDurabilidad.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getDuracion().toString()));
         columPeriocidad.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getPeriodicidad().toString()));
         columObservaciones.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getObservaciones()));
-        llenarComboBox();
+        columProveedor.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getProvedorNombre()));
+        columMonto.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getMonto().toString()));
+    }
+    private void activateResponsiveConfig() {
+
+        columContrato.prefWidthProperty().bind(tableResultados.widthProperty().divide(13));
+        columFecha.prefWidthProperty().bind(tableResultados.widthProperty().divide(10));
+        columActivo.prefWidthProperty().bind(tableResultados.widthProperty().divide(13));
+        columEstado.prefWidthProperty().bind(tableResultados.widthProperty().divide(12));
+        columTipo.prefWidthProperty().bind(tableResultados.widthProperty().divide(8));
+        columMonto.prefWidthProperty().bind(tableResultados.widthProperty().divide(13));
+        columDurabilidad.prefWidthProperty().bind(tableResultados.widthProperty().divide(15));
+        columPeriocidad.prefWidthProperty().bind(tableResultados.widthProperty().divide(15));
+        columAcciones.prefWidthProperty().bind(tableResultados.widthProperty().divide(8));
     }
 
     private void addButtonToTable() {
@@ -98,7 +109,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
         Callback<TableColumn<GastoReparacionDto, Void>, TableCell<GastoReparacionDto, Void>> cellFactory = new Callback<>() {
             @Override
             public TableCell<GastoReparacionDto, Void> call(final TableColumn<GastoReparacionDto, Void> param) {
-                final TableCell<GastoReparacionDto, Void> cell = new TableCell<>() {
+                return new TableCell<>() {
 
                     private final JFXButton btn = new JFXButton("Modificar");
 
@@ -128,7 +139,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
                                 "    -jfx-button-type:RAISED;\n" +
                                 "    -fx-text-fill:  #E0E0E0;");
                     }
-                    HBox hBox = new HBox(btn, btn2);
+                    final HBox hBox = new HBox(btn, btn2);
                     @Override
                     public void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);
@@ -140,7 +151,6 @@ public class GestorGastosConsultasController extends Controller implements Initi
                     }
 
                 };
-                return cell;
             }
         };
 
@@ -148,8 +158,6 @@ public class GestorGastosConsultasController extends Controller implements Initi
 
     }
     public void registrarNotificacion(GastoReparacionDto gastoReparacionDto){
-
-        AuthenticationResponse authentication = (AuthenticationResponse) AppContext.getInstance().get("token");
 
         AreaDto areaDto = new AreaDto();
         areaDto.setId((long) 3);
@@ -170,106 +178,35 @@ public class GestorGastosConsultasController extends Controller implements Initi
         else columAcciones.setVisible(false);
     }
 
-    private void  llenarComboBox(){
-        ObservableList<String> options =
-                FXCollections.observableArrayList(
-                        "ID",
-                        "Número de Contrato",
-                        "Estado de Pago",
-                        "Activo",
-                        "Tipo de servicio"
 
-                );
-        comboxParametros.setItems(options);
+    private void  unirRadioButtons(){
+        estadoActivoRadioButton.setToggleGroup(estadoMantenimientoToggleGroup);
+        estadoInactivoRadioButton.setToggleGroup(estadoMantenimientoToggleGroup);
+        pagadoRadioButton.setToggleGroup(estadoPagoToggleGroup);
+        pendienteRadioButton.setToggleGroup(estadoPagoToggleGroup);
 
-        ObservableList<String> options2 =
-                FXCollections.observableArrayList(
-                        "Periocidad",
-                        "Durabilidad"
-                );
-        comboxParametros1.setItems(options2);
-        
     }
-    public void buscarEntreDiasDurabilidadYPeriocidad(int selectedItem){
-        Respuesta respuesta = null;
-        switch (selectedItem){
-            case 0: respuesta = service.buscarEntreDiasPeriocidad(txtDiasInicio.getText(), txtDiasFinal.getText()) ;break;
-            case 1: respuesta = service.buscarEntreDiasDurabilidad(txtDiasInicio.getText(), txtDiasFinal.getText()); break;
-        }
-
-        if(respuesta != null && respuesta.getEstado()){
-            gastoReparacionList = (List<GastoReparacionDto>) respuesta.getResultado("data");
-            llenarTabla();
-        }else{
-            mensaje.show(Alert.AlertType.ERROR, "Información", "No se encontraron resultados :c");
-        }
-
-
+    private  void bindToggleButtonsConRadioButtons(){
+        estadoActivoRadioButton.visibleProperty().bind(estadoToggleButton.selectedProperty());
+        estadoInactivoRadioButton.visibleProperty().bind(estadoToggleButton.selectedProperty());
+        pendienteRadioButton.visibleProperty().bind(estadoPagoToggleButton.selectedProperty());
+        pagadoRadioButton.visibleProperty().bind(estadoPagoToggleButton.selectedProperty());
     }
 
     private void limpiar(){
-        txtDiasFinal.setText("");
-        txtDiasInicio.setText("");
-        txtValorBuscado.setText("");
+       txtnumeroContrato.clear();
+       txtProveedor.clear();
+       txtTipo.clear();
+       dateInicio.setValue(null);
+       dateFin.setValue(null);
+       estadoToggleButton.selectedProperty().set(false);
+       estadoPagoToggleButton.selectedProperty().set(false);
+       txtPeriocidadHasta.clear();
+       txtPeriocidadDesde.clear();
+       txtDuracionDesde.clear();
+       txtPeriocidadHasta.clear();
 
     }
-
-    public void busquedaSegunParametro(int selectedItem, String valor) {
-
-        Respuesta respuesta = null;
-        switch (selectedItem) {
-            case 0: {
-                if(Validar.isLongNumber(valor)){
-                    respuesta = service.buscarPorID(valor);
-                }else   mensaje.show(Alert.AlertType.WARNING, "Dato incorrecto", "Parece que el valor ingresado no es un número");
-                break;
-            }
-            case 1:
-                if(Validar.isLongNumber(valor)){
-                    respuesta = service.buscarPorNumeroContrato(Long.parseLong(valor));
-                }else   mensaje.show(Alert.AlertType.WARNING, "Dato incorrecto", "Parece que el valor ingresado no es un número");
-                break;
-            case 2:
-            {
-                if (valor.contains("pagado") || valor.contains("pendiente")) {
-                    valor = (valor.contains("pagado"))?"true":"false";
-                    respuesta = service.buscarPorEstadoPago(Boolean.parseBoolean(valor));
-                }else
-                    mensaje.show(Alert.AlertType.INFORMATION, "ERROR DE DATO", "El valor búscado es incorrecto, debe ser pagado o pendiente");
-                break;
-            }
-            case 3:
-                if (valor.contains("activo") || valor.contains("inactivo")) {
-                    valor = (valor.contains("inactivo"))?"false":"true";
-                    respuesta = service.buscarPorEstado(Boolean.parseBoolean(valor));
-                }else
-                    mensaje.show(Alert.AlertType.INFORMATION, "Dato incorrecto", "El valor búscado debería ser activo o inactivo");
-                break;
-
-            case 4:respuesta = service.buscarPorTipoNombre(valor); break;
-
-        }
-
-        if(respuesta != null ){
-
-            if(respuesta.getEstado()){
-                if(selectedItem == 0 || selectedItem == 1) {
-                    GastoReparacionDto service1 = (GastoReparacionDto) respuesta.getResultado("data");
-                    gastoReparacionList.clear();
-                    gastoReparacionList.add(service1);
-
-                }else{
-                    gastoReparacionList = (List<GastoReparacionDto>) respuesta.getResultado("data");
-                }
-                llenarTabla();
-            }else{
-                mensaje.show(Alert.AlertType.INFORMATION, "Respuesta", respuesta.getMensaje());
-            }
-
-        }
-
-    }
-
 
     @Override
     public void initialize() {
@@ -284,35 +221,44 @@ public class GestorGastosConsultasController extends Controller implements Initi
         }
     }
 
-    public void buscarPorFecha(ActionEvent actionEvent) {
-        Respuesta  respuesta = service.buscarEntreFechas(dateInicio.getValue(), dateFin.getValue());
-        if(respuesta.getEstado()){
-            gastoReparacionList = (List<GastoReparacionDto>) respuesta.getResultado("data");
-            llenarTabla();
-        }else{
 
-        }
+
+    public void buscarPorParametro() {
+
+        Respuesta respuesta = getRespuestaConsulta();
+
+        Platform.runLater(()->{
+            if(respuesta.getEstado()){
+                gastoReparacionList = (List<GastoReparacionDto>) respuesta.getResultado("data");
+                llenarTabla();
+            }else {
+                new Mensaje().show(Alert.AlertType.ERROR, "Error al consultar", respuesta.getMensaje());
+            }
+            buscarButton.setText("Buscar");
+            buscarButton.setDisable(false);
+        });
     }
 
-    public void buscarPorParametro(ActionEvent actionEvent) {
-        int selectedItem = comboxParametros.getSelectionModel().getSelectedIndex();
-        String valor = txtValorBuscado.getText();
+    private Respuesta getRespuestaConsulta() {
+        String activo, pago, fechaInicio, fechaFinal, diasDurabilidadInicic, diasDurabilidadFin, diasPeriocidadInicio, diasPeriocidadFin;
+        if(estadoToggleButton.isSelected()) activo = estadoActivoRadioButton.isSelected()? "true":"false";
+        else activo = "none";
+        if(estadoPagoToggleButton.isSelected()) pago= pagadoRadioButton.isSelected()? "true":"false";
+        else pago = "none";
+        if(dateInicio.getValue() == null) fechaInicio = "none";
+        else fechaInicio = dateInicio.getValue().toString();
+        if(dateFin.getValue() == null) fechaFinal = "none";
+        else fechaFinal = dateFin.getValue().toString();
+        diasDurabilidadInicic =  !txtDuracionDesde.getText().isBlank() &&Validar.isLongNumber(txtDuracionDesde.getText())? txtDuracionDesde.getText():"none";
+        diasDurabilidadFin =  !txtDuracionHasta.getText().isBlank() &&Validar.isLongNumber(txtDuracionHasta.getText())? txtDuracionHasta.getText():"none";
+        diasPeriocidadInicio =  !txtPeriocidadDesde.getText().isBlank() &&Validar.isLongNumber(txtPeriocidadDesde.getText())? txtPeriocidadDesde.getText():"none";
+        diasPeriocidadFin =  !txtPeriocidadHasta.getText().isBlank() &&Validar.isLongNumber(txtPeriocidadHasta.getText())? txtPeriocidadHasta.getText():"none";
 
-        if(!valor.isEmpty()&& !comboxParametros.getSelectionModel().isEmpty()){
-            busquedaSegunParametro(selectedItem, valor);
 
-        }else{
-            mensaje.show(Alert.AlertType.INFORMATION,"ERROR DE DATOS", "Debe seleccionar el parámetro e ingresar un valor a consultar");
-        }
+        Respuesta respuesta =  service.filter(txtnumeroContrato.getText(), txtTipo.getText(), txtProveedor.getText(),activo, pago, fechaInicio, fechaFinal, diasDurabilidadInicic, diasDurabilidadFin, diasPeriocidadInicio,diasPeriocidadFin );
+        return respuesta;
     }
 
-    public void buscarEntreDias(ActionEvent actionEvent) {
-        int selectedItem = comboxParametros1.getSelectionModel().getSelectedIndex();
-
-        if(!comboxParametros1.getSelectionModel().isEmpty() && Validar.isLongNumber(txtDiasFinal.getText()) && Validar.isLongNumber(txtDiasInicio.getText()))
-        buscarEntreDiasDurabilidadYPeriocidad(selectedItem);
-        else   mensaje.show(Alert.AlertType.INFORMATION,"ERROR DE DATOS", "Parece que no has ingresado datos correctos.");
-    }
 
     public void btnNuevo(ActionEvent actionEvent) {
         FlowController.getInstance().goView("RegistrarGastos");
@@ -324,5 +270,17 @@ public class GestorGastosConsultasController extends Controller implements Initi
 
     public void tiposDeReparacionButtonOnAction(ActionEvent actionEvent) {
         FlowController.getInstance().goViewInWindowModal("EditorTipoReparaciones", this.getStage(), false);
+    }
+
+    public void limpiarOnAction(ActionEvent actionEvent) {
+        limpiar();
+    }
+
+    public void buscarOnAction(ActionEvent actionEvent) {
+        buscarButton.setText("Buscando...");
+        buscarButton.setDisable(true);
+        Thread t = new Thread(()-> buscarPorParametro());
+        t.start();
+
     }
 }

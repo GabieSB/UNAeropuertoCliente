@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.una.unaeropuertoclient.model.GastoReparacionDto;
+import org.una.unaeropuertoclient.model.ServicioMantenimientoDto;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -15,6 +16,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.utils.RequesUtils;
+
+import static org.una.unaeropuertoclient.utils.RequesUtils.isEmptyResult;
+import static org.una.unaeropuertoclient.utils.RequesUtils.isError;
 
 public class GastoReparacionService {
 
@@ -144,7 +148,7 @@ public class GastoReparacionService {
 
     public Respuesta buscarPorTipoNombre(String tipo) {
         try {
-            System.out.printf("En crear servicio");
+            System.out.print("En crear servicio");
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.get("gastos_reparaciones/findByTipoReparacionNombre/" + tipo);
             System.out.println(respuesta.body().toString());
@@ -277,6 +281,27 @@ public class GastoReparacionService {
             return new Respuesta(true, "", "", "data", RequesUtils.<GastoReparacionDto>asList(respuesta, GastoReparacionDto.class));
         } catch (Exception ex) {
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
+        }
+    }
+
+    public Respuesta filter(String numeroContrato, String tipo, String proveedor, String activo,  String pago,String fechaI, String fechaF, String diasDurabilidadI, String diasDurabilidadF, String diasPeriocidadI, String diasPeriocidadF) {
+        try {
+            RequestHTTP requestHTTP = new RequestHTTP();
+            numeroContrato = (numeroContrato.isBlank()) ? "none" : numeroContrato.trim();
+            tipo = (tipo.isBlank()) ? "none" : tipo.trim();
+            proveedor = (proveedor.isBlank())? "none" : proveedor.trim();
+
+            HttpResponse respuesta = requestHTTP.get("gastos_reparaciones/filter/" + numeroContrato + "/" + tipo + "/" + proveedor + "/"+ activo + "/" + pago  + "/" + fechaI + "/" + fechaF + "/"+ diasDurabilidadI + "/" + diasDurabilidadF+ "/" + diasPeriocidadI+ "/" + diasPeriocidadF  );
+            System.out.println(respuesta.body().toString());
+            if (isError(respuesta.statusCode())) {
+                return new Respuesta(false, "Error interno al consultar los servicios, considera reportar esta falla.", "");
+            }
+            if (isEmptyResult(respuesta.statusCode())) {
+                return new Respuesta(false, "No hay servicios que coincidan con lo que buscas.", "");
+            }
+            return new Respuesta(true, "", "", "data", RequesUtils.asList(respuesta, GastoReparacionDto.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
     }
 }

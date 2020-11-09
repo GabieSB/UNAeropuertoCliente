@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.TipoReparacionDto;
 import org.una.unaeropuertoclient.service.TipoReparacionService;
-import org.una.unaeropuertoclient.service.TipoReparacionService;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -31,7 +30,7 @@ public class EditorTiposReparacionesController  extends Controller implements In
     public JFXButton buttonRegistrar;
     public JFXTextField txtNombreModifcar;
     public TableColumn<TipoReparacionDto, Void> columAcciones;
-    private List<TipoReparacionDto> proveedores;
+    private List<TipoReparacionDto> reparaciones;
     private TipoReparacionDto tipoReparacionSelected = null;
 
     public void buscarNombreButtonOnAction(ActionEvent actionEvent) {
@@ -66,7 +65,7 @@ public class EditorTiposReparacionesController  extends Controller implements In
 
             t.start();
         }else {
-            new Mensaje().showInformation("Debe seleccionar un proveedor e ingresar el nuevo nombre");
+            new Mensaje().showInformation("Debe seleccionar un tipo de reparación e ingresar el nuevo nombre");
         }
 
 
@@ -82,7 +81,7 @@ public class EditorTiposReparacionesController  extends Controller implements In
 
             t.start();
         }else {
-            new Mensaje().showInformation("Se debe completar el espacio del nombread");
+            new Mensaje().showInformation("Se debe completar el espacio del nombre");
         }
 
     }
@@ -106,7 +105,7 @@ public class EditorTiposReparacionesController  extends Controller implements In
 
         Platform.runLater(()->{
             if(respuesta.getEstado()){
-                proveedores = (List<TipoReparacionDto>) respuesta.getResultado("data");
+                reparaciones = (List<TipoReparacionDto>) respuesta.getResultado("data");
                 mostrarDatosEnTable();
 
             }else {
@@ -125,7 +124,7 @@ public class EditorTiposReparacionesController  extends Controller implements In
 
         Platform.runLater(()->{
             if(respuesta.getEstado()){
-                proveedores = (List<TipoReparacionDto>) respuesta.getResultado("data");
+                reparaciones = (List<TipoReparacionDto>) respuesta.getResultado("data");
                 mostrarDatosEnTable();
 
             }
@@ -139,11 +138,11 @@ public class EditorTiposReparacionesController  extends Controller implements In
 
         Platform.runLater(()->{
             if(respuesta.getEstado()){
-                new Mensaje().showInformation("TipoReparacion modificado con éxito.");
+                new Mensaje().showInformation("Tipo de Reparacion modificado con éxito.");
 
                 limpiarEditar();
             }else {
-                new Mensaje().show(Alert.AlertType.ERROR, "Error al modificar el TipoReparacion", respuesta.getMensaje() );
+                new Mensaje().show(Alert.AlertType.ERROR, "Error al modificar el Tipo de Reparacion", respuesta.getMensaje() );
             }
 
             modicarButton.setText("Modificar");
@@ -158,11 +157,11 @@ public class EditorTiposReparacionesController  extends Controller implements In
 
         Platform.runLater(()->{
             if(respuesta.getEstado()){
-                new Mensaje().showInformation("TipoReparacion registrado con éxito.");
+                new Mensaje().showInformation("Tipo de reparacion registrado con éxito.");
                 txtNombreRegistrar.setText("");
 
             }else {
-                new Mensaje().show(Alert.AlertType.ERROR, "Error al registrar el TipoReparacion", respuesta.getMensaje() );
+                new Mensaje().show(Alert.AlertType.ERROR, "Error al registrar el Tipo Reparacion", respuesta.getMensaje() );
             }
 
             buttonRegistrar.setText("Registrar");
@@ -174,12 +173,12 @@ public class EditorTiposReparacionesController  extends Controller implements In
 
     private void  mostrarDatosEnTable(){
         tableTipoReparaciones.getItems().clear();
-        tableTipoReparaciones.getItems().setAll(FXCollections.observableList(proveedores));
+        tableTipoReparaciones.getItems().setAll(FXCollections.observableList(reparaciones));
         addButtonToTable();
     }
 
     private void cargarTablePropiedades(){
-        tableTipoReparaciones.setPlaceholder(new Label("Realize una búsqueda para mostrar proveedores"));
+        tableTipoReparaciones.setPlaceholder(new Label("Realice una búsqueda para mostrar tipos de reparaciones"));
         columNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombre()));
     }
 

@@ -17,7 +17,7 @@
          <children>
             <HBox alignment="CENTER" prefHeight="42.0" prefWidth="868.0">
                <children>
-                  <Label styleClass="air-module-tittle" text="Registrar Gasto Mantenimiento" />
+                  <Label fx:id="labelTittle" styleClass="air-module-tittle" text="Registrar Gasto Mantenimiento" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="45.0" prefWidth="868.0" spacing="150.0">
@@ -67,7 +67,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="54.0" prefWidth="868.0">
                <children>
-                  <JFXButton alignment="CENTER" onAction="#guardarRegistro" prefHeight="38.0" prefWidth="79.0" text="GUARDAR">
+                  <JFXButton fx:id="guardarButton" alignment="CENTER" onAction="#guardarRegistro" prefHeight="41.0" prefWidth="121.0" text="Registrar">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
