@@ -7,7 +7,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="690.0" prefWidth="1000.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.MenuPrincipalController">
    <children>
-      <FlowPane fx:id="flow" hgap="5.0" layoutX="118.0" layoutY="85.0" prefHeight="200.0" prefWidth="691.0" vgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <FlowPane fx:id="flow" hgap="5.0" layoutX="6.0" layoutY="-6.0" prefHeight="200.0" prefWidth="691.0" vgap="5.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="-6.0">
          <padding>
             <Insets bottom="40.0" left="40.0" right="40.0" top="80.0" />
          </padding>
@@ -24,8 +24,8 @@
             <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" />
             <JFXButton onAction="#btnRegistrarGastos" prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton onAction="#btnReporteServicio" prefHeight="70.0" prefWidth="139.0" text="Reporte Servicio" />
+            <JFXButton onAction="#goReporteMantenimiento" prefHeight="70.0" prefWidth="139.0" text="Reporte Mantenimiento" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
          </children>

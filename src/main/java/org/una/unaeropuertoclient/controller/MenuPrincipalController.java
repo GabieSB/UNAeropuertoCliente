@@ -35,7 +35,7 @@ public class MenuPrincipalController extends Controller implements Initializable
     @FXML
     public JFXButton btnNotificaciones;
     @FXML
-    private FlowPane flow;
+    public FlowPane flow;
 
     /**
      * Initializes the controller class.
@@ -146,6 +146,14 @@ public class MenuPrincipalController extends Controller implements Initializable
 //                case "GERENTE_CONTROL_VUELO":
 //                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
 //                    break; ---> TODO
+                case "AUDITOR_SERVICIOS_AERONAVES":
+                    flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
+                      flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
+                    break;
+                case "AUDITOR_MANTENIMIENTO_AEROPUERTO":
+                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
+                    break;
+
             }
         });
     }
@@ -161,5 +169,15 @@ public class MenuPrincipalController extends Controller implements Initializable
 
     public void goModificarUsuario(ActionEvent actionEvent) {
         FlowController.getInstance().goView("BuscarUsuario");
+    }
+
+    @FXML
+    public void btnReporteServicio(ActionEvent event) {
+        FlowController.getInstance().goView("ReporteServicio");
+    }
+
+    @FXML
+    void goReporteMantenimiento(ActionEvent event) {
+        FlowController.getInstance().goView("DepartamentoReport");
     }
 }

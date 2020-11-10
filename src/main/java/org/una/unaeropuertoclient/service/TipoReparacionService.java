@@ -28,7 +28,7 @@ public class TipoReparacionService {
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.post("tiposReparaciones/create", gson.toJson(tipoReparacion));
             System.out.println(respuesta.body().toString());
-            if (requestHTTP.getStatus()!=200) {
+            if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
                 }
@@ -50,15 +50,16 @@ public class TipoReparacionService {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.get("tiposReparaciones/findByEstado/true");
-            if (requestHTTP.getStatus()!=200) {
+            if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
                 }
-                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
+                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
-            List<TipoReparacionDto> tipoReparacionDtos = new Gson().fromJson(respuesta.body().toString(), new TypeToken<List<TipoReparacionDto>>() {}.getType());
+            List<TipoReparacionDto> tipoReparacionDtos = new Gson().fromJson(respuesta.body().toString(), new TypeToken<List<TipoReparacionDto>>() {
+            }.getType());
 
-            for(TipoReparacionDto usuarioDTO: tipoReparacionDtos){
+            for (TipoReparacionDto usuarioDTO : tipoReparacionDtos) {
                 System.out.println(usuarioDTO.toString());
             }
 
@@ -70,6 +71,7 @@ public class TipoReparacionService {
         }
 
     }
+
     public Respuesta update(TipoReparacionDto tipoReparacion) {
         HttpResponse resp = new RequestHTTP().put("tiposReparaciones/update", gson.toJson(tipoReparacion));
         System.out.println((resp.body().toString()));
@@ -85,7 +87,7 @@ public class TipoReparacionService {
     public Respuesta findByNombre(String nombre) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.get("tiposReparaciones/findByNomb/"+nombre);
+            HttpResponse respuesta = requestHTTP.get("tiposReparaciones/findByNomb/" + nombre);
             if (isError(respuesta.statusCode())) {
                 return new Respuesta(false, "Error al consultar", String.valueOf(requestHTTP.getStatus()));
             }
@@ -97,11 +99,33 @@ public class TipoReparacionService {
             return new Respuesta(false, "Error de conexión", "");
         }
 
+    }
+
+      public Respuesta getAll() {
+
+        try {
+            RequestHTTP requestHTTP = new RequestHTTP();
+            HttpResponse respuesta = requestHTTP.get("tiposReparaciones/reparacion");
+            if (requestHTTP.getStatus() != 200) {
+                if (respuesta.statusCode() == 500) {
+                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                }
+                return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
+            }
+            List<TipoReparacionDto> tipoReparacionDtos = new Gson().fromJson(respuesta.body().toString(), new TypeToken<List<TipoReparacionDto>>() {
+            }.getType());
+
+            for (TipoReparacionDto usuarioDTO : tipoReparacionDtos) {
+                System.out.println(usuarioDTO.toString());
+            }
+
+            return new Respuesta(true, "", "", "data", tipoReparacionDtos);
+
+        } catch (Exception ex) {
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
+        }
 
     }
-    
-        
-    
 
-    
- }
+}
