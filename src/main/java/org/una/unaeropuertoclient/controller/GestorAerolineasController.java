@@ -28,6 +28,7 @@ import org.una.unaeropuertoclient.utils.AppContext;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.FlowController;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -61,6 +62,7 @@ public class GestorAerolineasController extends Controller implements Initializa
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtFormat();
         prepareTable();
     }
 
@@ -145,6 +147,10 @@ public class GestorAerolineasController extends Controller implements Initializa
     private void clearScreen() {
         tbAerolineas.getItems().clear();
         txtNombre.setText("");
+    }
+
+    private void txtFormat() {
+        txtNombre.setTextFormatter(Formato.getInstance().cedulaFormat(35));
     }
 
 }
