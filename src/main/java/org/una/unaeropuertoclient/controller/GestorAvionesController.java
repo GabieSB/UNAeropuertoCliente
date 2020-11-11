@@ -55,6 +55,7 @@ public class GestorAvionesController extends Controller implements Initializable
     private HBox controlContainer;
     @FXML
     private JFXButton btnBuscar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -70,6 +71,8 @@ public class GestorAvionesController extends Controller implements Initializable
 
     @Override
     public void initialize() {
+        accesMode = (int) AppContext.getInstance().get("mode");
+        btnBuscar.setDisable(accesMode > 2);
         clearScreen();
     }
 

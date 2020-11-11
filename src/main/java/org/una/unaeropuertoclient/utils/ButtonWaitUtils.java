@@ -23,9 +23,25 @@ public class ButtonWaitUtils {
             img.setFitHeight(20);
             img.setFitWidth(20);
             AppContext.getInstance().set("waitGif", img);
+            ImageView img2 = new ImageView(new Image(String.valueOf(App.class.getResource("pics/procesing.gif"))));
+            img.setFitHeight(20);
+            img.setFitWidth(20);
+            AppContext.getInstance().set("preceGif", img);
         }
         button.setDisable(true);
         button.setText("espera...");
+        button.setGraphic((ImageView) AppContext.getInstance().get("waitGif"));
+    }
+
+    public static void aModoProceso(Button button) {
+        if (AppContext.getInstance().get("waitGif") == null) {
+            ImageView img = new ImageView(new Image(String.valueOf(App.class.getResource("pics/wait2.gif"))));
+            img.setFitHeight(20);
+            img.setFitWidth(20);
+            AppContext.getInstance().set("preceGif", img);
+        }
+        button.setDisable(true);
+        button.setText("procesando");
         button.setGraphic((ImageView) AppContext.getInstance().get("waitGif"));
     }
 

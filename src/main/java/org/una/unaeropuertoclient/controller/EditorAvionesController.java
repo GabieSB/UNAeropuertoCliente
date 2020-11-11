@@ -45,7 +45,7 @@ public class EditorAvionesController extends Controller implements Initializable
     private HBox controlContainer;
     @FXML
     private JFXButton btnGuardar;
-    private boolean modoAuditor;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -60,11 +60,13 @@ public class EditorAvionesController extends Controller implements Initializable
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
-        btnGuardar.setDisable(modoAuditor);
+        accesMode = (int) AppContext.getInstance().get("mode");
+        btnGuardar.setDisable(accesMode != 1);
         txtMatricula.setText("");
         cbAerolinea.getItems().clear();
-        cbAerolinea.setPromptText("Cargando...");
+        if (accesMode < 3) {
+            cbAerolinea.setPromptText("Cargando...");
+        }
         cargarFuncionalidadesVentana();
     }
 
@@ -102,13 +104,15 @@ public class EditorAvionesController extends Controller implements Initializable
                 clearContextData();
             });
         });
-        Thread th = new Thread(() -> {
-            Platform.runLater(() -> {
-                chargeActivAirlines();
-                tryActivEditionMode();
+        if (accesMode < 3) {
+            Thread th = new Thread(() -> {
+                Platform.runLater(() -> {
+                    chargeActivAirlines();
+                    tryActivEditionMode();
+                });
             });
-        });
-        th.start();
+            th.start();
+        }
     }
 
     private void unChargeData() {

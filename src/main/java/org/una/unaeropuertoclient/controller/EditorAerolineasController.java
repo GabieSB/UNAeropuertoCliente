@@ -39,7 +39,7 @@ public class EditorAerolineasController extends Controller implements Initializa
     private HBox controlContainer;
     @FXML
     private JFXButton btnGuardar;
-    private boolean modoAuditor;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -54,10 +54,12 @@ public class EditorAerolineasController extends Controller implements Initializa
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
-        btnGuardar.setDisable(modoAuditor);
+        accesMode = (int) AppContext.getInstance().get("mode");
+        btnGuardar.setDisable(accesMode != 1);
         txtNombre.setText("");
-        tryActivEditionMode();
+        if (accesMode < 3) {
+            tryActivEditionMode();
+        }
         cargarFuncionalidadesVentana();
     }
 

@@ -42,7 +42,7 @@ public class EditorPistasController extends Controller implements Initializable 
     private HBox controlContainer;
     @FXML
     private JFXButton btnGuardar;
-    private boolean modoAuditor;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -57,11 +57,13 @@ public class EditorPistasController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
-        btnGuardar.setDisable(modoAuditor);
+        accesMode = (int) AppContext.getInstance().get("mode");
+        btnGuardar.setDisable(accesMode != 1);
         txtLongitud.setText("");
         txtNumeroPista.setText("");
-        tryActivEditionMode();
+        if (accesMode < 2) {
+            tryActivEditionMode();
+        }
         cargarFuncionalidadesVentana();
     }
 
