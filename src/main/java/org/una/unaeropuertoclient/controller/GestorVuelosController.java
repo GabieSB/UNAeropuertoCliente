@@ -270,11 +270,11 @@ public class GestorVuelosController extends Controller implements Initializable 
     }
 
     private void txtFormat() {
-        txtAerolinea.setTextFormatter(Formato.getInstance().cedulaFormat(35));
-        txtFlyName.setTextFormatter(Formato.getInstance().cedulaFormat(35));
-        txtLlegada.setTextFormatter(Formato.getInstance().cedulaFormat(35));
-        txtSalida.setTextFormatter(Formato.getInstance().cedulaFormat(35));
-        txtMatriculaAvion.setTextFormatter(Formato.getInstance().cedulaFormat(35));
+        txtAerolinea.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtFlyName.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtLlegada.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtSalida.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtMatriculaAvion.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }

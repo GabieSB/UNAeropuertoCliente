@@ -147,7 +147,7 @@ public class EditorLugaresController extends Controller implements Initializable
     }
 
     private void txtFormat() {
-        txtNombre.setTextFormatter(Formato.getInstance().maxLengthFormat(60));
+        txtNombre.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(60));
     }
 
 }

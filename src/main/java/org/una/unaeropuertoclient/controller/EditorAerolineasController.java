@@ -146,7 +146,7 @@ public class EditorAerolineasController extends Controller implements Initializa
     }
 
     private void txtFormat() {
-        txtNombre.setTextFormatter(Formato.getInstance().maxLengthFormat(45));
+        txtNombre.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(45));
     }
 
 }

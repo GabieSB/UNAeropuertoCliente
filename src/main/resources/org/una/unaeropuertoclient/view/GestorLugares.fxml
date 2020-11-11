@@ -13,8 +13,8 @@
 
 <AnchorPane id="AnchorPane" prefHeight="470.0" prefWidth="720.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorLugaresController">
    <children>
-      <Label layoutX="34.0" layoutY="34.0" prefHeight="17.0" prefWidth="101.0" styleClass="air-module-tittle" text="Lugares" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
-      <VBox alignment="CENTER" layoutX="35.0" layoutY="61.0" prefHeight="400.0" prefWidth="705.0" spacing="15.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+      <Label layoutX="34.0" layoutY="34.0" minWidth="100.0" styleClass="air-module-tittle" text="Lugares" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <VBox alignment="CENTER" layoutX="35.0" layoutY="61.0" prefHeight="400.0" prefWidth="705.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="air-glass-efect-color">
                <children>
@@ -29,10 +29,10 @@
                            </padding>
                         </VBox>
                         <Separator orientation="VERTICAL" prefHeight="200.0" styleClass="air-searchSeparator" />
-                        <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
+                        <VBox alignment="CENTER_LEFT" minWidth="100.0" spacing="15.0">
                            <children>
-                              <JFXButton onAction="#OnClickNuevo" prefHeight="25.0" prefWidth="100.0" text="Nuevo" />
-                              <JFXButton fx:id="btnBuscar" minWidth="100.0" onAction="#onActionBuscar" text="Buscar" />
+                              <JFXButton minHeight="25.0" minWidth="100.0" onAction="#OnClickNuevo" text="Nuevo" />
+                              <JFXButton fx:id="btnBuscar" minHeight="25.0" minWidth="100.0" onAction="#onActionBuscar" text="Buscar" />
                            </children>
                         </VBox>
                      </children>

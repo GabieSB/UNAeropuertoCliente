@@ -158,8 +158,8 @@ public class GestorAvionesController extends Controller implements Initializable
     }
 
     private void txtFormat() {
-        txtAerolinea.setTextFormatter(Formato.getInstance().cedulaFormat(35));
-        txtMatricula.setTextFormatter(Formato.getInstance().cedulaFormat(35));
+        txtAerolinea.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtMatricula.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }

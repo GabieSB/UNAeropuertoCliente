@@ -153,10 +153,10 @@ public class EditorPistasController extends Controller implements Initializable 
         });
         th.start();
     }
-    
-    private void txtFormat(){
-        txtNumeroPista.setTextFormatter(Formato.getInstance().cedulaFormat(10));
-        txtLongitud.setTextFormatter(Formato.getInstance().integerFormat());
+
+    private void txtFormat() {
+        txtNumeroPista.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(10));
+        txtLongitud.setTextFormatter(Formato.getInstance().twoDecimalFormat());
     }
 
 }

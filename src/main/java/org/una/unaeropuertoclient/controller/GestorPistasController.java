@@ -153,7 +153,7 @@ public class GestorPistasController extends Controller implements Initializable 
 
     private void txtFormat() {
         txtLongitud.setTextFormatter(Formato.getInstance().integerFormat());
-        txtNumeroPista.setTextFormatter(Formato.getInstance().cedulaFormat(35));
+        txtNumeroPista.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }

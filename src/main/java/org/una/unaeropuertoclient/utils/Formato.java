@@ -145,13 +145,34 @@ public class Formato {
         return letrasFormat;
     }
 
-    public TextFormatter maxLengthFormat(Integer length) {
-        TextFormatter maxLengthFormat = new TextFormatter<>(c
-                -> {
+    public TextFormatter letrasYNumerosFormat(Integer maxLength) {
+        TextFormatter<String> letrasFormat = new TextFormatter<>(c -> {
             if (c.getControlNewText().isEmpty()) {
                 return c;
             }
+            if (maxLength > 0) {
+                if (((TextInputControl) c.getControl()).getLength() >= maxLength && !c.isDeleted()) {
+                    return null;
+                }
+                if (c.getText().length() > maxLength && !c.isDeleted()) {
+                    return null;
+                }
+            }
+            c.setText(c.getText().replaceAll("[^a-zA-Z0-9 ]", ""));
+            if (c.getControlNewText().matches(".*\\s{2,}.*")) {
+                return null;
+            }
+            return c;
 
+        });
+        return letrasFormat;
+    }
+
+    public TextFormatter maxLengthFormat(Integer length) {
+        TextFormatter maxLengthFormat = new TextFormatter<>(c -> {
+            if (c.getControlNewText().isEmpty()) {
+                return c;
+            }
             if (((TextInputControl) c.getControl()).getLength() >= length && !c.isDeleted()) {
                 return null;
             }

@@ -174,7 +174,7 @@ public class EditorAvionesController extends Controller implements Initializable
     }
 
     private void txtFormat() {
-        txtMatricula.setTextFormatter(Formato.getInstance().cedulaFormat(30));
+        txtMatricula.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(30));
     }
 
 }

@@ -151,6 +151,6 @@ public class GestorLugaresController extends Controller implements Initializable
     }
 
     private void txtFormat() {
-        txtNombre.setTextFormatter(Formato.getInstance().cedulaFormat(35));
+        txtNombre.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 }

@@ -150,7 +150,7 @@ public class GestorAerolineasController extends Controller implements Initializa
     }
 
     private void txtFormat() {
-        txtNombre.setTextFormatter(Formato.getInstance().cedulaFormat(35));
+        txtNombre.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }
