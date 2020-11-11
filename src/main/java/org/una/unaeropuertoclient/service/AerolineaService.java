@@ -64,6 +64,7 @@ public class AerolineaService {
         if (isEmptyResult(resp.statusCode())) {
             return new Respuesta(false, "No ha sido posible hallar la aerolinea que se desea modificar", "");
         }
+        registrarNuevaBitacora("Modificó una aerolinea, Id de aerolinea" + aerolinea.getId());
         return new Respuesta(true, "", "", "data", RequesUtils.<AerolineaDto>asObject(resp, AerolineaDto.class));
     }
 
@@ -73,7 +74,16 @@ public class AerolineaService {
         if (isError(resp.statusCode())) {
             return new Respuesta(false, "Error al registrar nueva aerolinea en el sistema, considera reportar este problema", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<AerolineaDto>asObject(resp, AerolineaDto.class));
+        AerolineaDto aero = RequesUtils.<AerolineaDto>asObject(resp, AerolineaDto.class);
+        registrarNuevaBitacora("Creó nueva aerolinea con id " + aero.getId());
+        return new Respuesta(true, "", "", "data", aero);
+    }
+
+    private void registrarNuevaBitacora(String descripcion) {
+        Thread th = new Thread(() -> {
+            new BitacoraService().create(descripcion);
+        });
+        th.start();
     }
 
 }

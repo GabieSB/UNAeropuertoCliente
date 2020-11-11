@@ -57,14 +57,18 @@ public class LugarService {
     }
 
     public Respuesta update(LugarDto lugar) {
-        HttpResponse resp = new RequestHTTP().put("lugares/update", jsonConv.toJson(lugar));
-        if (isError(resp.statusCode())) {
-            return new Respuesta(false, "Error al crear modificar datos, considera reportar este problema", "");
+        if (lugar.getId() != 1) {
+            HttpResponse resp = new RequestHTTP().put("lugares/update", jsonConv.toJson(lugar));
+            if (isError(resp.statusCode())) {
+                return new Respuesta(false, "Error al crear modificar datos, considera reportar este problema", "");
+            }
+            if (isEmptyResult(resp.statusCode())) {
+                return new Respuesta(false, "No ha sido posible hallar el lugar que se desea modificar", "");
+            }
+            registrarNuevaBitacora("Modificó un lugar, Id de lugar: " + lugar.getId());
+            return new Respuesta(true, "", "", "data", RequesUtils.<LugarDto>asObject(resp, LugarDto.class));
         }
-        if (isEmptyResult(resp.statusCode())) {
-            return new Respuesta(false, "No ha sido posible hallar el lugar que se desea modificar", "");
-        }
-        return new Respuesta(true, "", "", "data", RequesUtils.<LugarDto>asObject(resp, LugarDto.class));
+        return new Respuesta(false, "No está permitido modificar este lugar.", "");
     }
 
     public Respuesta create(LugarDto lugar) {
@@ -73,6 +77,15 @@ public class LugarService {
         if (isError(resp.statusCode())) {
             return new Respuesta(false, "Error al registrar nuevo lugar en el sistema, considera reportar este problema", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<LugarDto>asObject(resp, LugarDto.class));
+        LugarDto lug = RequesUtils.<LugarDto>asObject(resp, LugarDto.class);
+        registrarNuevaBitacora("Registró un nuevo lugar con id " + lug.getId());
+        return new Respuesta(true, "", "", "data", lug);
+    }
+
+    private void registrarNuevaBitacora(String descripcion) {
+        Thread th = new Thread(() -> {
+            new BitacoraService().create(descripcion);
+        });
+        th.start();
     }
 }

@@ -8,7 +8,6 @@ package org.una.unaeropuertoclient.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.net.http.HttpResponse;
-import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.TipoVueloDto;
 import org.una.unaeropuertoclient.utils.RequesUtils;
 import static org.una.unaeropuertoclient.utils.RequesUtils.*;

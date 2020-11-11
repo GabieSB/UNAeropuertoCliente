@@ -20,6 +20,7 @@ import org.una.unaeropuertoclient.service.PistaService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -106,6 +107,7 @@ public class EditorPistasController extends Controller implements Initializable 
 
     private void clearContextData() {
         pista = null;
+        FlowController.getInstance().eliminarDeCache("EditorPistas");
         AppContext.getInstance().delete("EditPista");
         AppContext.getInstance().delete("GPist");
     }
