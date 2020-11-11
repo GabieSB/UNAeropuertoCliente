@@ -17,11 +17,11 @@
                <tabs>
                   <Tab text="Registrar">
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <AnchorPane fx:id="registrarContainer" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
                               <Label layoutX="104.0" layoutY="14.0" prefHeight="38.0" prefWidth="218.0" styleClass="air-module-tittle" text="Registrar Tipo de Servicio" />
-                              <JFXTextField fx:id="txtNombreRegistrar" layoutX="111.0" layoutY="89.0" prefHeight="24.0" prefWidth="232.0" promptText="Nombre" text="Nombre" />
-                              <JFXTextField fx:id="txtDescripcionRegistrar" layoutX="112.0" layoutY="146.0" prefHeight="24.0" prefWidth="230.0" promptText="Descripción" />
+                              <JFXTextField fx:id="txtNombreRegistrar" labelFloat="true" layoutX="111.0" layoutY="89.0" prefHeight="24.0" prefWidth="232.0" promptText="Nombre" />
+                              <JFXTextField fx:id="txtDescripcionRegistrar" labelFloat="true" layoutX="112.0" layoutY="146.0" prefHeight="24.0" prefWidth="230.0" promptText="Descripción" />
                               <JFXButton fx:id="registrarButton" alignment="CENTER" layoutX="167.0" layoutY="232.0" onAction="#registrarButtonOnAction" prefHeight="30.0" prefWidth="92.0" text="Registrar" />
                               <Label layoutX="46.0" layoutY="93.0" />
                            </children>
@@ -30,7 +30,7 @@
                   </Tab>
                   <Tab onSelectionChanged="#tabSelected" text="Editar">
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="293.0" prefWidth="426.0">
+                      <AnchorPane fx:id="editarContainer" minHeight="0.0" minWidth="0.0" prefHeight="293.0" prefWidth="426.0">
                            <children>
                               <JFXComboBox fx:id="comboTipoServicio" layoutX="133.0" layoutY="59.0" onAction="#onActionComboBox" prefHeight="32.0" prefWidth="226.0" promptText="Tipo de servicio a modificar" />
                               <JFXTextField fx:id="txtNombreEditar" layoutX="135.0" layoutY="110.0" prefHeight="28.0" prefWidth="230.0" text="Nuevo nombre" />

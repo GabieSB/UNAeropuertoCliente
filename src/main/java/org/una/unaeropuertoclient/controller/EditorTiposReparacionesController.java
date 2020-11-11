@@ -8,11 +8,14 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.TipoReparacionDto;
 import org.una.unaeropuertoclient.service.TipoReparacionService;
+import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
+import  static  org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 
 import java.net.URL;
 import java.util.List;
@@ -30,14 +33,19 @@ public class EditorTiposReparacionesController  extends Controller implements In
     public JFXButton buttonRegistrar;
     public JFXTextField txtNombreModifcar;
     public TableColumn<TipoReparacionDto, Void> columAcciones;
+    public AnchorPane controlsEditarContainer;
+    public AnchorPane controlRegistrarContainer;
     private List<TipoReparacionDto> reparaciones;
     private TipoReparacionDto tipoReparacionSelected = null;
 
     public void buscarNombreButtonOnAction(ActionEvent actionEvent) {
         tableTipoReparaciones.getItems().clear();
         tableTipoReparaciones.setPlaceholder(new Label("Cargando..."));
+
         if(!txtNombreTipoReparacionBuscar.getText().isEmpty()){
             tableTipoReparaciones.getItems().clear();
+            aModoEspera(buscarNombreButton);
+            controlsEditarContainer.setDisable(true);
             Thread thread = new Thread(()-> finByNombre(txtNombreTipoReparacionBuscar.getText()));
             thread.start();
         }else {
@@ -51,6 +59,9 @@ public class EditorTiposReparacionesController  extends Controller implements In
 
         tableTipoReparaciones.getItems().clear();
         tableTipoReparaciones.setPlaceholder(new Label("Cargando..."));
+        aModoEspera(buscarTodosButton);
+        controlsEditarContainer.setDisable(true);
+
         Thread thread = new Thread(()-> cargarActivosFromServer());
         thread.start();
     }
@@ -74,8 +85,8 @@ public class EditorTiposReparacionesController  extends Controller implements In
     public void registrarButtonOnAction(ActionEvent actionEvent) {
 
         if(!txtNombreRegistrar.getText().isEmpty()){
-            buttonRegistrar.setText("Registrando...");
-            buttonRegistrar.setDisable(true);
+            aModoEspera(buttonRegistrar);
+            controlRegistrarContainer.setDisable(true);
 
             Thread t = new Thread(()->registrar(new TipoReparacionDto(txtNombreRegistrar.getText())));
 
@@ -97,6 +108,14 @@ public class EditorTiposReparacionesController  extends Controller implements In
     @Override
     public void initialize() {
         cargarTablePropiedades();
+        int modoSeleccionado = (int) AppContext.getInstance().get("mode");
+        if(modoSeleccionado == 3) modoDeveloper();
+
+    }
+
+    private void modoDeveloper(){
+        controlsEditarContainer.setDisable(true);
+        controlRegistrarContainer.setDisable(true);
     }
 
     private void cargarActivosFromServer(){
@@ -111,6 +130,8 @@ public class EditorTiposReparacionesController  extends Controller implements In
             }else {
                 new Mensaje().show(Alert.AlertType.ERROR, "Error", respuesta.getMensaje());
             }
+            salirModoEspera(buscarTodosButton, "Buscar Todos");
+            controlsEditarContainer.setDisable(false);
         });
 
     }
@@ -128,6 +149,8 @@ public class EditorTiposReparacionesController  extends Controller implements In
                 mostrarDatosEnTable();
 
             }
+            salirModoEspera(buscarNombreButton, "Buscar Nombre");
+            controlsEditarContainer.setDisable(false);
         });
 
     }
@@ -145,8 +168,8 @@ public class EditorTiposReparacionesController  extends Controller implements In
                 new Mensaje().show(Alert.AlertType.ERROR, "Error al modificar el Tipo de Reparacion", respuesta.getMensaje() );
             }
 
-            modicarButton.setText("Modificar");
-            modicarButton.setDisable(false);
+            salirModoEspera(modicarButton, "Modificar");
+            controlRegistrarContainer.setDisable(false);
         });
 
 
@@ -164,8 +187,8 @@ public class EditorTiposReparacionesController  extends Controller implements In
                 new Mensaje().show(Alert.AlertType.ERROR, "Error al registrar el Tipo Reparacion", respuesta.getMensaje() );
             }
 
-            buttonRegistrar.setText("Registrar");
-            buttonRegistrar.setDisable(false);
+            salirModoEspera(buttonRegistrar, "Registrar");
+            controlRegistrarContainer.setDisable(false);
         });
 
 

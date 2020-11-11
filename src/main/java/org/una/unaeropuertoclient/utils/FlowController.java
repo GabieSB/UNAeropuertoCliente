@@ -305,6 +305,10 @@ public class FlowController {
         ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeUserNameTitle(name);
     }
 
+    public static void changeCodeScreenTittle(String name) {
+        ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeScreenCode(name);
+    }
+
     public <RootTipe extends Node> void chargeOn(Pane chargeHere, String viewName) {
         try {
             FXMLLoader loader = getLoader(viewName);
