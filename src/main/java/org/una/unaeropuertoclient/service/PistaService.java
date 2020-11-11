@@ -66,6 +66,7 @@ public class PistaService {
             RequestHTTP requestHTTP = new RequestHTTP();
             numeroPista = (numeroPista.isBlank()) ? "none" : numeroPista.trim();
             longitudPista = (longitudPista.isBlank()) ? "none" : longitudPista.trim();
+            numeroPista = numeroPista.replace(" ", "_");
             HttpResponse respuesta = requestHTTP.get("pistas/filter/" + numeroPista + "/" + longitudPista);
             if (isError(respuesta.statusCode())) {
                 return new Respuesta(false, "Error interno al consultar pistas, considera reportar esta falla.", "");

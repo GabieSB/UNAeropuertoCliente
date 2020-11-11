@@ -26,6 +26,7 @@ public class LugarService {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
             nombre = nombre.isBlank() ? "none" : nombre;
+            nombre = nombre.replace(" ", "-");
             HttpResponse respuesta = requestHTTP.get("lugares/findByNombre/" + nombre);
             if (isError(respuesta.statusCode())) {
                 return new Respuesta(false, "Error interno al consultar luagares, considera reportar esta falla.", "");

@@ -29,11 +29,11 @@ public class VueloService {
     public Respuesta filter(String aerolinea, String nombreVuelo, String matriculaAvion, String llegada, String salida, LocalDate desde, LocalDate hasta) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            aerolinea = (aerolinea.isBlank()) ? "none" : aerolinea.trim();
-            nombreVuelo = (nombreVuelo.isBlank()) ? "none" : nombreVuelo.trim();
-            matriculaAvion = (matriculaAvion.isBlank()) ? "none" : matriculaAvion.trim();
-            llegada = (llegada.isBlank()) ? "none" : llegada.trim();
-            salida = (salida.isBlank()) ? "none" : salida.trim();
+            aerolinea = (aerolinea.isBlank()) ? "none" : aerolinea.trim().replace(" ", "-");
+            nombreVuelo = (nombreVuelo.isBlank()) ? "none" : nombreVuelo.trim().replace(" ", "-");
+            matriculaAvion = (matriculaAvion.isBlank()) ? "none" : matriculaAvion.trim().replace(" ", "-");
+            llegada = (llegada.isBlank()) ? "none" : llegada.trim().replace(" ", "-");
+            salida = (salida.isBlank()) ? "none" : salida.trim().replace(" ", "-");
             desde = desde != null ? desde : LocalDate.of(2500, 1, 1);
             hasta = hasta != null ? hasta : LocalDate.of(2500, 1, 1);
             HttpResponse respuesta = requestHTTP.get("vuelos/filter/" + aerolinea + "/" + nombreVuelo + "/" + matriculaAvion + "/" + llegada + "/" + salida + "/" + desde + "/" + hasta);

@@ -26,6 +26,7 @@ public class AerolineaService {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
             nombre = nombre.isBlank() ? "none" : nombre;
+            nombre = nombre.replace(" ", "-");
             HttpResponse respuesta = requestHTTP.get("aerolineas/findByNomb/" + nombre);
             if (isError(respuesta.statusCode())) {
                 return new Respuesta(false, "Error interno al consultar aerolineas, considera reportar esta falla.", "");

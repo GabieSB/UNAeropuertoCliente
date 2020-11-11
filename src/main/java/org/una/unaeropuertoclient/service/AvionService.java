@@ -21,10 +21,10 @@ public class AvionService {
     Gson g = new GsonBuilder().setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
 
     @SuppressWarnings("UseSpecificCatch")
-    public Respuesta getByMatricula(String id) {
+    public Respuesta getByMatricula(String matric) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.get("aviones/getByMatricula/" + id);
+            HttpResponse respuesta = requestHTTP.get("aviones/getByMatricula/" + matric);
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
