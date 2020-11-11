@@ -20,9 +20,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.HBox;
 import org.una.unaeropuertoclient.model.ParamSistemaDto;
 import org.una.unaeropuertoclient.service.ParamSistemaServicio;
-import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -36,7 +36,7 @@ import org.una.unaeropuertoclient.utils.Respuesta;
  * @author LordLalo
  */
 public class ParametrosSistemaController extends Controller implements Initializable {
-
+    
     @FXML
     public JFXTextField txtRepresentante;
     @FXML
@@ -57,6 +57,8 @@ public class ParametrosSistemaController extends Controller implements Initializ
     public JFXButton btnGuardar;
     public ParamSistemaDto paramSistemaDto = new ParamSistemaDto();
     private boolean activar = false;
+    @FXML
+    private HBox controlsBase;
 
     /**
      * Initializes the controller class.
@@ -68,7 +70,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
     public void initialize(URL url, ResourceBundle rb) {
         txtFormat();
     }
-
+    
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Parámetros de sistema");
@@ -78,7 +80,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
         cargarDatosComboBox();
         cargarDatos();
     }
-
+    
     @FXML
     public void editarParametros(ActionEvent event) {
         if (!activar) {
@@ -89,7 +91,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
             activar = false;
         }
     }
-
+    
     public void cargarDatos() {
         aModoEspera(btnEditar);
         Thread th = new Thread(() -> {
@@ -115,7 +117,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
         });
         th.start();
     }
-
+    
     public void desactivarComponentes() {
         txtCorreo.setEditable(false);
         txtRepresentante.setEditable(false);
@@ -126,7 +128,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
         tpkCierre.setDisable(true);
         btnGuardar.setDisable(true);
     }
-
+    
     public void ActivarComponentes() {
         txtCorreo.setEditable(true);
         txtRepresentante.setEditable(true);
@@ -137,40 +139,56 @@ public class ParametrosSistemaController extends Controller implements Initializ
         tpkCierre.setDisable(false);
         btnGuardar.setDisable(false);
     }
-
+    
     @FXML
     public void onActionGuardar(ActionEvent event) {
         if (camposTextLlenos() && combBoxYPikersLlenos()) {
-            LocalDateTime ltApertura = LocalDateTime.of(LocalDate.now(), tpkApertura.getValue());
-            LocalDateTime ltCierre = LocalDateTime.of(LocalDate.now(), tpkCierre.getValue());
-            ParamSistemaDto p = new ParamSistemaDto();
-            p.setAperturaOficina(Timestamp.valueOf(ltApertura));
-            p.setCierreOficina(Timestamp.valueOf(ltCierre));
-            p.setTelefonoAeropuerto(txtTelefono.getText());
-            p.setEmailAeropuerto(txtCorreo.getText());
-            p.setNombreRepresentante(txtRepresentante.getText());
-            p.setVuelosHora(cbxVuelos.getValue());
-            p.setTiempoInactividad(cbxTiempoInactivo.getValue());
-            p.setId(1);
-            p.setUbicacion(paramSistemaDto.getUbicacion());
-            ParamSistemaServicio paramSistemaServicio = new ParamSistemaServicio();
-            Respuesta res = paramSistemaServicio.update(p);
-            if (res.getEstado()) {
-                new Mensaje().showModal(Alert.AlertType.INFORMATION, "Correcto", this.getStage(), "Los parámetros fueron actualizados exitosamente");
-                btnGuardar.setDisable(false);
-            } else {
-                new Mensaje().showModal(Alert.AlertType.ERROR, "Error", this.getStage(), res.getMensaje());
-            }
+            ParamSistemaDto prm = new ParamSistemaDto();
+            cargarDatos(prm);
+            controlsBase.setDisable(true);
+            aModoEspera(btnGuardar);
+            save(prm);
         }
-
+        
     }
-
+    
+    private void save(ParamSistemaDto prm) {
+        Thread th = new Thread(() -> {
+            Respuesta res = new ParamSistemaServicio().update(prm);
+            Platform.runLater(() -> {
+                controlsBase.setDisable(false);
+                salirModoEspera(btnGuardar, "Guardar");
+                if (res.getEstado()) {
+                    new Mensaje().showModal(Alert.AlertType.INFORMATION, "Correcto", this.getStage(), "Los parámetros fueron actualizados exitosamente");
+                    btnGuardar.setDisable(false);
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.ERROR, "Error", this.getStage(), res.getMensaje());
+                }
+            });
+        });
+        th.start();
+    }
+    
+    private void cargarDatos(ParamSistemaDto p) {
+        LocalDateTime ltApertura = LocalDateTime.of(LocalDate.now(), tpkApertura.getValue());
+        LocalDateTime ltCierre = LocalDateTime.of(LocalDate.now(), tpkCierre.getValue());
+        p.setAperturaOficina(Timestamp.valueOf(ltApertura));
+        p.setCierreOficina(Timestamp.valueOf(ltCierre));
+        p.setTelefonoAeropuerto(txtTelefono.getText());
+        p.setEmailAeropuerto(txtCorreo.getText());
+        p.setNombreRepresentante(txtRepresentante.getText());
+        p.setVuelosHora(cbxVuelos.getValue());
+        p.setTiempoInactividad(cbxTiempoInactivo.getValue());
+        p.setId(1);
+        p.setUbicacion(paramSistemaDto.getUbicacion());
+    }
+    
     public void cargarDatosComboBox() {
         cbxTiempoInactivo.getItems().addAll(5, 10, 20, 25, 30);
         Short timeList[] = {1, 2, 3, 4, 5, 6, 10, 12};
         cbxVuelos.getItems().addAll(timeList);
     }
-
+    
     public boolean camposTextLlenos() {
         if (txtCorreo.getText().isBlank() || txtRepresentante.getText().isBlank() || txtTelefono.getText().isBlank()) {
             new Mensaje().show(Alert.AlertType.WARNING, "Quizá olvidas algo", "Revisa los campos de texto, al menos uno se encuentra vacío");
@@ -178,7 +196,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
         }
         return true;
     }
-
+    
     public boolean combBoxYPikersLlenos() {
         if (tpkApertura.getValue() == null || tpkCierre.getValue() == null) {
             new Mensaje().show(Alert.AlertType.WARNING, "Quizá olvidas algo", "Revisa los campos de hora, al menos uno se encuentra vacío");
@@ -190,7 +208,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
         return true;
     }
     
-    private void txtFormat(){
+    private void txtFormat() {
         txtCorreo.setTextFormatter(Formato.getInstance().maxLengthFormat(50));
         txtRepresentante.setTextFormatter(Formato.getInstance().maxLengthFormat(45));
         txtTelefono.setTextFormatter(Formato.getInstance().maxLengthFormat(25));

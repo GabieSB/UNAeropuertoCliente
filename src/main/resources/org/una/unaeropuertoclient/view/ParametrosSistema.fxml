@@ -13,7 +13,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="588.0" prefWidth="657.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.ParametrosSistemaController">
    <children>
-      <HBox alignment="CENTER" layoutX="278.0" layoutY="263.0" prefHeight="100.0" prefWidth="200.0" styleClass="air-glass-efect-color" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="120.0">
+      <HBox fx:id="controlsBase" alignment="CENTER" layoutX="278.0" layoutY="263.0" prefHeight="100.0" prefWidth="200.0" styleClass="air-glass-efect-color" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="120.0">
          <children>
             <VBox alignment="CENTER" minWidth="200.0" prefHeight="328.0" prefWidth="256.0" spacing="60.0" HBox.hgrow="ALWAYS">
                <children>
