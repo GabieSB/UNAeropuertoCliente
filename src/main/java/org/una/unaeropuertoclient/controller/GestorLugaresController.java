@@ -28,6 +28,7 @@ import org.una.unaeropuertoclient.utils.AppContext;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.FlowController;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -66,6 +67,7 @@ public class GestorLugaresController extends Controller implements Initializable
 
     @Override
     public void initialize() {
+        txtFormat();
         clearScreen();
     }
 
@@ -146,5 +148,9 @@ public class GestorLugaresController extends Controller implements Initializable
     private void clearScreen() {
         tbAerolineas.getItems().clear();
         txtNombre.setText("");
+    }
+
+    private void txtFormat() {
+        txtNombre.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 }

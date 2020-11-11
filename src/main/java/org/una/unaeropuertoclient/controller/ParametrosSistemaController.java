@@ -26,6 +26,7 @@ import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.FlowController;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -65,6 +66,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtFormat();
     }
 
     @Override
@@ -186,5 +188,11 @@ public class ParametrosSistemaController extends Controller implements Initializ
             return false;
         }
         return true;
+    }
+    
+    private void txtFormat(){
+        txtCorreo.setTextFormatter(Formato.getInstance().maxLengthFormat(50));
+        txtRepresentante.setTextFormatter(Formato.getInstance().maxLengthFormat(45));
+        txtTelefono.setTextFormatter(Formato.getInstance().maxLengthFormat(25));
     }
 }

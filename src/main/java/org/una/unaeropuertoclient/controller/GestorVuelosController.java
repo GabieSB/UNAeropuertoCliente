@@ -36,6 +36,7 @@ import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 import org.una.unaeropuertoclient.utils.FlowController;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -96,6 +97,7 @@ public class GestorVuelosController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtFormat();
         prepareTable();
     }
 
@@ -265,6 +267,14 @@ public class GestorVuelosController extends Controller implements Initializable 
                 new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
             }
         }
+    }
+
+    private void txtFormat() {
+        txtAerolinea.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtFlyName.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtLlegada.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtSalida.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtMatriculaAvion.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }

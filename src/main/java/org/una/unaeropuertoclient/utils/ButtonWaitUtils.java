@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.una.unaeropuertoclient.App;
 
 /**
  *
@@ -18,7 +19,7 @@ public class ButtonWaitUtils {
 
     public static void aModoEspera(Button button) {
         if (AppContext.getInstance().get("waitGif") == null) {
-            ImageView img = new ImageView(new Image("org/una/unaeropuertoclient/pics/wait2.gif"));
+            ImageView img = new ImageView(new Image(App.class.getResource("pics/wait2.gif").toString()));
             img.setFitHeight(20);
             img.setFitWidth(20);
             AppContext.getInstance().set("waitGif", img);

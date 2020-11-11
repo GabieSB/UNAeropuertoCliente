@@ -29,6 +29,7 @@ import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
+import org.una.unaeropuertoclient.utils.Formato;
 
 /**
  * FXML Controller class
@@ -62,6 +63,7 @@ public class GestorPistasController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtFormat();
         prepareTable();
     }
 
@@ -147,6 +149,11 @@ public class GestorPistasController extends Controller implements Initializable 
             return cell;
         };
         clAcciones.setCellFactory(cellFactory);
+    }
+
+    private void txtFormat() {
+        txtLongitud.setTextFormatter(Formato.getInstance().integerFormat());
+        txtNumeroPista.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }

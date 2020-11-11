@@ -20,6 +20,7 @@ import org.una.unaeropuertoclient.service.PistaService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -50,6 +51,7 @@ public class EditorPistasController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtFormat();
     }
 
     @Override
@@ -150,6 +152,11 @@ public class EditorPistasController extends Controller implements Initializable 
             });
         });
         th.start();
+    }
+
+    private void txtFormat() {
+        txtNumeroPista.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(10));
+        txtLongitud.setTextFormatter(Formato.getInstance().twoDecimalFormat());
     }
 
 }
