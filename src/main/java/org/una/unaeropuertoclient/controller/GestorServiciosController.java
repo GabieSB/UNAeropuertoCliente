@@ -12,10 +12,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.converter.LocalDateStringConverter;
 import org.una.unaeropuertoclient.model.*;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 import org.una.unaeropuertoclient.service.AvionService;
 import org.una.unaeropuertoclient.service.CobroService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
@@ -42,8 +44,9 @@ public class GestorServiciosController extends Controller implements Initializab
     public JFXTextField txtCobro;
     public JFXToggleButton btonActivo;
     public JFXButton btonRegistrar;
-    public Hyperlink administarServiciosLink;
     public Label titleLabel;
+    public HBox editarButtonOnAction;
+    public VBox container;
     List<TipoServicioDto> tiposServicios;
     TipoServicioService tipoServicioService = new TipoServicioService();
     ServicioMantenimientoService  service = new ServicioMantenimientoService();
@@ -85,15 +88,24 @@ public class GestorServiciosController extends Controller implements Initializab
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Registrar Servicio Mantenimiento de Aviones");
-        AvionDto avionDto = (AvionDto) AppContext.getInstance().get("avionSeleccionado");
-        if(avionDto!=null){
-            txtAvion.setText(avionDto.getMatricula());
-        }
+        FlowController.changeCodeScreenTittle("SG000");
 
-        if(servicioSelecionado==null){
-           cargarServicioAModificar();
-        }
+        int modoSeleccionado = (int) AppContext.getInstance().get("mode");
+        if(modoSeleccionado == 3) modoDevelop();
+        else {
+            AvionDto avionDto = (AvionDto) AppContext.getInstance().get("avionSeleccionado");
+            if(avionDto!=null){
+                txtAvion.setText(avionDto.getMatricula());
+            }
 
+            if(servicioSelecionado==null){
+                cargarServicioAModificar();
+            }
+        }
+    }
+
+    private void modoDevelop() {
+        container.setDisable(true);
     }
 
     public void cargarServicioAModificar(){
@@ -116,8 +128,6 @@ public class GestorServiciosController extends Controller implements Initializab
         txtAvion.setText(servicioSelecionado.getAvionesId().getMatricula());
         comboxTipos.getSelectionModel().select(servicioSelecionado.getTiposServiciosId().getNombre());
         txtCobro.setText(servicioSelecionado.getCobroList().get(0).getMonto().toString());
-
-
     }
 
     private  void limpiar(){
@@ -161,15 +171,15 @@ public class GestorServiciosController extends Controller implements Initializab
 
     @FXML
     public void registrarServicio(ActionEvent actionEvent) {
-        btonRegistrar.setDisable(true);
+        aModoEspera(btonRegistrar);
+        container.setDisable(true);
         if(servicioSelecionado==null) {
-            btonRegistrar.setText("Registrando...");
-            Thread t = new Thread(()->registrarServicio());
+
+            Thread t = new Thread(this::registrarServicio);
             t.start();
         }
         else {
-            btonRegistrar.setText("Modificando...");
-            Thread t = new Thread(()->modificarServicio());
+            Thread t = new Thread(this::modificarServicio);
             t.start();
 
         }
@@ -191,9 +201,9 @@ public class GestorServiciosController extends Controller implements Initializab
                 } else {
                      new Mensaje().show(Alert.AlertType.ERROR, "Error de registro de Servicio de Aeronave", respuesta.getMensaje());
                 }
-
-                btonRegistrar.setDisable(false);
-                btonRegistrar.setText("Registrar");
+                container.setDisable(false);
+                salirModoEspera(btonRegistrar, "REGISTRAR");
+                limpiar();
 
             });
         }
@@ -224,8 +234,8 @@ public class GestorServiciosController extends Controller implements Initializab
                     }
                 }else  new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error al modificar el servicio");
 
-                btonRegistrar.setText("MODIFICAR");
-                btonRegistrar.setDisable(false);
+                container.setDisable(false);
+                salirModoEspera(btonRegistrar, "MODIFICAR");
             });
 
         }

@@ -23,16 +23,16 @@
                   <HBox alignment="CENTER_LEFT" prefHeight="34.0" prefWidth="452.0" HBox.hgrow="ALWAYS">
                      <children>
                         <JFXButton fx:id="btonNuevo" alignment="CENTER" contentDisplay="BOTTOM" onAction="#btnNuevo" prefHeight="30.0" prefWidth="126.0" stylesheets="@style.css" text="Nuevo" />
-                        <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="434.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                        <HBox fx:id="containerButtons" alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="434.0" spacing="10.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <JFXButton id="advance-button-efect" onAction="#provedoresButtonOnAction" prefHeight="30.0" prefWidth="93.0" text="Provedores" />
-                              <JFXButton id="advance-button-efect" onAction="#tiposDeReparacionButtonOnAction" prefHeight="30.0" prefWidth="146.0" text="Tipos de Mantenimiento" />
+                              <JFXButton id="advance-button-efect" fx:id="btnProveedores" onAction="#provedoresButtonOnAction" prefHeight="30.0" prefWidth="93.0" text="Provedores" />
+                              <JFXButton id="advance-button-efect" fx:id="btnTipoMantenimiento" onAction="#tiposDeReparacionButtonOnAction" prefHeight="30.0" prefWidth="146.0" text="Tipos de Mantenimiento" />
                            </children>
                         </HBox>
                      </children>
                   </HBox>
                </children></HBox>
-            <VBox alignment="CENTER" prefHeight="198.0" prefWidth="830.0" styleClass="air-glass-efect-color" VBox.vgrow="ALWAYS">
+            <VBox fx:id="containerControls" alignment="CENTER" prefHeight="198.0" prefWidth="830.0" styleClass="air-glass-efect-color" VBox.vgrow="ALWAYS">
                <children>
                   <Label styleClass="air-module-tittle" text="Panel de Búsqueda" />
                   <HBox prefHeight="206.0" prefWidth="830.0">

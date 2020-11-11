@@ -12,9 +12,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
 import org.una.unaeropuertoclient.model.TipoServicioDto;
 import org.una.unaeropuertoclient.service.TipoServicioService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -33,6 +35,8 @@ public class RegistrarTipoServicioController extends Controller implements Initi
     public TabPane tabServicios;
     public JFXButton modificarButton;
     public JFXButton registrarButton;
+    public AnchorPane editarContainer;
+    public AnchorPane registrarContainer;
     private TipoServicioDto tipoServicioSeleccionadoEditar;
     private List<TipoServicioDto> tiposServicios = null;
     TipoServicioService tipoServicioService = new TipoServicioService();
@@ -46,6 +50,13 @@ public class RegistrarTipoServicioController extends Controller implements Initi
     @Override
     public void initialize() {
 
+        int modoSeleccionado = (int) AppContext.getInstance().get("mode");
+        if(modoSeleccionado == 3) modoDevelop();
+    }
+
+    private void  modoDevelop(){
+        editarContainer.setDisable(true);
+        registrarContainer.setDisable(true);
     }
 
     private void cargarServicios() {
@@ -67,7 +78,6 @@ public class RegistrarTipoServicioController extends Controller implements Initi
             }
         });
 
-        System.out.println("Termina");
     }
 
     private boolean datosValidosRegistrar(){
@@ -91,8 +101,8 @@ public class RegistrarTipoServicioController extends Controller implements Initi
     public void registrarButtonOnAction(ActionEvent actionEvent) {
         if(datosValidosRegistrar()){
             TipoServicioDto servicioDto = new TipoServicioDto(txtNombreRegistrar.getText(), txtDescripcionRegistrar.getText());
-            registrarButton.setText("Registrando");
-            registrarButton.setDisable(true);
+            ButtonWaitUtils.aModoEspera(registrarButton);
+            tabServicios.setDisable(true);
             Thread thread = new Thread(()-> solicitarRegistro(servicioDto));
             thread.start();
         }
@@ -127,8 +137,8 @@ public class RegistrarTipoServicioController extends Controller implements Initi
             TipoServicioDto servicioDto = new TipoServicioDto(txtNombreEditar.getText(), txtDescripcionEditar.getText());
             servicioDto.setId(tipoServicioSeleccionadoEditar.getId());
 
-            modificarButton.setText("Modificando...");
-            modificarButton.setDisable(true);
+            ButtonWaitUtils.aModoEspera(modificarButton);
+            tabServicios.setDisable(true);
             Thread thread = new Thread(()->solicitarModificacion(servicioDto));
             thread.start();
 
@@ -151,8 +161,8 @@ public class RegistrarTipoServicioController extends Controller implements Initi
             }else{
                 new Mensaje().show(Alert.AlertType.ERROR, "Información", respuesta.getMensaje());
             }
-            modificarButton.setText("Modificar");
-            modificarButton.setDisable(false);
+            ButtonWaitUtils.salirModoEspera(modificarButton, "Modificar");
+            tabServicios.setDisable(false);
         });
 
     }
@@ -167,8 +177,8 @@ public class RegistrarTipoServicioController extends Controller implements Initi
             }else{
                 new Mensaje().show(Alert.AlertType.ERROR, "Información", respuesta.getMensaje());
             }
-            registrarButton.setText("Registrar");
-            registrarButton.setDisable(false);
+            tabServicios.setDisable(false);
+            ButtonWaitUtils.salirModoEspera(registrarButton, "Registrar");
         });
 
     }

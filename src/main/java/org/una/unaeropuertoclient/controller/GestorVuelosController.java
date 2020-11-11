@@ -118,7 +118,9 @@ public class GestorVuelosController extends Controller implements Initializable 
     @FXML
     public void onActionBuscar(ActionEvent event) {
         controlsContainer.setDisable(true);
+
         aModoEspera(btnBuscar);
+
         Thread th = new Thread(() -> {
             buscar();
         });

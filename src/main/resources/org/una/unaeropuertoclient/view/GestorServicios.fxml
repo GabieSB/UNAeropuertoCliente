@@ -14,7 +14,7 @@
 
 <AnchorPane prefHeight="587.0" prefWidth="692.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.GestorServiciosController">
    <children>
-      <VBox alignment="CENTER" prefHeight="587.0" prefWidth="692.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="container" alignment="CENTER" prefHeight="587.0" prefWidth="692.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label fx:id="titleLabel" styleClass="air-module-tittle" text="REGISTRAR SERVICIO" />
             <HBox alignment="CENTER" prefHeight="52.0" prefWidth="692.0" spacing="100.0">

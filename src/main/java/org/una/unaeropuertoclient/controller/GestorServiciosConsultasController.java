@@ -2,28 +2,23 @@ package org.una.unaeropuertoclient.controller;
 
 import com.jfoenix.controls.*;
 import javafx.application.Platform;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.*;
 import org.una.unaeropuertoclient.service.BitacoraService;
 import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
 import org.una.unaeropuertoclient.utils.*;
+import  static  org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 import java.net.URL;
-import java.sql.SQLOutput;
-import java.util.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -55,6 +50,10 @@ public class GestorServiciosConsultasController  extends Controller implements I
     public JFXToggleButton pagoToggleButton;
     public JFXToggleButton finalizacionToggleButton;
     public JFXToggleButton servicioToggleButton;
+    public JFXButton limpiarButton;
+    public JFXButton btnTipoDeServicios;
+    public HBox containerButtons;
+    public VBox containerControls;
     ToggleGroup estadoPagoToggleGroup = new ToggleGroup();
     ToggleGroup estadoFinalizacionToggleGroup = new ToggleGroup();
     ToggleGroup estadoServicioToggleGroup = new ToggleGroup();
@@ -104,7 +103,11 @@ public class GestorServiciosConsultasController  extends Controller implements I
                     {
                         btn2.setOnAction((ActionEvent event) -> {
                             ServicioMantenimientoDto servicioMantenimientoDto = getTableView().getItems().get(getIndex());
-                            if(servicioMantenimientoDto.getActivo()) registrarNotificacion(servicioMantenimientoDto);
+                            if(servicioMantenimientoDto.getActivo()) {
+                                JFXButton buttonSelected = (JFXButton) event.getSource();
+                                aModoEspera(buttonSelected);
+                                registrarNotificacion(servicioMantenimientoDto,buttonSelected);
+                            }
                             else mensaje.show(Alert.AlertType.WARNING, "", "El servicio mantenimiento que intenta anular ya esta inactivo");
                         });
 
@@ -133,6 +136,24 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
         columAcciones.setCellFactory(cellFactory);
 
+    }
+
+    private void  setModoAuditor(){
+
+        btnTipoDeServicios.setVisible(false);
+        columAcciones.setVisible(false);
+        btnNuevo.setVisible(false);
+
+    }
+    private void modoDevelop(){
+        containerControls.setDisable(true);
+
+    }
+
+
+    private  void setModoEspera(boolean estado){
+        containerButtons.setDisable(true);
+        containerControls.setDisable(true);
     }
 
     private  void bindToggleButtonsConRadioButtons(){
@@ -182,15 +203,19 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
     @Override
     public void initialize() {
-        AuthenticationResponse auth = (AuthenticationResponse) AppContext.getInstance().get("token");
-        Optional<RolUsuarioDto> rol = auth.getRolUsuario().stream().filter(r -> r.getRolesId().getNombre().equals("GESTOR_SERVICIOS_AERONAVES")).findFirst();
-        if(rol.isPresent())
-        {
-            isGestor = true;
-            btnNuevo.setVisible(true);
-            System.out.println("Gestor");
-        }
         FlowController.changeSuperiorTittle("Servicios de Mantenimiento de Aviones");
+        FlowController.changeCodeScreenTittle("SG000");
+        cargarModoSeleccionado();
+
+
+    }
+
+    private void cargarModoSeleccionado(){
+        int  modo = (int) AppContext.getInstance().get("mode");
+        switch (modo){
+            case 2: setModoAuditor(); break;
+            case 3: modoDevelop(); break;
+        }
 
     }
 
@@ -201,7 +226,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
         else columAcciones.setVisible(false);
     }
 
-    void registrarNotificacion(ServicioMantenimientoDto selected){
+    void registrarNotificacion(ServicioMantenimientoDto selected, JFXButton buttonSelected){
 
 
         Thread t = new Thread(()->{
@@ -215,6 +240,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
                     new BitacoraService().create("Se solicitó la anulación de el servicio mantenimiento con ID: " + selected.getId());
                     mensaje.show(Alert.AlertType.INFORMATION, "Información", "Se solicitó la anulacion del servicion con ID: " + selected.getId());
                 }
+                salirModoEspera(buttonSelected, "Anular");
             });
 
         });
@@ -248,14 +274,14 @@ public class GestorServiciosConsultasController  extends Controller implements I
             }else {
                 new Mensaje().show(Alert.AlertType.ERROR, "Error al consultar", respuesta.getMensaje());
             }
-            btonBuscarParametro.setText("Buscar");
-            btonBuscarParametro.setDisable(false);
+            salirModoEspera(btonBuscarParametro,"Buscar");
+            setModoEspera(false);
         });
     }
 
     public void buscarPorParametroOnAction(ActionEvent actionEvent) {
-        btonBuscarParametro.setText("Buscando...");
-        btonBuscarParametro.setDisable(true);
+       aModoEspera(btonBuscarParametro);
+       setModoEspera(true);
         Thread t = new Thread(()-> busquedaSegunParametro());
         t.start();
 
