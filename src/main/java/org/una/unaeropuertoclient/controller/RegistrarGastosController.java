@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.util.converter.LocalDateStringConverter;
 import org.una.unaeropuertoclient.model.*;
 import org.una.unaeropuertoclient.service.BitacoraService;
@@ -37,7 +38,7 @@ public class RegistrarGastosController  extends Controller implements Initializa
     public JFXComboBox<String> comboxProveedores;
     public JFXTextField txtCobro;
     public JFXButton guardarButton;
-    public Label labelTittle;
+    public VBox container;
     List<TipoReparacionDto> tipoReparacion = new ArrayList<>();
     List<ProvedorDto> provedores = new ArrayList<>();
     boolean componentesIniciados = false;
@@ -51,12 +52,7 @@ public class RegistrarGastosController  extends Controller implements Initializa
     public void initialize(URL url, ResourceBundle resourceBundle) {
         FlowController.changeSuperiorTittle("Registrar Gasto Mantenimiento");
       iniciarComponentes();
-
-      if(gastoSeleccionado==null){
-          FlowController.changeSuperiorTittle("Modicar Gasto Mantenimiento");
-          labelTittle.setText("Modificar Gasto Mantenimiento");
-          cargarGastoModificar();
-      }
+      cargarGastoModificar();
     }
     public void iniciarComponentes(){
         Thread thread = new Thread(this::llenarComboxTiposReparaciones);
@@ -73,6 +69,8 @@ public class RegistrarGastosController  extends Controller implements Initializa
     public void cargarGastoModificar(){
         gastoSeleccionado = (GastoReparacionDto) AppContext.getInstance().get("gastoSeleccionado");
         if(gastoSeleccionado!=null){
+            guardarButton.setText("Modificar");
+            FlowController.changeSuperiorTittle("Modicar Gasto Mantenimiento");
             if(!componentesIniciados) iniciarComponentes();
             cargarDatosGasto();
         }
@@ -169,27 +167,40 @@ public class RegistrarGastosController  extends Controller implements Initializa
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Registrar Gasto Mantenimiento");
-        if(gastoSeleccionado==null){
-            FlowController.changeSuperiorTittle("Modicar Gasto Mantenimiento");
-            labelTittle.setText("Modificar Gasto Mantenimiento");
-            cargarGastoModificar();
-            guardarButton.setText("Modificar");
-        }
+        iniciarComponentes();
+        cargarGastoModificar();
+        limpiar();
+        int modo = (int) AppContext.getInstance().get("mode");
+        if(modo == 3) modoDevelop();
+
+    }
+
+    private void modoDevelop() {
+        dateRegistro.setDisable(true);
+        txtCobro.setEditable(false);
+        txtNumeroContrato.setEditable(false);
+        txtPeriocidad.setEditable(false);
+        txtDuracion.setEditable(false);
+        txtObservaciones.setEditable(false);
+        comboxTipo.setDisable(true);
+        comboxProveedores.setDisable(true);
+        guardarButton.setDisable(true);
+
+
     }
 
     public void guardarRegistro(ActionEvent actionEvent) {
         GastoReparacionDto gastoReparacionDto = crearGastoReparacionConDatosIngresados();
         if(gastoReparacionDto != null){
-            guardarButton.setDisable(true);
+            ButtonWaitUtils.aModoEspera(guardarButton);
+            container.setDisable(true);
             if(gastoSeleccionado == null){
-
-                guardarButton.setText("Registrando...");
 
                 Thread t = new Thread(()-> registrarGastoReparacion(gastoReparacionDto));
                 t.start();
 
             }else{
-                guardarButton.setText("Modificando...");
+
                 Thread t = new Thread(()->  modificarGastoReparacion(gastoReparacionDto));
                 t.start();
             }
@@ -205,13 +216,14 @@ public class RegistrarGastosController  extends Controller implements Initializa
         respuesta = gastoReparacionService.update(gastoReparacionDto);
         Platform.runLater(()->{
             if(respuesta.getEstado()){
-                new BitacoraService().create("Se modificó un gasto mantenimiento con número ID: "+gastoReparacionDto.getId());
+                AppContext.getInstance().delete("gastoSeleccionado");
+                new BitacoraService().create("Modificó un gasto mantenimiento con número ID: "+gastoReparacionDto.getId());
                 new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Gasto Mantenimiento modificado correctamente");
             }else{
                 new Mensaje().show(Alert.AlertType.ERROR, "Información", respuesta.getMensaje());
             }
-            guardarButton.setText("Modificar");
-            guardarButton.setDisable(false);
+           ButtonWaitUtils.salirModoEspera(guardarButton, "Modificar");
+            container.setDisable(false);
         });
 
     }
@@ -233,12 +245,12 @@ public class RegistrarGastosController  extends Controller implements Initializa
         Platform.runLater(()->{
             if(respuesta.getEstado()){
                 limpiar();
-                new BitacoraService().create("Se registró un gasto mantenimiento con número de contrato: " +gastoReparacionDto.getNumeroContrato());
+                new BitacoraService().create("Registró gasto mantenimiento con ID: " + ((GastoReparacionDto) respuesta.getResultado("data")).getId());
                 new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Gasto Mantenimiento registrado correctamente");
             }else
                 new Mensaje().show(Alert.AlertType.ERROR, "Información", respuesta.getMensaje());
-            guardarButton.setText("Registrar");
-            guardarButton.setDisable(false);
+            ButtonWaitUtils.salirModoEspera(guardarButton, "Registrar");
+            container.setDisable(false);
 
         });
 

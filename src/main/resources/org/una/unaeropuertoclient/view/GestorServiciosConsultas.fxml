@@ -118,7 +118,7 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="92.0" prefWidth="938.0" spacing="20.0">
                      <children>
-                        <JFXButton fx:id="btonBuscarParametro" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorParametroOnAction" prefHeight="30.0" prefWidth="122.0" stylesheets="@style.css" text="Buscar" />
+                        <JFXButton fx:id="btonBuscarParametro" alignment="CENTER" contentDisplay="BOTTOM" onAction="#buscarPorParametroOnAction" prefHeight="30.0" prefWidth="145.0" stylesheets="@style.css" text="Buscar" />
                         <JFXButton fx:id="limpiarButton" onAction="#limpiarButtonOnAction" prefHeight="27.0" prefWidth="134.0" text="Limpiar" />
                      </children>
                      <opaqueInsets>

@@ -25,6 +25,7 @@
                                         <Label layoutX="143.0" layoutY="47.0" styleClass="air-module-tittle" text="Registrar Tipo de Mantenimiento" />
                                         <JFXTextField fx:id="txtNombreRegistrar" layoutX="164.0" layoutY="191.0" prefHeight="26.0" prefWidth="239.0" promptText="Nombre" />
                                         <JFXButton fx:id="buttonRegistrar" layoutX="236.0" layoutY="278.0" onAction="#registrarButtonOnAction" prefHeight="34.0" prefWidth="96.0" text="Registrar" />
+                              <Label layoutX="463.0" layoutY="425.0" text="Código:MT100" />
                                     </children>
                                 </AnchorPane>
                             </content>
@@ -49,6 +50,7 @@
                                         <Label fx:id="nombreTipoReparacioneditarLabel" layoutX="221.0" layoutY="305.0" text="Tipo de mantenimiento" />
                                         <JFXButton fx:id="modicarButton" layoutX="236.0" layoutY="403.0" onAction="#modicarButtonOnAction" prefHeight="38.0" prefWidth="103.0" text="Modificar" />
                                         <Label layoutX="353.0" layoutY="29.0" styleClass="air-module-subtittle" text="Panel de Búsqueda" />
+                              <Label layoutX="462.0" layoutY="432.0" text="Código: MT200" />
                                     </children>
                                 </AnchorPane>
                             </content>

@@ -37,6 +37,7 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
     public AnchorPane editarContainer;
     private List<ProvedorDto> proveedores;
     private ProvedorDto provedorSelected = null;
+    boolean modoDev = false ;
 
     public void buscarNombreButtonOnAction(ActionEvent actionEvent) {
 
@@ -84,7 +85,7 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
     public void registrarButtonOnAction(ActionEvent actionEvent) {
 
 
-        if(!txtNombreRegistrar.getText().isEmpty()){
+        if(!txtNombreRegistrar.getText().isEmpty() && !modoDev){
             aModoEspera(buttonRegistrar);
             registrarContainer.setDisable(true);
 
@@ -92,7 +93,7 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
 
             t.start();
         }else {
-            new Mensaje().showInformation("Se debe completar el espacio del nombread");
+            new Mensaje().showInformation("Se debe completar el espacio del nombre");
         }
 
     }
@@ -113,11 +114,12 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
     }
 
     private void modoDeveloper(){
-        registrarContainer.setDisable(true);
-        editarContainer.setDisable(true);
+        modoDev = true;
+        txtNombreRegistrar.setEditable(false);
+        txtNombreModifcar.setEditable(false);
+        buttonRegistrar.setDisable(true);
+        modicarButton.setDisable(true);
     }
-
-
 
     private void cargarActivosFromServer(){
 

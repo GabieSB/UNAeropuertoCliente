@@ -57,6 +57,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
     public HBox containerButtons;
     public JFXButton btnProveedores;
     public JFXButton btnTipoMantenimiento;
+    private boolean modoDevelop = false;
     List<GastoReparacionDto> gastoReparacionList = new ArrayList<>();
     GastoReparacionService service = new GastoReparacionService();
     NotificacionService notificacionService = new NotificacionService();
@@ -106,7 +107,8 @@ public class GestorGastosConsultasController extends Controller implements Initi
     }
 
     private void modoDevelop() {
-        containerControls.setDisable(true);
+
+       modoDevelop = true;
     }
 
     private void setPropiedadesTable(){
@@ -149,12 +151,12 @@ public class GestorGastosConsultasController extends Controller implements Initi
                         btn.setOnAction((ActionEvent event) -> {
                             GastoReparacionDto gastoSeleccionadoDto = getTableView().getItems().get(getIndex());
 
-                            if(gastoSeleccionadoDto.getActivo()){
+                            if(gastoSeleccionadoDto.getActivo() && !modoDevelop){
                                 AppContext.getInstance().set("gastoSeleccionado", gastoSeleccionadoDto);
                                 FlowController.getInstance().goView("RegistrarGastos");
-                            }else{
+                            }else if (!gastoSeleccionadoDto.getActivo() && !modoDevelop){
                                 mensaje.show(Alert.AlertType.WARNING, "", "El gasto mantenimiento que intenta modificar esta inactivo");
-                            }
+                            }else    mensaje.show(Alert.AlertType.ERROR, "", "Se encuentra en modo desarrollador por lo tanto no puede realizar anulacionesf");
 
                         });
                     }
@@ -206,8 +208,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
     public void llenarTabla(){
         tableResultados.getItems().clear();
         tableResultados.setItems(FXCollections.observableList(gastoReparacionList));
-        if(isGestor) addButtonToTable();
-        else columAcciones.setVisible(false);
+        addButtonToTable();
     }
 
 
@@ -244,6 +245,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
     public void initialize() {
         FlowController.changeSuperiorTittle("Gastos de Mantenimiento");
         FlowController.changeCodeScreenTittle("MG000");
+        AppContext.getInstance().delete("gastoSeleccionado");
 
     }
 

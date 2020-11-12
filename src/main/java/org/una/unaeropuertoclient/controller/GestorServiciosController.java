@@ -18,10 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.util.converter.LocalDateStringConverter;
 import org.una.unaeropuertoclient.model.*;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
-import org.una.unaeropuertoclient.service.AvionService;
-import org.una.unaeropuertoclient.service.CobroService;
-import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
-import org.una.unaeropuertoclient.service.TipoServicioService;
+
+import org.una.unaeropuertoclient.service.*;
 import org.una.unaeropuertoclient.utils.*;
 
 import java.net.URL;
@@ -44,9 +42,9 @@ public class GestorServiciosController extends Controller implements Initializab
     public JFXTextField txtCobro;
     public JFXToggleButton btonActivo;
     public JFXButton btonRegistrar;
-    public Label titleLabel;
     public HBox editarButtonOnAction;
     public VBox container;
+    boolean modoDevelop = false;
     List<TipoServicioDto> tiposServicios;
     TipoServicioService tipoServicioService = new TipoServicioService();
     ServicioMantenimientoService  service = new ServicioMantenimientoService();
@@ -90,29 +88,36 @@ public class GestorServiciosController extends Controller implements Initializab
         FlowController.changeSuperiorTittle("Registrar Servicio Mantenimiento de Aviones");
         FlowController.changeCodeScreenTittle("SG000");
 
+
         int modoSeleccionado = (int) AppContext.getInstance().get("mode");
         if(modoSeleccionado == 3) modoDevelop();
-        else {
-            AvionDto avionDto = (AvionDto) AppContext.getInstance().get("avionSeleccionado");
-            if(avionDto!=null){
-                txtAvion.setText(avionDto.getMatricula());
-            }
 
-            if(servicioSelecionado==null){
-                cargarServicioAModificar();
-            }
+        AvionDto avionDto = (AvionDto) AppContext.getInstance().get("avionSeleccionado");
+        if(avionDto!=null){
+            txtAvion.setText(avionDto.getMatricula());
         }
+        limpiar();
+
+        cargarServicioAModificar();
+
     }
 
     private void modoDevelop() {
-        container.setDisable(true);
+        modoDevelop = true;
+        txtNumeroFactura.setEditable(false);
+        txtCobro.setEditable(false);
+        txtAvion.setEditable(false);
+        comboxTipos.setDisable(true);
+        btonRegistrar.setDisable(true);
+        dateServicio.setDisable(true);
+
     }
 
     public void cargarServicioAModificar(){
-        FlowController.changeSuperiorTittle("Modificar Servicio Mantenimiento de Aviones");
-        titleLabel.setText("MODIFICAR SERVICIO");
+
         servicioSelecionado = (ServicioMantenimientoDto) AppContext.getInstance().get("servicioSeleccionado");
         if(servicioSelecionado!=null){
+            FlowController.changeSuperiorTittle("Modificar Servicio Mantenimiento de Aviones");
             if(!componentesIniciados) iniciarComponetes();
             btonRegistrar.setText("MODIFICAR");
             cargarDatosServicio();
@@ -136,7 +141,6 @@ public class GestorServiciosController extends Controller implements Initializab
         txtNumeroFactura.setText("");
         btonFinalizado.setSelected(false);
         btnEstadoPago.setSelected(false);
-        btonActivo.setSelected(false);
         txtAvion.setText("");
 
     }
@@ -173,27 +177,31 @@ public class GestorServiciosController extends Controller implements Initializab
     public void registrarServicio(ActionEvent actionEvent) {
         aModoEspera(btonRegistrar);
         container.setDisable(true);
+        ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
         if(servicioSelecionado==null) {
 
-            Thread t = new Thread(this::registrarServicio);
+            Thread t = new Thread(()->registrarServicio(servicioMantenimientoDto));
             t.start();
         }
         else {
-            Thread t = new Thread(this::modificarServicio);
+            Thread t = new Thread(()->modificarServicio(servicioMantenimientoDto));
             t.start();
 
         }
     }
-    public void registrarServicio(){
-        ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
+    private void registrarServicio(ServicioMantenimientoDto servicioMantenimientoDto){
+
+        Respuesta respuesta = service.create(servicioMantenimientoDto);
         if(servicioMantenimientoDto!=null) {
             Platform.runLater(() -> {
-                Respuesta respuesta = service.create(servicioMantenimientoDto);
+
                 if (respuesta.getEstado()) {
                     CobroDto cobroDto = new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
                     ServicioMantenimientoDto servicioMantenimientoDto1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
                     servicioMantenimientoDto.setId(servicioMantenimientoDto1.getId());
                     cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
+                    new BitacoraService().create("Registró gasto mantenimiento con ID: " + ((ServicioMantenimientoDto) respuesta.getResultado("data")).getId());
+
                     Respuesta respuesta1 = cobroService.create(cobroDto);
                     if (respuesta1.getEstado()) new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Registrado Exitosamente");
                     else new Mensaje().show(Alert.AlertType.ERROR, "Error de registro de cobro", respuesta1.getMensaje());
@@ -209,8 +217,8 @@ public class GestorServiciosController extends Controller implements Initializab
         }
     }
 
-    public void modificarServicio(){
-        ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
+    public void modificarServicio( ServicioMantenimientoDto servicioMantenimientoDto){
+
         if(servicioMantenimientoDto!=null){
             servicioMantenimientoDto.setId(servicioSelecionado.getId());
             Respuesta respuesta = service.update(servicioMantenimientoDto);
@@ -228,7 +236,9 @@ public class GestorServiciosController extends Controller implements Initializab
                     }
 
                     if(respuesta1.getEstado()){
+                        AppContext.getInstance().delete("servicioSeleccionado");
                         new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Modificado Exitosamente");
+                        new BitacoraService().create("Modificó un gasto mantenimiento con ID: " + servicioSelecionado.getId());
                     }else{
                         new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error al modificar el cobro del servicio");
                     }

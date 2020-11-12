@@ -63,6 +63,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
     public DatePicker dateFin;
     public JFXButton btnNuevo;
     boolean isGestor = false;
+    boolean modoDevelop = false;
 
     private List<ServicioMantenimientoDto> serviciosResultados = new ArrayList<>();
     ServicioMantenimientoService service = new ServicioMantenimientoService();
@@ -86,7 +87,6 @@ public class GestorServiciosConsultasController  extends Controller implements I
                 final TableCell<ServicioMantenimientoDto, Void> cell = new TableCell<>() {
 
                     private final JFXButton btn = new JFXButton("Modificar");
-
                     {
                         btn.setOnAction((ActionEvent event) -> {
                             ServicioMantenimientoDto servicioMantenimientoDto = getTableView().getItems().get(getIndex());
@@ -103,12 +103,13 @@ public class GestorServiciosConsultasController  extends Controller implements I
                     {
                         btn2.setOnAction((ActionEvent event) -> {
                             ServicioMantenimientoDto servicioMantenimientoDto = getTableView().getItems().get(getIndex());
-                            if(servicioMantenimientoDto.getActivo()) {
+                            if(servicioMantenimientoDto.getActivo() && !modoDevelop ) {
                                 JFXButton buttonSelected = (JFXButton) event.getSource();
                                 aModoEspera(buttonSelected);
                                 registrarNotificacion(servicioMantenimientoDto,buttonSelected);
                             }
-                            else mensaje.show(Alert.AlertType.WARNING, "", "El servicio mantenimiento que intenta anular ya esta inactivo");
+                            else if(!servicioMantenimientoDto.getActivo() && !modoDevelop) mensaje.show(Alert.AlertType.WARNING, "", "El servicio mantenimiento que intenta anular ya esta inactivo");
+                            else if(modoDevelop)  mensaje.show(Alert.AlertType.ERROR, "", "Se encuentra en modo desarrollo, no puede solicitar anulaciones");
                         });
 
                         btn2.setStyle(" -fx-background-color: #d63152;\n" +
@@ -146,14 +147,13 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
     }
     private void modoDevelop(){
-        containerControls.setDisable(true);
-
+       modoDevelop = true;
     }
 
 
     private  void setModoEspera(boolean estado){
-        containerButtons.setDisable(true);
-        containerControls.setDisable(true);
+        containerButtons.setDisable(estado);
+        containerControls.setDisable(estado);
     }
 
     private  void bindToggleButtonsConRadioButtons(){
@@ -207,11 +207,14 @@ public class GestorServiciosConsultasController  extends Controller implements I
         FlowController.changeCodeScreenTittle("SG000");
         cargarModoSeleccionado();
 
+       AppContext.getInstance().delete("servicioSeleccionado");
+
 
     }
 
     private void cargarModoSeleccionado(){
         int  modo = (int) AppContext.getInstance().get("mode");
+        System.out.println("carga " + modo);
         switch (modo){
             case 2: setModoAuditor(); break;
             case 3: modoDevelop(); break;
@@ -222,8 +225,7 @@ public class GestorServiciosConsultasController  extends Controller implements I
     public void llenarTabla(){
         tableResultados.getItems().clear();
         tableResultados.setItems(FXCollections.observableList(serviciosResultados));
-        if(isGestor) addButtonToTable();
-        else columAcciones.setVisible(false);
+        addButtonToTable();
     }
 
     void registrarNotificacion(ServicioMantenimientoDto selected, JFXButton buttonSelected){
@@ -237,10 +239,11 @@ public class GestorServiciosConsultasController  extends Controller implements I
 
             Platform.runLater(()->{
                 if(respuesta.getEstado()){
-                    new BitacoraService().create("Se solicitó la anulación de el servicio mantenimiento con ID: " + selected.getId());
+                    new BitacoraService().create("Solicitó anulación de el servicio mantenimiento con ID: " + selected.getId());
                     mensaje.show(Alert.AlertType.INFORMATION, "Información", "Se solicitó la anulacion del servicion con ID: " + selected.getId());
                 }
                 salirModoEspera(buttonSelected, "Anular");
+                setModoEspera(false);
             });
 
         });

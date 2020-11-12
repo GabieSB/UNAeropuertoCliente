@@ -24,6 +24,7 @@
                               <JFXTextField fx:id="txtDescripcionRegistrar" labelFloat="true" layoutX="112.0" layoutY="146.0" prefHeight="24.0" prefWidth="230.0" promptText="Descripción" />
                               <JFXButton fx:id="registrarButton" alignment="CENTER" layoutX="167.0" layoutY="232.0" onAction="#registrarButtonOnAction" prefHeight="30.0" prefWidth="92.0" text="Registrar" />
                               <Label layoutX="46.0" layoutY="93.0" />
+                              <Label layoutX="331.0" layoutY="275.0" text="Código: ST100" />
                            </children>
                         </AnchorPane>
                     </content>
@@ -40,6 +41,7 @@
                               <Label layoutX="33.0" layoutY="115.0" text="Nuevo nombre:" />
                               <Label layoutX="54.0" layoutY="189.0" text="Descripción" />
                               <Label layoutX="70.0" layoutY="66.0" text="Servicio:" />
+                              <Label layoutX="336.0" layoutY="277.0" text="Código: ST200" />
                            </children>
                         </AnchorPane>
                     </content>

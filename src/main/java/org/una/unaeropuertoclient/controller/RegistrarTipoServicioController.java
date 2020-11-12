@@ -55,7 +55,10 @@ public class RegistrarTipoServicioController extends Controller implements Initi
     }
 
     private void  modoDevelop(){
-        editarContainer.setDisable(true);
+        modificarButton.setDisable(true);
+        txtNombreRegistrar.setEditable(false);
+        txtNombreEditar.setEditable(false);
+        txtDescripcionRegistrar.setEditable(false);
         registrarContainer.setDisable(true);
     }
 

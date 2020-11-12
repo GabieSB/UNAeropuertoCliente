@@ -8,10 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.una.unaeropuertoclient.model.BitacoraDto;
 import org.una.unaeropuertoclient.service.BitacoraService;
@@ -50,19 +47,16 @@ public class BuscarBitacoraController  extends Controller implements Initializab
         FlowController.changeSuperiorTittle("BITÁCORAS");
         FlowController.changeCodeScreenTittle("BG000");
 
-        if((int)AppContext.getInstance().get("mode")==3){
-            containerRoot.setDisable(false);
-        }else {
-            items.addAll("ID", "CÉDULA USUARIO", "ACCIÓN");
-            comboxParametros.getItems().addAll(items);
 
-            cargarPropiedadesTable();
+        items.addAll("ID", "CÉDULA USUARIO", "ACCIÓN");
+        comboxParametros.getItems().addAll(items);
 
-        }
+        cargarPropiedadesTable();
 
     }
 
     private void cargarPropiedadesTable() {
+        tableResultados.setPlaceholder(new Label("Realice una consulta para mostrar resultados"));
         columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
         columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaModificacion().toString()));
         columAccion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTipoCambio()));

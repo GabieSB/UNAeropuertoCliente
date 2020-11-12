@@ -114,8 +114,10 @@ public class EditorTiposReparacionesController  extends Controller implements In
     }
 
     private void modoDeveloper(){
-        controlsEditarContainer.setDisable(true);
-        controlRegistrarContainer.setDisable(true);
+       txtNombreModifcar.setEditable(false);
+       txtNombreRegistrar.setEditable(false);
+       buttonRegistrar.setDisable(true);
+       modicarButton.setDisable(true);
     }
 
     private void cargarActivosFromServer(){
