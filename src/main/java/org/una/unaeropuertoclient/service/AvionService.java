@@ -21,10 +21,10 @@ public class AvionService {
     Gson g = new GsonBuilder().setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
 
     @SuppressWarnings("UseSpecificCatch")
-    public Respuesta getByMatricula(String id) {
+    public Respuesta getByMatricula(String matric) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.get("aviones/getByMatricula/" + id);
+            HttpResponse respuesta = requestHTTP.get("aviones/getByMatricula/" + matric);
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
@@ -130,6 +130,7 @@ public class AvionService {
             if (isEmptyResult(resp.statusCode())) {
                 return new Respuesta(false, "No ha sido posible hallar el avión que se desea modificar", "");
             }
+            registrarNuevaBitacora("Modificó un avión, Id de avion:" + avion.getId());
             return new Respuesta(true, "", "", "data", RequesUtils.<AvionDto>asObject(resp, AvionDto.class));
         } catch (Exception ex) {
             return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
@@ -144,7 +145,9 @@ public class AvionService {
             if (isError(resp.statusCode())) {
                 return new Respuesta(false, "Error al registrar nuevo avión en el sistema, considera reportar este problema", "");
             }
-            return new Respuesta(true, "", "", "data", RequesUtils.<AvionDto>asObject(resp, AvionDto.class));
+            AvionDto av = RequesUtils.<AvionDto>asObject(resp, AvionDto.class);
+            registrarNuevaBitacora("Registró un nuevo avión con id " + av.getId());
+            return new Respuesta(true, "", "", "data", av);
         } catch (Exception ex) {
             return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
@@ -162,6 +165,13 @@ public class AvionService {
         } catch (Exception ex) {
             return new Respuesta(false, "Error en conexión, imposible averiguar si se puede reaizar este vuelo.", "");
         }
+    }
+
+    private void registrarNuevaBitacora(String descripcion) {
+        Thread th = new Thread(() -> {
+            new BitacoraService().create(descripcion);
+        });
+        th.start();
     }
 
 }

@@ -53,6 +53,7 @@ public class GestorLugaresController extends Controller implements Initializable
     private HBox controlsContainer;
     @FXML
     private JFXButton btnBuscar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -63,11 +64,14 @@ public class GestorLugaresController extends Controller implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         prepareTable();
+        txtFormat();
     }
 
     @Override
     public void initialize() {
-        txtFormat();
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnBuscar.setDisable(accesMode > 2);
         clearScreen();
     }
 

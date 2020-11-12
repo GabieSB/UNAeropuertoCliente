@@ -29,11 +29,11 @@ public class VueloService {
     public Respuesta filter(String aerolinea, String nombreVuelo, String matriculaAvion, String llegada, String salida, LocalDate desde, LocalDate hasta) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            aerolinea = (aerolinea.isBlank()) ? "none" : aerolinea.trim();
-            nombreVuelo = (nombreVuelo.isBlank()) ? "none" : nombreVuelo.trim();
-            matriculaAvion = (matriculaAvion.isBlank()) ? "none" : matriculaAvion.trim();
-            llegada = (llegada.isBlank()) ? "none" : llegada.trim();
-            salida = (salida.isBlank()) ? "none" : salida.trim();
+            aerolinea = (aerolinea.isBlank()) ? "none" : aerolinea.trim().replace(" ", "-");
+            nombreVuelo = (nombreVuelo.isBlank()) ? "none" : nombreVuelo.trim().replace(" ", "-");
+            matriculaAvion = (matriculaAvion.isBlank()) ? "none" : matriculaAvion.trim().replace(" ", "-");
+            llegada = (llegada.isBlank()) ? "none" : llegada.trim().replace(" ", "-");
+            salida = (salida.isBlank()) ? "none" : salida.trim().replace(" ", "-");
             desde = desde != null ? desde : LocalDate.of(2500, 1, 1);
             hasta = hasta != null ? hasta : LocalDate.of(2500, 1, 1);
             HttpResponse respuesta = requestHTTP.get("vuelos/filter/" + aerolinea + "/" + nombreVuelo + "/" + matriculaAvion + "/" + llegada + "/" + salida + "/" + desde + "/" + hasta);
@@ -76,6 +76,7 @@ public class VueloService {
             if (isEmptyResult(resp.statusCode())) {
                 return new Respuesta(false, "No ha sido posible hallar el vuelo que se desea modificar", "");
             }
+            registrarNuevaBitacora("Modificó un vuelo, Id de vuelo: " + vuelo.getId());
             return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asObject(resp, VueloDto.class));
         } catch (Exception ex) {
             return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
@@ -89,7 +90,9 @@ public class VueloService {
             if (isError(resp.statusCode())) {
                 return new Respuesta(false, "Error al registrar nuevo vuelo en el sistema, considera reportar este problema", "");
             }
-            return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asObject(resp, VueloDto.class));
+            VueloDto fly = RequesUtils.<VueloDto>asObject(resp, VueloDto.class);
+            registrarNuevaBitacora("Registró el vuelo " + fly.getNombreVuelo());
+            return new Respuesta(true, "", "", "data", fly);
         } catch (Exception ex) {
             return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
@@ -121,6 +124,13 @@ public class VueloService {
         } catch (Exception ex) {
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
+    }
+
+    private void registrarNuevaBitacora(String descripcion) {
+        Thread th = new Thread(() -> {
+            new BitacoraService().create(descripcion);
+        });
+        th.start();
     }
 
 }

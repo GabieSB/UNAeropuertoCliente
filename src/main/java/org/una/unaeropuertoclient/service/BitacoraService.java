@@ -25,16 +25,10 @@ public class BitacoraService {
             .setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
 
     public void create(String descripcion){
-
         AuthenticationResponse authentication = (AuthenticationResponse) AppContext.getInstance().get("token");
         BitacoraDto bitacoraDto =  new BitacoraDto(new Timestamp(System.currentTimeMillis()), descripcion,  authentication.getUsuario());
-        System.out.println(bitacoraDto.getFechaModificacion().getTime());
         RequestHTTP requestHTTP = new RequestHTTP();
         HttpResponse response =   requestHTTP.post("biatacoras/create", gson.toJson(bitacoraDto));
-
-
-
-        System.out.println(response.statusCode() + ": " + response.body());
     }
 
     public Respuesta buscarEntreFechas(LocalDate fehaInicio , LocalDate fechaFinal){

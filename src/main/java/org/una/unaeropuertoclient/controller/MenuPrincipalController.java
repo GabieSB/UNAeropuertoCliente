@@ -53,7 +53,7 @@ public class MenuPrincipalController extends Controller implements Initializable
     public void initialize() {
         extraerOpcionesProhibidas();
         FlowController.changeSuperiorTittle("Menú principal");
-        FlowController.changeCodeScreenTittle("SG200");
+        FlowController.changeCodeScreenTittle("GG200");
     }
 
     @FXML
@@ -107,11 +107,9 @@ public class MenuPrincipalController extends Controller implements Initializable
         List<Node> flowChildrenList = new ArrayList();
         flow.getChildren().forEach(node -> flowChildrenList.add(node));
         flow.getChildren().clear();
-        AppContext.getInstance().set("auditMode", false);
         rList.forEach(rolU -> {
             switch (rolU.getRolesId().getNombre()) {
                 case "ADMINISTRADOR":
-                    System.out.println("modo admin");
                     AppContext.getInstance().set("mode", 3);
                     flow.getChildren().add(getButtonFromList("Registrar Usuario", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Parametros Sistema", flowChildrenList));
@@ -142,7 +140,6 @@ public class MenuPrincipalController extends Controller implements Initializable
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
                     break;
                 case "AUDITOR_CONTROL_VUELOS":
-                    AppContext.getInstance().set("auditMode", true);
                     AppContext.getInstance().set("mode", 2);
                     flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
@@ -150,6 +147,7 @@ public class MenuPrincipalController extends Controller implements Initializable
                 case "AUDITOR_MANTENIMIENTO_AEROPUERTO":
                     AppContext.getInstance().set("auditMode", true);
                     AppContext.getInstance().set("mode", 2);
+                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Consultar Bitácoras", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
@@ -157,6 +155,7 @@ public class MenuPrincipalController extends Controller implements Initializable
                 case "AUDITOR_SERVICIOS_AERONAVES":
                     AppContext.getInstance().set("mode", 2);
                     AppContext.getInstance().set("auditMode", true);
+                    flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Gestor Servicios", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Consultar Bitacoras", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
@@ -172,12 +171,11 @@ public class MenuPrincipalController extends Controller implements Initializable
 //                    break; ---> TODO
 //                case "AUDITOR_SERVICIOS_AERONAVES":
 //                    flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
-//                      flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
+//                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
 //                    break;
 //                case "AUDITOR_MANTENIMIENTO_AEROPUERTO":
 //                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
 //                    break;
-
             }
         });
     }

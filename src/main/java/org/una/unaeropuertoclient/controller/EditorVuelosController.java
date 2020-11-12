@@ -95,7 +95,7 @@ public class EditorVuelosController extends Controller implements Initializable 
     private HBox controlContainer2;
     @FXML
     private JFXButton btnGuardar;
-    private boolean modoAuditor;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -113,18 +113,21 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
-        btnGuardar.setDisable(modoAuditor);
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnGuardar.setDisable(accesMode != 1);
         vbSalidaYLlegada.setDisable(true);
-        cbAerolinea.setPromptText("Cargando...");
-        cbAvion.setPromptText("Aviones(Vacío)");
-        cbAvion.setDisable(true);
-        cbPistaAterrisage.setPromptText("Cargando...");
-        cbSitioSalida.setPromptText("Cargando...");
-        cbSitioLlegada.setPromptText("Cargando...");
-        cbTipoVuelo.setPromptText("Cargando...");
-        chargeExternalData();
-        tryActivEditionMode();
+        if (accesMode < 3) {
+            cbAerolinea.setPromptText("Cargando...");
+            cbAvion.setPromptText("Aviones(Vacío)");
+            cbAvion.setDisable(true);
+            cbPistaAterrisage.setPromptText("Cargando...");
+            cbSitioSalida.setPromptText("Cargando...");
+            cbSitioLlegada.setPromptText("Cargando...");
+            cbTipoVuelo.setPromptText("Cargando...");
+            chargeExternalData();
+            tryActivEditionMode();
+        }
     }
 
     @FXML
@@ -404,7 +407,7 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     private void refreshBack() {
         if (AppContext.getInstance().get("GVuelo") != null) {
-            ((GestorVuelosController) AppContext.getInstance().get("GVuelo")).onActionBuscar(new ActionEvent());
+            ((GestorVuelosController) AppContext.getInstance().get("GVuelo")).onActionLimpiar(new ActionEvent());
         }
     }
 

@@ -24,5 +24,6 @@
             <Insets right="10.0" />
          </padding>
       </HBox>
+      <Label layoutX="374.0" layoutY="6.0" text="VAE100" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="6.0" />
    </children>
 </AnchorPane>

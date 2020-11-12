@@ -20,6 +20,7 @@ import org.una.unaeropuertoclient.service.PistaService;
 import org.una.unaeropuertoclient.utils.AppContext;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -41,7 +42,7 @@ public class EditorPistasController extends Controller implements Initializable 
     private HBox controlContainer;
     @FXML
     private JFXButton btnGuardar;
-    private boolean modoAuditor;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -56,11 +57,14 @@ public class EditorPistasController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
-        btnGuardar.setDisable(modoAuditor);
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnGuardar.setDisable(accesMode != 1);
         txtLongitud.setText("");
         txtNumeroPista.setText("");
-        tryActivEditionMode();
+        if (accesMode < 2) {
+            tryActivEditionMode();
+        }
         cargarFuncionalidadesVentana();
     }
 
@@ -106,6 +110,7 @@ public class EditorPistasController extends Controller implements Initializable 
 
     private void clearContextData() {
         pista = null;
+        FlowController.getInstance().eliminarDeCache("EditorPistas");
         AppContext.getInstance().delete("EditPista");
         AppContext.getInstance().delete("GPist");
     }

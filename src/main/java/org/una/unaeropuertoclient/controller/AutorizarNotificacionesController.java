@@ -77,31 +77,35 @@ public class AutorizarNotificacionesController extends Controller implements Ini
     private final List<ServicioMantenimientoDto> listServicio = new ArrayList<>();
     private final List<GastoReparacionDto> listGastoReparacion = new ArrayList<>();
     private final List<VueloDto> listVuelo = new ArrayList<>();
-    private boolean modoAuditor;
+    private int accesMode;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
         tbvNotificaciones.setPlaceholder(new Label("Estás al día, no hay nuevas solicitudes de inhabilitación que mostrar"));
     }
 
     @Override
     public void initialize() {
-        modoAuditor = (boolean) AppContext.getInstance().get("auditMode");
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
         AuthenticationResponse aux = (AuthenticationResponse) AppContext.getInstance().get("token");
         numeroArea = aux.getUsuario().getAreasId().getId();
         FlowController.changeSuperiorTittle("Notificaciones (peticiones de inhabilitación)");
+        FlowController.changeCodeScreenTittle("NG200");
         prepareTable();
+        togNotificacion.setDisable(accesMode != 2);
         togNotificacion.setSelected(true);
         toggBuscar(new ActionEvent());
     }
 
     @FXML
     private void toggBuscar(ActionEvent event) {
-        if (togNotificacion.isSelected()) {
-            cargarDatos(true);
-        } else {
-            cargarDatos(false);
+        if (accesMode == 2) {
+            if (togNotificacion.isSelected()) {
+                cargarDatos(true);
+            } else {
+                cargarDatos(false);
+            }
         }
     }
 
@@ -156,7 +160,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
             NotificacionService notificacionService = new NotificacionService();
             Respuesta resp = notificacionService.getIDandEstado(numeroArea, estado);
             Platform.runLater(() -> {
-                salirModoEspera(togNotificacion,"");
+                salirModoEspera(togNotificacion, "");
                 if (resp.getEstado()) {
                     listNotificaciones = (List) resp.getResultado("data");
                     List<Long> idList = listNotificaciones.stream().map(nota -> nota.getIdObjeto()).collect(Collectors.toList());
@@ -201,7 +205,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                 public JFXButton acceptar = new JFXButton("Acceptar");
 
                 {
-                    acceptar.setDisable(modoAuditor);
+                    acceptar.setDisable(accesMode != 2);
                     acceptar.setOnAction((ActionEvent event) -> {
                         RecolectorInfoNotas recolectorInfoNotas = getTableView().getItems().get(getIndex());
                         if (recolectorInfoNotas.isEstado()) {
@@ -216,7 +220,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                 public JFXButton denegar = new JFXButton("Denegar");
 
                 {
-                    denegar.setDisable(modoAuditor);
+                    denegar.setDisable(accesMode != 2);
                     denegar.setId("dangerous-button-efect");
                     denegar.setOnAction((ActionEvent event) -> {
                         RecolectorInfoNotas recolectorInfoNotas = getTableView().getItems().get(getIndex());

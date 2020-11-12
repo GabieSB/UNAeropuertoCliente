@@ -47,7 +47,9 @@ public class PistaService {
         if (isError(resp.statusCode())) {
             return new Respuesta(false, "Error al crear nueva pista de aterrizaje", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>asObject(resp, PistaDto.class));
+        PistaDto pist = RequesUtils.<PistaDto>asObject(resp, PistaDto.class);
+        registrarNuevaBitacora("Creó una nueva pista con id " + pist.getId());
+        return new Respuesta(true, "", "", "data", pist);
     }
 
     public Respuesta update(PistaDto pista) {
@@ -58,6 +60,7 @@ public class PistaService {
         if (isEmptyResult(resp.statusCode())) {
             return new Respuesta(false, "No ha sido posible hallar la pista que se desea modificar", "");
         }
+        registrarNuevaBitacora("Pista ha sido modificada, Id de pista: " + pista.getId());
         return new Respuesta(true, "", "", "data", RequesUtils.<PistaDto>asObject(resp, PistaDto.class));
     }
 
@@ -66,6 +69,7 @@ public class PistaService {
             RequestHTTP requestHTTP = new RequestHTTP();
             numeroPista = (numeroPista.isBlank()) ? "none" : numeroPista.trim();
             longitudPista = (longitudPista.isBlank()) ? "none" : longitudPista.trim();
+            numeroPista = numeroPista.replace(" ", "_");
             HttpResponse respuesta = requestHTTP.get("pistas/filter/" + numeroPista + "/" + longitudPista);
             if (isError(respuesta.statusCode())) {
                 return new Respuesta(false, "Error interno al consultar pistas, considera reportar esta falla.", "");
@@ -77,7 +81,13 @@ public class PistaService {
         } catch (Exception ex) {
             return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
-
-
     }
+
+    private void registrarNuevaBitacora(String descripcion) {
+        Thread th = new Thread(() -> {
+            new BitacoraService().create(descripcion);
+        });
+        th.start();
+    }
+
 }

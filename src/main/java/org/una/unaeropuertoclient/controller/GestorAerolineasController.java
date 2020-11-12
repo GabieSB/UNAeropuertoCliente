@@ -53,6 +53,7 @@ public class GestorAerolineasController extends Controller implements Initializa
     private HBox controlsContainer;
     @FXML
     private JFXButton btnBuscar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -68,6 +69,9 @@ public class GestorAerolineasController extends Controller implements Initializa
 
     @Override
     public void initialize() {
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnBuscar.setDisable(accesMode > 2);
         clearScreen();
     }
 
