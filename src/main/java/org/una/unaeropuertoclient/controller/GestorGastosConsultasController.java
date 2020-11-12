@@ -2,20 +2,20 @@ package org.una.unaeropuertoclient.controller;
 
 import com.jfoenix.controls.*;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.*;
 import org.una.unaeropuertoclient.service.GastoReparacionService;
 import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.utils.*;
-
+import  static org.una.unaeropuertoclient.utils.Validar.*;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -53,6 +53,11 @@ public class GestorGastosConsultasController extends Controller implements Initi
     public JFXTextField txtDuracionDesde;
     public JFXTextField txtDuracionHasta;
     public TableColumn<GastoReparacionDto, String>  columMonto;
+    public VBox containerControls;
+    public HBox containerButtons;
+    public JFXButton btnProveedores;
+    public JFXButton btnTipoMantenimiento;
+    private boolean modoDevelop = false;
     List<GastoReparacionDto> gastoReparacionList = new ArrayList<>();
     GastoReparacionService service = new GastoReparacionService();
     NotificacionService notificacionService = new NotificacionService();
@@ -65,9 +70,24 @@ public class GestorGastosConsultasController extends Controller implements Initi
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         FlowController.changeSuperiorTittle("Gastos de Mantenimiento");
+
         iniciarComponentes();
 
 
+    }
+
+    private void  setModoAuditor(){
+
+        btonNuevo.setVisible(false);
+        columAcciones.setVisible(false);
+        btnProveedores.setVisible(false);
+        btnTipoMantenimiento.setVisible(false);
+
+    }
+
+    private void setModoEspera(boolean estado){
+        containerButtons.setDisable(estado);
+        containerControls.setDisable(estado);
     }
 
     private void iniciarComponentes(){
@@ -75,6 +95,20 @@ public class GestorGastosConsultasController extends Controller implements Initi
         setPropiedadesTable();
         unirRadioButtons();
         bindToggleButtonsConRadioButtons();
+        seleccionarModo();
+    }
+
+    private void seleccionarModo() {
+        int modoSeleccionado = (int) AppContext.getInstance().get("mode");
+        switch (modoSeleccionado){
+            case 2:setModoAuditor(); break;
+            case 3: modoDevelop(); break;
+        }
+    }
+
+    private void modoDevelop() {
+
+       modoDevelop = true;
     }
 
     private void setPropiedadesTable(){
@@ -117,12 +151,12 @@ public class GestorGastosConsultasController extends Controller implements Initi
                         btn.setOnAction((ActionEvent event) -> {
                             GastoReparacionDto gastoSeleccionadoDto = getTableView().getItems().get(getIndex());
 
-                            if(gastoSeleccionadoDto.getActivo()){
+                            if(gastoSeleccionadoDto.getActivo() && !modoDevelop){
                                 AppContext.getInstance().set("gastoSeleccionado", gastoSeleccionadoDto);
                                 FlowController.getInstance().goView("RegistrarGastos");
-                            }else{
+                            }else if (!gastoSeleccionadoDto.getActivo() && !modoDevelop){
                                 mensaje.show(Alert.AlertType.WARNING, "", "El gasto mantenimiento que intenta modificar esta inactivo");
-                            }
+                            }else    mensaje.show(Alert.AlertType.ERROR, "", "Se encuentra en modo desarrollador por lo tanto no puede realizar anulacionesf");
 
                         });
                     }
@@ -174,8 +208,7 @@ public class GestorGastosConsultasController extends Controller implements Initi
     public void llenarTabla(){
         tableResultados.getItems().clear();
         tableResultados.setItems(FXCollections.observableList(gastoReparacionList));
-        if(isGestor) addButtonToTable();
-        else columAcciones.setVisible(false);
+        addButtonToTable();
     }
 
 
@@ -211,19 +244,15 @@ public class GestorGastosConsultasController extends Controller implements Initi
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Gastos de Mantenimiento");
-        AuthenticationResponse auth = (AuthenticationResponse) AppContext.getInstance().get("token");
-        Optional<RolUsuarioDto> rol = auth.getRolUsuario().stream().filter(r -> r.getRolesId().getNombre().equals("GESTOR_MANTENIMIENTO_AEROPUERTO")).findFirst();
-        if(rol.isPresent())
-        {
-            isGestor = true;
-            btonNuevo.setVisible(true);
-            System.out.println("Gestor");
-        }
+        FlowController.changeCodeScreenTittle("MG000");
+        AppContext.getInstance().delete("gastoSeleccionado");
+
     }
 
 
 
     public void buscarPorParametro() {
+
 
         Respuesta respuesta = getRespuestaConsulta();
 
@@ -234,8 +263,8 @@ public class GestorGastosConsultasController extends Controller implements Initi
             }else {
                 new Mensaje().show(Alert.AlertType.ERROR, "Error al consultar", respuesta.getMensaje());
             }
-            buscarButton.setText("Buscar");
-            buscarButton.setDisable(false);
+            salirModoEspera(buscarButton, "Buscar");
+            setModoEspera(false);
         });
     }
 
@@ -249,10 +278,10 @@ public class GestorGastosConsultasController extends Controller implements Initi
         else fechaInicio = dateInicio.getValue().toString();
         if(dateFin.getValue() == null) fechaFinal = "none";
         else fechaFinal = dateFin.getValue().toString();
-        diasDurabilidadInicic =  !txtDuracionDesde.getText().isBlank() &&Validar.isLongNumber(txtDuracionDesde.getText())? txtDuracionDesde.getText():"none";
-        diasDurabilidadFin =  !txtDuracionHasta.getText().isBlank() &&Validar.isLongNumber(txtDuracionHasta.getText())? txtDuracionHasta.getText():"none";
-        diasPeriocidadInicio =  !txtPeriocidadDesde.getText().isBlank() &&Validar.isLongNumber(txtPeriocidadDesde.getText())? txtPeriocidadDesde.getText():"none";
-        diasPeriocidadFin =  !txtPeriocidadHasta.getText().isBlank() &&Validar.isLongNumber(txtPeriocidadHasta.getText())? txtPeriocidadHasta.getText():"none";
+        diasDurabilidadInicic =  !txtDuracionDesde.getText().isBlank() &&isLongNumber(txtDuracionDesde.getText())? txtDuracionDesde.getText():"none";
+        diasDurabilidadFin =  !txtDuracionHasta.getText().isBlank() &&isLongNumber(txtDuracionHasta.getText())? txtDuracionHasta.getText():"none";
+        diasPeriocidadInicio =  !txtPeriocidadDesde.getText().isBlank() &&isLongNumber(txtPeriocidadDesde.getText())? txtPeriocidadDesde.getText():"none";
+        diasPeriocidadFin =  !txtPeriocidadHasta.getText().isBlank() &&isLongNumber(txtPeriocidadHasta.getText())? txtPeriocidadHasta.getText():"none";
 
 
         Respuesta respuesta =  service.filter(txtnumeroContrato.getText(), txtTipo.getText(), txtProveedor.getText(),activo, pago, fechaInicio, fechaFinal, diasDurabilidadInicic, diasDurabilidadFin, diasPeriocidadInicio,diasPeriocidadFin );
@@ -277,9 +306,9 @@ public class GestorGastosConsultasController extends Controller implements Initi
     }
 
     public void buscarOnAction(ActionEvent actionEvent) {
-        buscarButton.setText("Buscando...");
-        buscarButton.setDisable(true);
-        Thread t = new Thread(()-> buscarPorParametro());
+       setModoEspera(true);
+        aModoEspera(buscarButton);
+        Thread t = new Thread(this::buscarPorParametro);
         t.start();
 
     }

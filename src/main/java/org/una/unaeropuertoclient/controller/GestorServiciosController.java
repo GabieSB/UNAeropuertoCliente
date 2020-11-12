@@ -12,14 +12,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.converter.LocalDateStringConverter;
 import org.una.unaeropuertoclient.model.*;
-import org.una.unaeropuertoclient.service.AvionService;
-import org.una.unaeropuertoclient.service.CobroService;
-import org.una.unaeropuertoclient.service.ServicioMantenimientoService;
-import org.una.unaeropuertoclient.service.TipoServicioService;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
+
+import org.una.unaeropuertoclient.service.*;
 import org.una.unaeropuertoclient.utils.*;
 
 import java.net.URL;
@@ -42,8 +42,9 @@ public class GestorServiciosController extends Controller implements Initializab
     public JFXTextField txtCobro;
     public JFXToggleButton btonActivo;
     public JFXButton btonRegistrar;
-    public Hyperlink administarServiciosLink;
-    public Label titleLabel;
+    public HBox editarButtonOnAction;
+    public VBox container;
+    boolean modoDevelop = false;
     List<TipoServicioDto> tiposServicios;
     TipoServicioService tipoServicioService = new TipoServicioService();
     ServicioMantenimientoService  service = new ServicioMantenimientoService();
@@ -85,22 +86,38 @@ public class GestorServiciosController extends Controller implements Initializab
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Registrar Servicio Mantenimiento de Aviones");
+        FlowController.changeCodeScreenTittle("SG000");
+
+
+        int modoSeleccionado = (int) AppContext.getInstance().get("mode");
+        if(modoSeleccionado == 3) modoDevelop();
+
         AvionDto avionDto = (AvionDto) AppContext.getInstance().get("avionSeleccionado");
         if(avionDto!=null){
             txtAvion.setText(avionDto.getMatricula());
         }
+        limpiar();
 
-        if(servicioSelecionado==null){
-           cargarServicioAModificar();
-        }
+        cargarServicioAModificar();
+
+    }
+
+    private void modoDevelop() {
+        modoDevelop = true;
+        txtNumeroFactura.setEditable(false);
+        txtCobro.setEditable(false);
+        txtAvion.setEditable(false);
+        comboxTipos.setDisable(true);
+        btonRegistrar.setDisable(true);
+        dateServicio.setDisable(true);
 
     }
 
     public void cargarServicioAModificar(){
-        FlowController.changeSuperiorTittle("Modificar Servicio Mantenimiento de Aviones");
-        titleLabel.setText("MODIFICAR SERVICIO");
+
         servicioSelecionado = (ServicioMantenimientoDto) AppContext.getInstance().get("servicioSeleccionado");
         if(servicioSelecionado!=null){
+            FlowController.changeSuperiorTittle("Modificar Servicio Mantenimiento de Aviones");
             if(!componentesIniciados) iniciarComponetes();
             btonRegistrar.setText("MODIFICAR");
             cargarDatosServicio();
@@ -116,8 +133,6 @@ public class GestorServiciosController extends Controller implements Initializab
         txtAvion.setText(servicioSelecionado.getAvionesId().getMatricula());
         comboxTipos.getSelectionModel().select(servicioSelecionado.getTiposServiciosId().getNombre());
         txtCobro.setText(servicioSelecionado.getCobroList().get(0).getMonto().toString());
-
-
     }
 
     private  void limpiar(){
@@ -126,7 +141,6 @@ public class GestorServiciosController extends Controller implements Initializab
         txtNumeroFactura.setText("");
         btonFinalizado.setSelected(false);
         btnEstadoPago.setSelected(false);
-        btonActivo.setSelected(false);
         txtAvion.setText("");
 
     }
@@ -161,29 +175,33 @@ public class GestorServiciosController extends Controller implements Initializab
 
     @FXML
     public void registrarServicio(ActionEvent actionEvent) {
-        btonRegistrar.setDisable(true);
+        aModoEspera(btonRegistrar);
+        container.setDisable(true);
+        ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
         if(servicioSelecionado==null) {
-            btonRegistrar.setText("Registrando...");
-            Thread t = new Thread(()->registrarServicio());
+
+            Thread t = new Thread(()->registrarServicio(servicioMantenimientoDto));
             t.start();
         }
         else {
-            btonRegistrar.setText("Modificando...");
-            Thread t = new Thread(()->modificarServicio());
+            Thread t = new Thread(()->modificarServicio(servicioMantenimientoDto));
             t.start();
 
         }
     }
-    public void registrarServicio(){
-        ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
+    private void registrarServicio(ServicioMantenimientoDto servicioMantenimientoDto){
+
+        Respuesta respuesta = service.create(servicioMantenimientoDto);
         if(servicioMantenimientoDto!=null) {
             Platform.runLater(() -> {
-                Respuesta respuesta = service.create(servicioMantenimientoDto);
+
                 if (respuesta.getEstado()) {
                     CobroDto cobroDto = new CobroDto(Float.parseFloat(txtCobro.getText()), "Cobro de servicio");
                     ServicioMantenimientoDto servicioMantenimientoDto1 = (ServicioMantenimientoDto) respuesta.getResultado("data");
                     servicioMantenimientoDto.setId(servicioMantenimientoDto1.getId());
                     cobroDto.setServiciosMantenimientoId(servicioMantenimientoDto);
+                    new BitacoraService().create("Registró gasto mantenimiento con ID: " + ((ServicioMantenimientoDto) respuesta.getResultado("data")).getId());
+
                     Respuesta respuesta1 = cobroService.create(cobroDto);
                     if (respuesta1.getEstado()) new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Registrado Exitosamente");
                     else new Mensaje().show(Alert.AlertType.ERROR, "Error de registro de cobro", respuesta1.getMensaje());
@@ -191,16 +209,16 @@ public class GestorServiciosController extends Controller implements Initializab
                 } else {
                      new Mensaje().show(Alert.AlertType.ERROR, "Error de registro de Servicio de Aeronave", respuesta.getMensaje());
                 }
-
-                btonRegistrar.setDisable(false);
-                btonRegistrar.setText("Registrar");
+                container.setDisable(false);
+                salirModoEspera(btonRegistrar, "REGISTRAR");
+                limpiar();
 
             });
         }
     }
 
-    public void modificarServicio(){
-        ServicioMantenimientoDto  servicioMantenimientoDto = crearServicioMantenimientoConDatosIngresados();
+    public void modificarServicio( ServicioMantenimientoDto servicioMantenimientoDto){
+
         if(servicioMantenimientoDto!=null){
             servicioMantenimientoDto.setId(servicioSelecionado.getId());
             Respuesta respuesta = service.update(servicioMantenimientoDto);
@@ -218,14 +236,16 @@ public class GestorServiciosController extends Controller implements Initializab
                     }
 
                     if(respuesta1.getEstado()){
+                        AppContext.getInstance().delete("servicioSeleccionado");
                         new Mensaje().show(Alert.AlertType.INFORMATION, "Información", "Servicio Modificado Exitosamente");
+                        new BitacoraService().create("Modificó un gasto mantenimiento con ID: " + servicioSelecionado.getId());
                     }else{
                         new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error al modificar el cobro del servicio");
                     }
                 }else  new Mensaje().show(Alert.AlertType.ERROR, "Información", "Hubo un error al modificar el servicio");
 
-                btonRegistrar.setText("MODIFICAR");
-                btonRegistrar.setDisable(false);
+                container.setDisable(false);
+                salirModoEspera(btonRegistrar, "MODIFICAR");
             });
 
         }

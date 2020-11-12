@@ -26,13 +26,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.UsuarioDto;
 import org.una.unaeropuertoclient.service.UsuarioService;
-import org.una.unaeropuertoclient.utils.AppContext;
-import org.una.unaeropuertoclient.utils.FlowController;
-import org.una.unaeropuertoclient.utils.Mensaje;
-import org.una.unaeropuertoclient.utils.Respuesta;
+import org.una.unaeropuertoclient.utils.*;
+
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 
 /**
  * FXML Controller class
@@ -69,6 +69,7 @@ public class BuscarUsuarioController extends Controller implements Initializable
     public TableColumn<UsuarioDto, String> tbcFechaModificacion;
     @FXML
     public TableColumn<UsuarioDto, String> tbcEstado;
+    public VBox container;
     List<UsuarioDto> usuarioList = new ArrayList<>();
     @FXML
     public TableView<UsuarioDto> tblUsuarios;
@@ -98,12 +99,16 @@ public class BuscarUsuarioController extends Controller implements Initializable
     @Override
     public void initialize() {
 
+        FlowController.changeSuperiorTittle("Consultar Usuario");
+        FlowController.changeCodeScreenTittle("UG300");
     }
 
     @FXML
     public void actionBuscarPersona(ActionEvent event) {
-        btnBuscar.setText("Buscando...");
-        btnBuscar.setDisable(true);
+
+
+        ButtonWaitUtils.aModoEspera(btnBuscar);
+        container.setDisable(true);
        Thread thread = new Thread(()-> buscarUsuario());
        thread.start();
     }
@@ -142,8 +147,9 @@ public class BuscarUsuarioController extends Controller implements Initializable
 
             }
 
-            btnBuscar.setText("Buscar");
-            btnBuscar.setDisable(false);
+            ButtonWaitUtils.salirModoEspera(btnBuscar, "Buscar");
+            container.setDisable(false);
+            
         });
 
     }

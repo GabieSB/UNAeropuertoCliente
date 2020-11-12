@@ -6,20 +6,15 @@
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane prefHeight="542.0" prefWidth="798.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.RegistrarGastosController">
    <children>
-      <VBox alignment="CENTER" prefHeight="591.0" prefWidth="868.0" AnchorPane.bottomAnchor="67.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <VBox fx:id="container" alignment="CENTER" prefHeight="591.0" prefWidth="868.0" AnchorPane.bottomAnchor="67.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="42.0" prefWidth="868.0">
-               <children>
-                  <Label fx:id="labelTittle" styleClass="air-module-tittle" text="Registrar Gasto Mantenimiento" />
-               </children>
-            </HBox>
+            <HBox alignment="CENTER" prefHeight="42.0" prefWidth="868.0" />
             <HBox alignment="CENTER" prefHeight="45.0" prefWidth="868.0" spacing="150.0">
                <children>
                   <DatePicker fx:id="dateRegistro" prefHeight="16.0" prefWidth="226.0" />

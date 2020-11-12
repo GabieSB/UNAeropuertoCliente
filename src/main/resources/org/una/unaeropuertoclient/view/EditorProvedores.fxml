@@ -20,18 +20,19 @@
               <tabs>
                 <Tab text="Registrar">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="310.0" prefWidth="634.0" styleClass="air-module-fondo" stylesheets="@style.css">
+                    <AnchorPane fx:id="registrarContainer" minHeight="0.0" minWidth="0.0" prefHeight="310.0" prefWidth="634.0" styleClass="air-module-fondo" stylesheets="@style.css">
                            <children>
                               <Label layoutX="225.0" layoutY="38.0" styleClass="air-module-tittle" text="Registrar Proveedor" />
                               <JFXTextField fx:id="txtNombreRegistrar" layoutX="190.0" layoutY="117.0" prefHeight="26.0" prefWidth="239.0" promptText="Nombre" />
                               <JFXButton fx:id="buttonRegistrar" layoutX="262.0" layoutY="220.0" onAction="#registrarButtonOnAction" prefHeight="34.0" prefWidth="96.0" text="Registrar" />
+                              <Label layoutX="470.0" layoutY="439.0" text="Código: SP100" />
                            </children>
                         </AnchorPane>
                   </content>
                 </Tab>
                 <Tab text="Editar">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="476.0" prefWidth="566.0" styleClass="air-module-fondo" stylesheets="@style.css">
+                    <AnchorPane fx:id="editarContainer" minHeight="0.0" minWidth="0.0" prefHeight="476.0" prefWidth="566.0" styleClass="air-module-fondo" stylesheets="@style.css">
                            <children>
                               <TableView fx:id="tableProveedores" layoutX="23.0" layoutY="27.0" prefHeight="222.0" prefWidth="252.0">
                                 <columns>
@@ -39,16 +40,17 @@
                                     <TableColumn fx:id="columAcciones" minWidth="5.5999755859375" prefWidth="98.39996337890625" text="Acción" />
                                 </columns>
                               </TableView>
-                              <JFXTextField fx:id="txtNombreProveedorBuscar" layoutX="315.0" layoutY="76.0" prefHeight="24.0" prefWidth="201.0" promptText="Nombre" />
-                              <JFXButton fx:id="buscarNombreButton" layoutX="312.0" layoutY="132.0" onAction="#buscarNombreButtonOnAction" prefHeight="27.0" prefWidth="82.0" stylesheets="@style.css" text="Buscar" />
+                              <JFXTextField fx:id="txtNombreProveedorBuscar" labelFloat="true" layoutX="315.0" layoutY="76.0" prefHeight="24.0" prefWidth="201.0" promptText="Nombre" />
+                              <JFXButton fx:id="buscarNombreButton" layoutX="312.0" layoutY="132.0" onAction="#buscarNombreButtonOnAction" prefHeight="29.0" prefWidth="118.0" stylesheets="@style.css" text="Buscar Nombre" />
                               <Label layoutX="175.0" layoutY="284.0" styleClass="air-module-subtittle" stylesheets="@style.css" text="Proveedor Seleccionado a Editar:" />
                               <JFXTextField fx:id="txtNombreModifcar" labelFloat="true" layoutX="189.0" layoutY="346.0" prefHeight="26.0" prefWidth="214.0" promptText="Nuevo nombre" />
-                              <Button fx:id="buscarTodosButton" layoutX="421.0" layoutY="133.0" mnemonicParsing="false" onAction="#buscarTodosButtonOnAction" prefHeight="26.0" prefWidth="92.0" styleClass="jfx-button" stylesheets="@style.css" text="Buscar Todos" />
+                              <Button fx:id="buscarTodosButton" layoutX="312.0" layoutY="186.0" mnemonicParsing="false" onAction="#buscarTodosButtonOnAction" prefHeight="26.0" prefWidth="117.0" styleClass="jfx-button" stylesheets="@style.css" text="Buscar Todos" />
                               <Separator layoutX="278.0" layoutY="29.0" orientation="VERTICAL" prefHeight="218.0" prefWidth="10.0" styleClass="air-searchSeparator" />
                               <Separator layoutY="255.0" prefHeight="15.0" prefWidth="565.0" styleClass="air-searchSeparator" />
                               <Label fx:id="nombreProvedoreditarLabel" layoutX="240.0" layoutY="313.0" text="Nombre Provedor" />
                               <JFXButton fx:id="modicarButton" layoutX="236.0" layoutY="403.0" onAction="#modicarButtonOnAction" prefHeight="38.0" prefWidth="103.0" text="Modificar" />
                               <Label layoutX="353.0" layoutY="29.0" styleClass="air-module-subtittle" text="Panel de Búsqueda" />
+                              <Label layoutX="473.0" layoutY="445.0" text="Código: SP200" />
                            </children>
                         </AnchorPane>
                   </content>

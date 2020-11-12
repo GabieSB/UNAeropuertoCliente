@@ -8,15 +8,14 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.GastoReparacionDto;
 import org.una.unaeropuertoclient.model.ProvedorDto;
 import org.una.unaeropuertoclient.service.ProveedorService;
-import org.una.unaeropuertoclient.utils.AppContext;
-import org.una.unaeropuertoclient.utils.FlowController;
-import org.una.unaeropuertoclient.utils.Mensaje;
-import org.una.unaeropuertoclient.utils.Respuesta;
+import org.una.unaeropuertoclient.utils.*;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 
 import java.net.URL;
 import java.util.List;
@@ -34,14 +33,20 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
     public JFXButton buttonRegistrar;
     public JFXTextField txtNombreModifcar;
     public TableColumn<ProvedorDto, Void> columAcciones;
+    public AnchorPane registrarContainer;
+    public AnchorPane editarContainer;
     private List<ProvedorDto> proveedores;
     private ProvedorDto provedorSelected = null;
+    boolean modoDev = false ;
 
     public void buscarNombreButtonOnAction(ActionEvent actionEvent) {
-        tableProveedores.getItems().clear();
-        tableProveedores.setPlaceholder(new Label("Cargando..."));
+
         if(!txtNombreProveedorBuscar.getText().isEmpty()){
+            tableProveedores.setPlaceholder(new Label("Cargando..."));
             tableProveedores.getItems().clear();
+            aModoEspera(buscarNombreButton);
+            editarContainer.setDisable(true);
+
             Thread thread = new Thread(()-> finByNombre(txtNombreProveedorBuscar.getText()));
             thread.start();
         }else {
@@ -55,15 +60,17 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
 
         tableProveedores.getItems().clear();
         tableProveedores.setPlaceholder(new Label("Cargando..."));
-        Thread thread = new Thread(()-> cargarActivosFromServer());
+        aModoEspera(buscarTodosButton);
+        editarContainer.setDisable(true);
+        Thread thread = new Thread(this::cargarActivosFromServer);
         thread.start();
     }
 
     public void modicarButtonOnAction(ActionEvent actionEvent) {
 
         if(!txtNombreModifcar.getText().isEmpty() && provedorSelected!=null){
-            modicarButton.setText("Modificando...");
-            modicarButton.setDisable(true);
+            aModoEspera(modicarButton);
+            editarContainer.setDisable(true);
 
             Thread t = new Thread(()->modificar(new ProvedorDto(provedorSelected.getId(), txtNombreModifcar.getText())));
 
@@ -77,15 +84,16 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
 
     public void registrarButtonOnAction(ActionEvent actionEvent) {
 
-        if(!txtNombreRegistrar.getText().isEmpty()){
-            buttonRegistrar.setText("Registrando...");
-            buttonRegistrar.setDisable(true);
+
+        if(!txtNombreRegistrar.getText().isEmpty() && !modoDev){
+            aModoEspera(buttonRegistrar);
+            registrarContainer.setDisable(true);
 
             Thread t = new Thread(()->registrar(new ProvedorDto(txtNombreRegistrar.getText())));
 
             t.start();
         }else {
-            new Mensaje().showInformation("Se debe completar el espacio del nombread");
+            new Mensaje().showInformation("Se debe completar el espacio del nombre");
         }
 
     }
@@ -95,12 +103,22 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 
     @Override
     public void initialize() {
         cargarTablePropiedades();
+        int modoSeleccionado = (int) AppContext.getInstance().get("mode");
+        if(modoSeleccionado == 3) modoDeveloper();
+
+    }
+
+    private void modoDeveloper(){
+        modoDev = true;
+        txtNombreRegistrar.setEditable(false);
+        txtNombreModifcar.setEditable(false);
+        buttonRegistrar.setDisable(true);
+        modicarButton.setDisable(true);
     }
 
     private void cargarActivosFromServer(){
@@ -115,6 +133,8 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
             }else {
                 new Mensaje().show(Alert.AlertType.ERROR, "Error", respuesta.getMensaje());
             }
+            salirModoEspera(buscarTodosButton, "Buscar Todos");
+            editarContainer.setDisable(false);
         });
 
     }
@@ -130,8 +150,9 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
             if(respuesta.getEstado()){
                 proveedores = (List<ProvedorDto>) respuesta.getResultado("data");
                 mostrarDatosEnTable();
-
             }
+            salirModoEspera(buscarNombreButton, "Buscar Nombre");
+            editarContainer.setDisable(false);
         });
 
     }
@@ -149,8 +170,9 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
                 new Mensaje().show(Alert.AlertType.ERROR, "Error al modificar el Proveedor", respuesta.getMensaje() );
             }
 
-            modicarButton.setText("Modificar");
-            modicarButton.setDisable(false);
+            salirModoEspera(modicarButton, "Modificar");
+            editarContainer.setDisable(false);
+
         });
 
 
@@ -168,8 +190,8 @@ public class EditorProvedoresContoller  extends Controller implements Initializa
                 new Mensaje().show(Alert.AlertType.ERROR, "Error al registrar el Proveedor", respuesta.getMensaje() );
             }
 
-            buttonRegistrar.setText("Registrar");
-            buttonRegistrar.setDisable(false);
+            salirModoEspera(buttonRegistrar, "Registrar");
+            registrarContainer.setDisable(false);
         });
 
 

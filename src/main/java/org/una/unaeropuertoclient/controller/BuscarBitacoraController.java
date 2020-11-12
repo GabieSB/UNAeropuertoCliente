@@ -8,16 +8,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import org.una.unaeropuertoclient.model.BitacoraDto;
 import org.una.unaeropuertoclient.service.BitacoraService;
-import org.una.unaeropuertoclient.utils.FlowController;
-import org.una.unaeropuertoclient.utils.Mensaje;
-import org.una.unaeropuertoclient.utils.Respuesta;
-import org.una.unaeropuertoclient.utils.Validar;
+import org.una.unaeropuertoclient.utils.*;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,6 +31,7 @@ public class BuscarBitacoraController  extends Controller implements Initializab
     public JFXButton btonBuscarParametro;
     public JFXComboBox comboxParametros;
     public TableView tableResultados;
+    public VBox containerRoot;
 
     List<BitacoraDto> bitacorasResultado = new ArrayList<>();
     
@@ -48,14 +44,23 @@ public class BuscarBitacoraController  extends Controller implements Initializab
 
     public void iniciarComponentes(){
         ObservableList<String> items = FXCollections.observableArrayList();
+        FlowController.changeSuperiorTittle("BITÁCORAS");
+        FlowController.changeCodeScreenTittle("BG000");
+
+
         items.addAll("ID", "CÉDULA USUARIO", "ACCIÓN");
         comboxParametros.getItems().addAll(items);
 
+        cargarPropiedadesTable();
+
+    }
+
+    private void cargarPropiedadesTable() {
+        tableResultados.setPlaceholder(new Label("Realice una consulta para mostrar resultados"));
         columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
         columFecha.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getFechaModificacion().toString()));
         columAccion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTipoCambio()));
         columUsuario.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getUsuariosId().getNombre()));
-
     }
 
     public void busquedaSegunCategoria(){

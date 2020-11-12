@@ -19,7 +19,7 @@ public class ButtonWaitUtils {
 
     public static void aModoEspera(Button button) {
         if (AppContext.getInstance().get("waitGif") == null) {
-            ImageView img = new ImageView(new Image(App.class.getResource("pics/wait2.gif").toString()));
+            ImageView img = new ImageView(new Image(String.valueOf(App.class.getResource("pics/wait2.gif"))));
             img.setFitHeight(20);
             img.setFitWidth(20);
             AppContext.getInstance().set("waitGif", img);

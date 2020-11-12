@@ -25,6 +25,7 @@ public class MenuSuperiorController extends Controller implements Initializable 
     public Label lblUsuarioLogeado;
     @FXML
     public Label lblPantallaActual;
+    public Label lblCodigoPantallas;
 
     /**
      * Initializes the controller class.
@@ -52,6 +53,9 @@ public class MenuSuperiorController extends Controller implements Initializable 
 
     public void changeScreenNameTitle(String name) {
         lblPantallaActual.setText(name);
+    }
+    public void changeScreenCode(String name) {
+        lblCodigoPantallas.setText(name);
     }
 
 }

@@ -20,18 +20,19 @@
                     <tabs>
                         <Tab text="Registrar">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="310.0" prefWidth="634.0" styleClass="air-module-fondo" stylesheets="@style.css">
+                                <AnchorPane fx:id="controlRegistrarContainer" minHeight="0.0" minWidth="0.0" prefHeight="310.0" prefWidth="634.0" styleClass="air-module-fondo" stylesheets="@style.css">
                                     <children>
                                         <Label layoutX="143.0" layoutY="47.0" styleClass="air-module-tittle" text="Registrar Tipo de Mantenimiento" />
                                         <JFXTextField fx:id="txtNombreRegistrar" layoutX="164.0" layoutY="191.0" prefHeight="26.0" prefWidth="239.0" promptText="Nombre" />
                                         <JFXButton fx:id="buttonRegistrar" layoutX="236.0" layoutY="278.0" onAction="#registrarButtonOnAction" prefHeight="34.0" prefWidth="96.0" text="Registrar" />
+                              <Label layoutX="463.0" layoutY="425.0" text="Código:MT100" />
                                     </children>
                                 </AnchorPane>
                             </content>
                         </Tab>
                         <Tab text="Editar">
                             <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="476.0" prefWidth="566.0" styleClass="air-module-fondo" stylesheets="@style.css">
+                                <AnchorPane fx:id="controlsEditarContainer" minHeight="0.0" minWidth="0.0" prefHeight="476.0" prefWidth="566.0" styleClass="air-module-fondo" stylesheets="@style.css">
                                     <children>
                                         <TableView fx:id="tableTipoReparaciones" layoutX="23.0" layoutY="27.0" prefHeight="222.0" prefWidth="252.0">
                                             <columns>
@@ -39,16 +40,17 @@
                                                 <TableColumn fx:id="columAcciones" minWidth="5.5999755859375" prefWidth="98.39996337890625" text="Acción" />
                                             </columns>
                                         </TableView>
-                                        <JFXTextField fx:id="txtNombreTipoReparacionBuscar" layoutX="315.0" layoutY="76.0" prefHeight="24.0" prefWidth="201.0" promptText="Nombre" />
-                                        <JFXButton fx:id="buscarNombreButton" layoutX="312.0" layoutY="132.0" onAction="#buscarNombreButtonOnAction" prefHeight="27.0" prefWidth="82.0" stylesheets="@style.css" text="Buscar" />
+                                        <JFXTextField fx:id="txtNombreTipoReparacionBuscar" labelFloat="true" layoutX="315.0" layoutY="76.0" prefHeight="24.0" prefWidth="201.0" promptText="Nombre" />
+                                        <JFXButton fx:id="buscarNombreButton" layoutX="312.0" layoutY="132.0" onAction="#buscarNombreButtonOnAction" prefHeight="27.0" prefWidth="114.0" stylesheets="@style.css" text="Buscar Nombre" />
                                         <Label layoutX="131.0" layoutY="276.0" styleClass="air-module-subtittle" stylesheets="@style.css" text="Tipo de mantenimiento Seleccionado a Editar:" />
                                         <JFXTextField fx:id="txtNombreModifcar" labelFloat="true" layoutX="189.0" layoutY="346.0" prefHeight="26.0" prefWidth="214.0" promptText="Nuevo nombre" />
-                                        <Button fx:id="buscarTodosButton" layoutX="421.0" layoutY="133.0" mnemonicParsing="false" onAction="#buscarTodosButtonOnAction" prefHeight="26.0" prefWidth="92.0" styleClass="jfx-button" stylesheets="@style.css" text="Buscar Todos" />
+                                        <Button fx:id="buscarTodosButton" layoutX="309.0" layoutY="189.0" mnemonicParsing="false" onAction="#buscarTodosButtonOnAction" prefHeight="26.0" prefWidth="118.0" styleClass="jfx-button" stylesheets="@style.css" text="Buscar Todos" />
                                         <Separator layoutX="278.0" layoutY="29.0" orientation="VERTICAL" prefHeight="218.0" prefWidth="10.0" styleClass="air-searchSeparator" />
                                         <Separator layoutY="255.0" prefHeight="15.0" prefWidth="565.0" styleClass="air-searchSeparator" />
                                         <Label fx:id="nombreTipoReparacioneditarLabel" layoutX="221.0" layoutY="305.0" text="Tipo de mantenimiento" />
                                         <JFXButton fx:id="modicarButton" layoutX="236.0" layoutY="403.0" onAction="#modicarButtonOnAction" prefHeight="38.0" prefWidth="103.0" text="Modificar" />
                                         <Label layoutX="353.0" layoutY="29.0" styleClass="air-module-subtittle" text="Panel de Búsqueda" />
+                              <Label layoutX="462.0" layoutY="432.0" text="Código: MT200" />
                                     </children>
                                 </AnchorPane>
                             </content>

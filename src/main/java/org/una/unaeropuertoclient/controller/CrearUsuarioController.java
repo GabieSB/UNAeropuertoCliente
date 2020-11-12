@@ -25,15 +25,13 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import org.una.unaeropuertoclient.model.AreaDto;
-import org.una.unaeropuertoclient.model.RolDto;
-import org.una.unaeropuertoclient.model.RolUsuarioDto;
-import org.una.unaeropuertoclient.model.UsuarioDto;
-import org.una.unaeropuertoclient.service.AreaService;
-import org.una.unaeropuertoclient.service.RolService;
-import org.una.unaeropuertoclient.service.RolUsuarioService;
-import org.una.unaeropuertoclient.service.UsuarioService;
+import javafx.scene.layout.VBox;
+import org.una.unaeropuertoclient.model.*;
+import org.una.unaeropuertoclient.service.*;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
+
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -65,6 +63,7 @@ public class CrearUsuarioController extends Controller implements Initializable 
     public Label txtTitulo;
     public JFXButton cambiarContrasenaButton;
     public JFXButton modificarButton;
+    public VBox container;
     @FXML
     private JFXComboBox<String> cbxRoles;
     @FXML
@@ -84,39 +83,26 @@ public class CrearUsuarioController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
+        FlowController.changeSuperiorTittle("Registrar Usuario");
+        FlowController.changeCodeScreenTittle("UG100");
+
         if(rolList.isEmpty()) cargarRoles();
         DatosEdicion();
+
     }
+
 
     @FXML
     public void onActionGuardar(ActionEvent event) {
 
         if(isValidInformation(true)){
-            btnGuardo.setDisable(true);
-            btnGuardo.setText("Registrando...");
+           container.setDisable(true);
+            aModoEspera(btnGuardo);
             Optional<RolDto> rolDto = rolList.stream().filter(r -> cbxRoles.getValue().equals(r.getNombre())).findFirst();
             UsuarioDto usuarioDto = new UsuarioDto(txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtContrasenna.getText(), Timestamp.valueOf(LocalDateTime.of(dtpFechaNacimiento.getValue(), LocalTime.MIN)), checkActivo.isSelected(), getAreaByRole(cbxRoles.getValue()));
             Thread thread = new Thread(()->{
 
-                Respuesta respuesta = new UsuarioService().create(usuarioDto);
-                Platform.runLater(()->{
-                    if (respuesta.getEstado()) {
-                        UsuarioDto usuarioCreado = (UsuarioDto) respuesta.getResultado("data");
-                        RolUsuarioDto rolUsuario = new RolUsuarioDto(Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()), true, rolDto.get(), usuarioCreado);
-                        Respuesta repuestaRol = new RolUsuarioService().create(rolUsuario);
-                        if(repuestaRol.getEstado()){
-                            new Mensaje().showInformation("Se ha creado el usuario con éxito");
-                        }else {
-                            new Mensaje().show(Alert.AlertType.ERROR, "Error al asignar un rol", "No se ha podido asignar el rol al usuario");
-                        }
-
-                    }else {
-                        new Mensaje().show(Alert.AlertType.ERROR, "Error de información", respuesta.getMensaje());
-                    }
-                    btnGuardo.setDisable(false);
-                    btnGuardo.setText("Guardar");
-
-                });
+                registrarUsuario(rolDto, usuarioDto);
 
             });
 
@@ -126,14 +112,46 @@ public class CrearUsuarioController extends Controller implements Initializable 
 
     }
 
+    private void limpiar(){
+        txtContrasenna.clear();
+        txtContrasennaConfirmacion.clear();
+        txtCedula.clear();
+        txtApellido.clear();
+        txtNombre.clear();
+        cbxRoles.getSelectionModel().clearSelection();
+        dtpFechaNacimiento.setValue(null);
+    }
+
+    private void registrarUsuario(Optional<RolDto> rolDto, UsuarioDto usuarioDto) {
+        Respuesta respuesta = new UsuarioService().create(usuarioDto);
+        Platform.runLater(()->{
+            if (respuesta.getEstado()) {
+                UsuarioDto usuarioCreado = (UsuarioDto) respuesta.getResultado("data");
+                RolUsuarioDto rolUsuario = new RolUsuarioDto(Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()), true, rolDto.get(), usuarioCreado);
+                Respuesta repuestaRol = new RolUsuarioService().create(rolUsuario);
+                if(repuestaRol.getEstado()){
+                    limpiar();
+                    new Mensaje().showInformation("Se ha creado el usuario con éxito");
+                    new BitacoraService().create("Registró usuario con ID: " + ((UsuarioDto) respuesta.getResultado("data")).getId());
+                }else {
+                    new Mensaje().show(Alert.AlertType.ERROR, "Error al asignar un rol", "No se ha podido asignar el rol al usuario");
+                }
+
+            }else {
+                new Mensaje().show(Alert.AlertType.ERROR, "Error de información", respuesta.getMensaje());
+            }
+           container.setDisable(false);
+            salirModoEspera(btnGuardo, "Guardar");
+
+        });
+    }
+
     private boolean isValidInformation(boolean evaluarContrasena){
         String mensajeErrores = ""; boolean isValid = true;
-
 
         if (cbxRoles.getSelectionModel().getSelectedItem()==null) {
             mensajeErrores+="Se necesita un rol para completar el registro\n";
             isValid = false;
-
         }
         if(txtNombre.getText().isEmpty() || txtApellido.getText().isEmpty()){
             mensajeErrores+="Se necesita que los campos de nombre y apellido estén completos para realizar el registro\n";
@@ -154,12 +172,12 @@ public class CrearUsuarioController extends Controller implements Initializable 
             }else if(!(txtContrasenna.getText().equals(txtContrasennaConfirmacion.getText()) && isValid)){
                 mensajeErrores+="La contraseña no coincide con su confirmación\n";
                 isValid = false;
-            }else if(!(isValidPassword(txtContrasenna.getText()) && isValid)) isValid = false;
+            }else if(!isValidPassword(txtContrasenna.getText())) isValid = false;
         }
 
 
         if(!isValid) new Mensaje().show(Alert.AlertType.ERROR, "Error de información", mensajeErrores);
-        else {
+        else if(usuarioSeleccionado==null) {
 
             boolean isCedulaDisponible = (boolean) new UsuarioService().isCedulaRegistrada(txtCedula.getText()).getResultado("data");
             if(!isCedulaDisponible) new Mensaje().show(Alert.AlertType.ERROR, "Error de información", "Ya se encuentra un usuario registrado con la cédula ingresada");
@@ -201,7 +219,7 @@ public class CrearUsuarioController extends Controller implements Initializable 
             mensajeErrores += "La contraseña debe tener al menos un número\n";
             isValid = false;
         }
-        if(!isValid && !mensajeErrores.isEmpty()) new Mensaje().show(Alert.AlertType.ERROR, "Error de información", mensajeErrores);
+        if(!isValid) new Mensaje().show(Alert.AlertType.ERROR, "Error de información", mensajeErrores);
         return isValid;
     }
 
@@ -257,6 +275,8 @@ public class CrearUsuarioController extends Controller implements Initializable 
 
     public void DatosEdicion() {
         if (AppContext.getInstance().get("usuarioEdit") != null) {
+            FlowController.changeSuperiorTittle("Modificar Usuario");
+            FlowController.changeCodeScreenTittle("UG200");
             UsuarioDto usuarioDto = (UsuarioDto) AppContext.getInstance().get("usuarioEdit");
             usuarioSeleccionado = usuarioDto;
             modificarButton.setVisible(true);
@@ -270,7 +290,6 @@ public class CrearUsuarioController extends Controller implements Initializable 
             checkActivo.setSelected(usuarioDto.getActivo());
             txtContrasenna.setPromptText("Click para cambiar contraseña");
             txtContrasennaConfirmacion.setVisible(false);
-          //  cambiarContrasenaButton.setVisible(true);
             btnGuardo.setVisible(false);
             cbxRoles.getSelectionModel().select(usuarioDto.getRolNombre());
 
@@ -295,32 +314,9 @@ public class CrearUsuarioController extends Controller implements Initializable 
     public void modificarButtonOnAction(ActionEvent actionEvent) {
 
         if(isValidInformation(!txtContrasenna.getText().isEmpty())){
-            modificarButton.setText("Modificando...");
-            modificarButton.setDisable(true);
-            Thread thread = new Thread(()->{
-                Optional<RolDto> rolDto = rolList.stream().filter(r -> cbxRoles.getValue().equals(r.getNombre())).findFirst();
-                UsuarioDto usuarioDto = new UsuarioDto(txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtContrasenna.getText(), Timestamp.valueOf(LocalDateTime.of(dtpFechaNacimiento.getValue(), LocalTime.MIN)), checkActivo.isSelected(), getAreaByRole(cbxRoles.getValue()));
-                usuarioDto.setId(usuarioSeleccionado.getId());
-                Platform.runLater(()->{
-                    Respuesta respuesta = new UsuarioService().update(usuarioDto);
-                    if (respuesta.getEstado()) {
-                        RolUsuarioDto rolUsuario = new RolUsuarioDto(Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()), true, rolDto.get(), usuarioDto);
-                        rolUsuario.setId(usuarioSeleccionado.getRolUsuarioList().get(0).getId());
-                        Respuesta repuestaRol = new RolUsuarioService().update(rolUsuario);
-                        if(repuestaRol.getEstado()){
-                            new Mensaje().showInformation("Se ha modificado  el usuario con éxito");
-                        }else {
-                            new Mensaje().show(Alert.AlertType.ERROR, "Error al modificar el rol", "No se ha podido asignar el rol al usuario");
-                        }
-
-                    }else {
-                        new Mensaje().show(Alert.AlertType.ERROR, "Error de información", respuesta.getMensaje());
-                    }
-                    modificarButton.setText("Modificar");
-                    modificarButton.setDisable(false);
-                });
-
-            });
+           container.setDisable(true);
+           aModoEspera(modificarButton);
+            Thread thread = new Thread(this::modificarUsuario);
 
             thread.start();
 
@@ -328,8 +324,35 @@ public class CrearUsuarioController extends Controller implements Initializable 
 
     }
 
+    private void modificarUsuario() {
+        Optional<RolDto> rolDto = rolList.stream().filter(r -> cbxRoles.getValue().equals(r.getNombre())).findFirst();
+
+        UsuarioDto usuarioDto = new UsuarioDto(txtCedula.getText(), txtNombre.getText(), txtApellido.getText(), txtContrasenna.getText(), Timestamp.valueOf(LocalDateTime.of(dtpFechaNacimiento.getValue(), LocalTime.MIN)), checkActivo.isSelected(), getAreaByRole(cbxRoles.getValue()));
+        usuarioDto.setId(usuarioSeleccionado.getId());
+        Respuesta respuesta = new UsuarioService().update(usuarioDto);
+        Platform.runLater(()->{
+
+            if (respuesta.getEstado()) {
+                RolUsuarioDto rolUsuario = new RolUsuarioDto(Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()), true, rolDto.get(), usuarioDto);
+                rolUsuario.setId(usuarioSeleccionado.getRolUsuarioList().get(0).getId());
+                Respuesta repuestaRol = new RolUsuarioService().update(rolUsuario);
+                if(repuestaRol.getEstado()){
+                    new BitacoraService().create("Modificó usuario con ID: " + usuarioDto.getId());
+                    new Mensaje().showInformation("Se ha modificado  el usuario con éxito");
+                }else {
+                    new Mensaje().show(Alert.AlertType.ERROR, "Error al modificar el rol", "No se ha podido asignar el rol al usuario");
+                }
+
+            }else {
+                new Mensaje().show(Alert.AlertType.ERROR, "Error de información", respuesta.getMensaje());
+            }
+            container.setDisable(false);
+            salirModoEspera(modificarButton, "Modificar");
+        });
+    }
+
     public void textContrasenaOnAction(ActionEvent actionEvent) {
-        System.out.println("clik in label");
+
         if(usuarioSeleccionado!=null){
             txtContrasennaConfirmacion.setVisible(true);
             txtContrasenna.setPromptText("Nueva contraseña");
@@ -337,7 +360,7 @@ public class CrearUsuarioController extends Controller implements Initializable 
     }
 
     public void textContrasenaOnClick(MouseEvent mouseEvent) {
-        System.out.println("clik in label");
+
         if(usuarioSeleccionado!=null){
             txtContrasennaConfirmacion.setVisible(true);
             txtContrasenna.setPromptText("Nueva contraseña");
