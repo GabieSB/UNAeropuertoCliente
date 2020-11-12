@@ -38,7 +38,7 @@
                               </HBox>
                               <HBox alignment="CENTER_RIGHT" prefHeight="87.0" prefWidth="366.0">
                                  <children>
-                                    <JFXButton onAction="#onActionGenerarReporte" text="Generar " />
+                                    <JFXButton fx:id="btnGenerar" onAction="#onActionGenerarReporte" text="Generar " />
                                  </children>
                               </HBox>
                            </children>

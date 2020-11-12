@@ -148,7 +148,8 @@ public class MenuPrincipalController extends Controller implements Initializable
 //                    break; ---> TODO
                 case "AUDITOR_SERVICIOS_AERONAVES":
                     flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
-                      flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Reporte Vuelo", flowChildrenList));
                     break;
                 case "AUDITOR_MANTENIMIENTO_AEROPUERTO":
                     flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
@@ -167,6 +168,7 @@ public class MenuPrincipalController extends Controller implements Initializable
         return null;
     }
 
+    @FXML
     public void goModificarUsuario(ActionEvent actionEvent) {
         FlowController.getInstance().goView("BuscarUsuario");
     }
@@ -179,5 +181,10 @@ public class MenuPrincipalController extends Controller implements Initializable
     @FXML
     void goReporteMantenimiento(ActionEvent event) {
         FlowController.getInstance().goView("DepartamentoReport");
+    }
+
+    @FXML
+    private void goReporteVuelo(ActionEvent event) {
+        FlowController.getInstance().goView("VueloReporte");
     }
 }

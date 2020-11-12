@@ -26,7 +26,7 @@
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
             <JFXButton onAction="#btnReporteServicio" prefHeight="70.0" prefWidth="139.0" text="Reporte Servicio" />
             <JFXButton onAction="#goReporteMantenimiento" prefHeight="70.0" prefWidth="139.0" text="Reporte Mantenimiento" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton onAction="#goReporteVuelo" prefHeight="70.0" prefWidth="139.0" text="Reporte Vuelo" />
             <JFXButton prefHeight="70.0" prefWidth="139.0" />
          </children>
          <opaqueInsets>
