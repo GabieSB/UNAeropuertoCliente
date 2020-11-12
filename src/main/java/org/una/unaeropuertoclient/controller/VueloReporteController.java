@@ -29,6 +29,7 @@ import org.una.unaeropuertoclient.service.AerolineaService;
 import org.una.unaeropuertoclient.service.ReporteService;
 import org.una.unaeropuertoclient.service.TipoVueloService;
 import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -86,9 +87,9 @@ public class VueloReporteController extends Controller implements Initializable 
             ReporteService reporS = new ReporteService();
             Respuesta respuesta = reporS.getReporteVuelo(dtpFechaInicio.getValue(), dtpFechaFinal.getValue(), cbxAerolinea.getValue(), cbxTipo.getValue());
             Platform.runLater(() -> {
+                salirModoEspera(btnGenerar, "Generar");
                 if (respuesta.getEstado()) {
                     try {
-
                         String r = (String) respuesta.getResultado("data");
                         byte[] base64 = Base64.getDecoder().decode(r);
                         InputStream in = new ByteArrayInputStream(base64);
@@ -102,6 +103,8 @@ public class VueloReporteController extends Controller implements Initializable 
                     } catch (Exception e) {
                         System.err.println(e);
                     }
+                }else{
+                    new Mensaje().show(Alert.AlertType.WARNING, "Atención", respuesta.getMensaje());
                 }
             });
         });

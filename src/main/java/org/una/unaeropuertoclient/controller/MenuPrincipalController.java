@@ -141,6 +141,7 @@ public class MenuPrincipalController extends Controller implements Initializable
                     break;
                 case "AUDITOR_CONTROL_VUELOS":
                     AppContext.getInstance().set("mode", 2);
+                    flow.getChildren().add(getButtonFromList("Reporte Vuelo", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
                     break;
@@ -157,27 +158,9 @@ public class MenuPrincipalController extends Controller implements Initializable
                     AppContext.getInstance().set("auditMode", true);
                     flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Gestor Servicios", flowChildrenList));
-                    flow.getChildren().add(getButtonFromList("Consultar Bitacoras", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Consultar Bitácoras", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
                     break;
-//                case "GERENTE_CONTROL_VUELO":
-//                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
-//                    break;
-//                case "GERENTE_CONTROL_VUELO":
-//                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
-//                    break;
-//                case "GERENTE_CONTROL_VUELO":
-//                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
-//                    break; ---> TODO
-                case "AUDITOR_SERVICIOS_AERONAVES":
-                    flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
-                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
-                    flow.getChildren().add(getButtonFromList("Reporte Vuelo", flowChildrenList));
-                    break;
-                case "AUDITOR_MANTENIMIENTO_AEROPUERTO":
-                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
-                    break;
-
             }
         });
     }
