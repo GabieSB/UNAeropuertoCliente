@@ -13,7 +13,7 @@
          </padding>
          <children>
             <JFXButton fx:id="btnRegistrarUsuario" onAction="#goRegistrarUsuario" prefHeight="70.0" prefWidth="137.0" text="Registrar Usuario" />
-            <JFXButton onAction="#goParametros" prefHeight="70.0" prefWidth="139.0" text="Parametros Sistema" />
+            <JFXButton onAction="#goParametros" prefHeight="70.0" prefWidth="139.0" text="Parámetros Sistema" />
             <JFXButton fx:id="btnNotificaciones" onAction="#goNotificaciones" prefHeight="70.0" prefWidth="139.0" text="Notificaciones" />
             <JFXButton onAction="#goModificarUsuario" prefHeight="70.0" prefWidth="139.0" text="Modificar Usuario" />
             <JFXButton onAction="#OnClickAirModule" prefHeight="70.0" prefWidth="139.0" text="Control de vuelos" />

@@ -112,13 +112,13 @@ public class MenuPrincipalController extends Controller implements Initializable
                 case "ADMINISTRADOR":
                     AppContext.getInstance().set("mode", 3);
                     flow.getChildren().add(getButtonFromList("Registrar Usuario", flowChildrenList));
-                    flow.getChildren().add(getButtonFromList("Parametros Sistema", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Parámetros Sistema", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Modificar Usuario", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Gestor Servicios", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
-                    flow.getChildren().add(getButtonFromList("Consultar Bitacoras", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Consultar Bitácoras", flowChildrenList));
 
                     break;
                 case "GESTOR_CONTROL_VUELOS":
@@ -142,6 +142,7 @@ public class MenuPrincipalController extends Controller implements Initializable
                 case "AUDITOR_CONTROL_VUELOS":
                     AppContext.getInstance().set("mode", 2);
                     flow.getChildren().add(getButtonFromList("Reporte Vuelo", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Consultar Bitácoras", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
                     break;
