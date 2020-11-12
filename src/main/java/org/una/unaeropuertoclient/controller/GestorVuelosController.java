@@ -106,6 +106,7 @@ public class GestorVuelosController extends Controller implements Initializable 
         FlowController.changeSuperiorTittle("Módulo de vuelos");
         FlowController.changeCodeScreenTittle("VG200");
         accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
         btnBuscar.setDisable(accesMode > 2);
         btnLimpiar.setDisable(accesMode > 2);
         tbVuelos.getItems().clear();

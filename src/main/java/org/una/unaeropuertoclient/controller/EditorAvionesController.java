@@ -61,6 +61,7 @@ public class EditorAvionesController extends Controller implements Initializable
     @Override
     public void initialize() {
         accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
         btnGuardar.setDisable(accesMode != 1);
         txtMatricula.setText("");
         cbAerolinea.getItems().clear();

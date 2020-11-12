@@ -71,6 +71,7 @@ public class GestorPistasController extends Controller implements Initializable 
     @Override
     public void initialize() {
         accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
         btnBuscar.setDisable(accesMode > 2);
         clearScreen();
     }

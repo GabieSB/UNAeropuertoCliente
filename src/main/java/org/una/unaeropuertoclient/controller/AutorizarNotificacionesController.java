@@ -87,6 +87,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
     @Override
     public void initialize() {
         accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
         AuthenticationResponse aux = (AuthenticationResponse) AppContext.getInstance().get("token");
         numeroArea = aux.getUsuario().getAreasId().getId();
         FlowController.changeSuperiorTittle("Notificaciones (peticiones de inhabilitación)");
