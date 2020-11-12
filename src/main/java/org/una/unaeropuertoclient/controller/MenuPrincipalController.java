@@ -170,13 +170,13 @@ public class MenuPrincipalController extends Controller implements Initializable
 //                case "GERENTE_CONTROL_VUELO":
 //                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
 //                    break; ---> TODO
-                case "AUDITOR_SERVICIOS_AERONAVES":
-                    flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
-                      flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
-                    break;
-                case "AUDITOR_MANTENIMIENTO_AEROPUERTO":
-                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
-                    break;
+//                case "AUDITOR_SERVICIOS_AERONAVES":
+//                    flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
+//                      flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
+//                    break;
+//                case "AUDITOR_MANTENIMIENTO_AEROPUERTO":
+//                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
+//                    break;
 
             }
         });
