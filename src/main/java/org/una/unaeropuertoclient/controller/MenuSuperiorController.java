@@ -64,7 +64,7 @@ public class MenuSuperiorController extends Controller implements Initializable 
     private void onClickCerrarSesion(ActionEvent event) {
         if (new Mensaje().showConfirmation("Atención", this.getStage(), "Al aceptar "
                 + "este recuadro la sesión actual se terminará y se perderán los cambios que no "
-                + "halla guardado", "¿Desea cerrar sesión?")) {
+                + "haya guardado", "¿Desea cerrar sesión?")) {
             AppContext.getInstance().reset();
             FlowController.getInstance().reset();
             this.getStage().close();
