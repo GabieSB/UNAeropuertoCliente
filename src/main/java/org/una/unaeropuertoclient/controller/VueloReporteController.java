@@ -30,6 +30,7 @@ import org.una.unaeropuertoclient.service.ReporteService;
 import org.una.unaeropuertoclient.service.TipoVueloService;
 import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -63,7 +64,8 @@ public class VueloReporteController extends Controller implements Initializable 
 
     @Override
     public void initialize() {
-
+        FlowController.changeSuperiorTittle("Reportes Vuelo");
+        FlowController.changeCodeScreenTittle("VR300");
     }
 
     @FXML
@@ -78,6 +80,11 @@ public class VueloReporteController extends Controller implements Initializable 
     private void crearMensaje() {
         Mensaje mensaje = new Mensaje();
         mensaje.show(Alert.AlertType.WARNING, "Informacion Incompleta", "Se debe se completar la información de todos los campos");
+    }
+
+    private void crearMensajeConnexionFallida() {
+        Mensaje mensaje = new Mensaje();
+        mensaje.show(Alert.AlertType.WARNING, "Informacion Incompleta", "Problemas con la conexión");
     }
 
     private void crearReporte() {
@@ -102,8 +109,9 @@ public class VueloReporteController extends Controller implements Initializable 
                         j.show();
                     } catch (Exception e) {
                         System.err.println(e);
+                        crearMensajeConnexionFallida();
                     }
-                }else{
+                } else {
                     new Mensaje().show(Alert.AlertType.WARNING, "Atención", respuesta.getMensaje());
                 }
             });
@@ -113,32 +121,39 @@ public class VueloReporteController extends Controller implements Initializable 
 
     private void llenarAerolines() {
         cbxAerolinea.getItems().clear();
-        Respuesta respuesta = new Respuesta();
-        AerolineaService aerolineaService = new AerolineaService();
-        respuesta = aerolineaService.findByEstado(true);
-        List<AerolineaDto> listAerolinea = new ArrayList<>();
-        if (respuesta.getEstado()) {
-            listAerolinea = (List<AerolineaDto>) respuesta.getResultado("data");
-            for (AerolineaDto aerolineaDto : listAerolinea) {
-                cbxAerolinea.getItems().add(aerolineaDto.getNombre());
-            }
-        }
+        Thread th = new Thread(() -> {
+            AerolineaService aerolineaService = new AerolineaService();
+            Respuesta respuesta = aerolineaService.findByEstado(true);
+            Platform.runLater(() -> {
+                List<AerolineaDto> listAerolinea = new ArrayList<>();
+                if (respuesta.getEstado()) {
+                    listAerolinea = (List<AerolineaDto>) respuesta.getResultado("data");
+                    for (AerolineaDto aerolineaDto : listAerolinea) {
+                        cbxAerolinea.getItems().add(aerolineaDto.getNombre());
+                    }
+                }
+            });
+        });
+        th.start();
     }
 
     private void llenarTipoVuelo() {
         cbxTipo.getItems().clear();
-        Respuesta respuesta = new Respuesta();
-        TipoVueloService tipoVuelo = new TipoVueloService();
-        respuesta = tipoVuelo.findByEstado(true);
-        List<TipoVueloDto> listaTipoVuelo = new ArrayList<>();
-        if (respuesta.getEstado()) {
-            listaTipoVuelo = (List<TipoVueloDto>) respuesta.getResultado("data");
-            for (TipoVueloDto tipoV : listaTipoVuelo) {
-                cbxTipo.getItems().add(tipoV.getNombre());
-            }
 
-        }
+        Thread th = new Thread(() -> {
+            TipoVueloService tipoVuelo = new TipoVueloService();
+            Respuesta respuesta = tipoVuelo.findByEstado(true);
+            Platform.runLater(() -> {
+                List<TipoVueloDto> listaTipoVuelo = new ArrayList<>();
+                if (respuesta.getEstado()) {
+                    listaTipoVuelo = (List<TipoVueloDto>) respuesta.getResultado("data");
+                    for (TipoVueloDto tipoV : listaTipoVuelo) {
+                        cbxTipo.getItems().add(tipoV.getNombre());
+                    }
+                }
 
+            });
+        });
+        th.start();
     }
-
 }
