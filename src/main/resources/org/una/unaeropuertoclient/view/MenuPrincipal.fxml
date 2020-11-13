@@ -12,22 +12,19 @@
             <Insets bottom="40.0" left="40.0" right="40.0" top="80.0" />
          </padding>
          <children>
-            <JFXButton fx:id="btnRegistrarUsuario" onAction="#goRegistrarUsuario" prefHeight="70.0" prefWidth="137.0" text="Registrar Usuario" />
-            <JFXButton onAction="#goParametros" prefHeight="70.0" prefWidth="139.0" text="Parámetros Sistema" />
-            <JFXButton fx:id="btnNotificaciones" onAction="#goNotificaciones" prefHeight="70.0" prefWidth="139.0" text="Notificaciones" />
-            <JFXButton onAction="#goModificarUsuario" prefHeight="70.0" prefWidth="139.0" text="Modificar Usuario" />
-            <JFXButton onAction="#OnClickAirModule" prefHeight="70.0" prefWidth="139.0" text="Control de vuelos" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton onAction="#btnconsultarServicios" prefHeight="70.0" prefWidth="139.0" text="Gestor Servicios" />
-            <JFXButton onAction="#btnconsultarGastos" prefHeight="70.0" prefWidth="139.0" text="Gestor Gastos" />
-            <JFXButton onAction="#btnConsultarBitacoras" prefHeight="70.0" prefWidth="139.0" text="Consultar Bitácoras" />
-            <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton id="registration" fx:id="btnRegistrarUsuario" onAction="#goRegistrarUsuario" prefHeight="70.0" text="Registrar Usuario" />
+            <JFXButton id="paramSistem" onAction="#goParametros" prefHeight="70.0" text="Parámetros Sistema" />
+            <JFXButton id="notificaciones" fx:id="btnNotificaciones" onAction="#goNotificaciones" prefHeight="70.0" text="Notificaciones" />
+            <JFXButton id="registration" onAction="#goModificarUsuario" prefHeight="70.0" text="Modificar Usuario" />
+            <JFXButton id="flightCotrol" onAction="#OnClickAirModule" prefHeight="70.0" text="Control de vuelos" />
+            <JFXButton id="servicios" onAction="#btnconsultarServicios" prefHeight="70.0" text="Gestor Servicios" />
+            <JFXButton id="reparacionesYGastos" onAction="#btnconsultarGastos" prefHeight="70.0" text="Gestor Gastos" />
+            <JFXButton id="bitacoras" onAction="#btnConsultarBitacoras" prefHeight="70.0" text="Consultar Bitácoras" />
+            <JFXButton id="reportes" onAction="#btnReporteServicio" prefHeight="70.0" text="Reporte Servicio" />
+            <JFXButton id="reportes" onAction="#goReporteMantenimiento" prefHeight="70.0" text="Reporte Mantenimiento" />
+            <JFXButton id="reportes" onAction="#goReporteVuelo" prefHeight="70.0" text="Reporte Vuelo" />
             <JFXButton onAction="#btnRegistrarGastos" prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton onAction="#btnReporteServicio" prefHeight="70.0" prefWidth="139.0" text="Reporte Servicio" />
-            <JFXButton onAction="#goReporteMantenimiento" prefHeight="70.0" prefWidth="139.0" text="Reporte Mantenimiento" />
-            <JFXButton onAction="#goReporteVuelo" prefHeight="70.0" prefWidth="139.0" text="Reporte Vuelo" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" />
          </children>
          <opaqueInsets>
             <Insets />

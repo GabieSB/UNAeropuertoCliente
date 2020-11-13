@@ -185,7 +185,7 @@ public class MenuPrincipalController extends Controller implements Initializable
     }
 
     @FXML
-    void goReporteMantenimiento(ActionEvent event) {
+    public void goReporteMantenimiento(ActionEvent event) {
         FlowController.getInstance().goView("DepartamentoReport");
     }
 
