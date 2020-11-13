@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.scene.control.Label;
 
 public class BuscarAvionController extends Controller implements Initializable {
 
@@ -60,6 +61,7 @@ public class BuscarAvionController extends Controller implements Initializable {
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Buscar Avión para Servicio");
+        tableResultados.setPlaceholder(new Label("Realice una consulta para mostrar resultados"));
     }
 
     public void llenarTabla(){

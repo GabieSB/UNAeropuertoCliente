@@ -41,7 +41,7 @@
                               <URL value="@style.css" />
                            </stylesheets>
                         </JFXButton>
-                        <JFXTextField fx:id="txtAvion" editable="false" layoutY="21.0" prefHeight="24.0" prefWidth="204.0" promptText="Matrícula del Avión" />
+                        <JFXTextField fx:id="txtAvion"  layoutY="21.0" prefHeight="24.0" prefWidth="204.0" promptText="Matrícula del Avión" />
                      </children>
                   </Pane>
                </children>

@@ -47,8 +47,11 @@ public class UsuarioService {
             if (RequesUtils.isEmptyResult(respuesta.statusCode())) {
                 return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
             }
+            
             AuthenticationResponse authenticationResponse = g.fromJson(respuesta.body().toString(), AuthenticationResponse.class);
             AppContext.getInstance().set("token", authenticationResponse);
+            
+            if(!authenticationResponse.getUsuario().getActivo())  return new Respuesta(false, "Parece que tu usuario se encuentra inactivo.", String.valueOf(requestHTTP.getStatus()));
             return new Respuesta(true, "", "", "data", authenticationResponse);
         } catch (Exception ex) {
             Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
