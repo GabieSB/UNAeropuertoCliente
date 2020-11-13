@@ -5,8 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
 import org.una.unaeropuertoclient.model.BitacoraDto;
-import org.una.unaeropuertoclient.model.BitacoraDto;
-import org.una.unaeropuertoclient.model.CobroDto;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
 import org.una.unaeropuertoclient.utils.Respuesta;
@@ -40,7 +38,7 @@ public class BitacoraService {
             System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Ha ocurrido un error al buscar entre fechas", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }
@@ -49,7 +47,7 @@ public class BitacoraService {
             return new Respuesta(true, "", "", "data", bitacoraDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " Buscar por fechas() ->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
@@ -62,7 +60,7 @@ public class BitacoraService {
             System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Ha ocurrido un error buscando por el tipo de area", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }
@@ -71,7 +69,7 @@ public class BitacoraService {
             return new Respuesta(true, "", "", "data", bitacoraDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, "Tipo De Cambio ->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
@@ -84,7 +82,7 @@ public class BitacoraService {
             System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Parece que ha ocurrido un error buscando entre fechas.", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }
@@ -93,7 +91,7 @@ public class BitacoraService {
             return new Respuesta(true, "", "", "data", bitacoraDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " Busqueda por cedula->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
@@ -106,7 +104,7 @@ public class BitacoraService {
             System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus()!=200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Parece que ha ocurrido un error buscando mediante el Id del usuario.", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema." ,String.valueOf(requestHTTP.getStatus()));
             }

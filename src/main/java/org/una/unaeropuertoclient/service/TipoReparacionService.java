@@ -122,7 +122,7 @@ public class TipoReparacionService {
             return new Respuesta(true, "", "", "data", tipoReparacionDtos);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " tipoReparaciones() ->", ex);
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
 

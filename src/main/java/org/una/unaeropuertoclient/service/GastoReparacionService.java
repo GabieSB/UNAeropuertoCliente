@@ -43,7 +43,7 @@ public class GastoReparacionService {
             return new Respuesta(true, "", "", "data", gastoReparacionDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " CrearGasto() ->", ex);
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
     }
@@ -140,7 +140,7 @@ public class GastoReparacionService {
             return new Respuesta(true, "", "", "data", gastoReparacionDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, "BuscarEntreDias() ->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
@@ -214,7 +214,7 @@ public class GastoReparacionService {
             return new Respuesta(true, "", "", "data", gastoReparacionDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " BuscarMedianteEstado() ->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
@@ -237,7 +237,7 @@ public class GastoReparacionService {
             return new Respuesta(true, "", "", "data", gastoReparacionDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " BuscarNumeroDeContrato->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
 
@@ -262,7 +262,7 @@ public class GastoReparacionService {
             return new Respuesta(true, "", "", "data", gastoReparacionDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " BuscarMedianteID() ->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }

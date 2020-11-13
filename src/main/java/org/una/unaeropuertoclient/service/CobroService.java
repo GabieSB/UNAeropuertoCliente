@@ -27,14 +27,12 @@ public class CobroService {
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
-
-            //List<AuthenticationResponse> users = new Gson().fromJson(respuesta.body().toString(), new TypeToken<>() {}.getType());
             CobroDto servicioMantenimientoDto = gson.fromJson(respuesta.body().toString(), CobroDto.class);
 
             return new Respuesta(true, "", "", "data", servicioMantenimientoDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " create() ->", ex);
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
     }
@@ -55,7 +53,7 @@ public class CobroService {
             return new Respuesta(true, "", "", "data", servicioMantenimientoDto);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " Update() ->", ex);
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
     }

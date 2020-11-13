@@ -39,7 +39,7 @@ public class TipoServicioService {
             return new Respuesta(true, "", "", "data", tipoServicioDtos);
 
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " obtenerTipoServicio->", ex);
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }
 
