@@ -41,24 +41,15 @@ public class UsuarioService {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.post("autenticacion/login", g.toJson(autRiq));
-            if (requestHTTP.getStatus() != 200) {
-                if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
-                }
+            if (RequesUtils.isError(respuesta.statusCode())) {
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
-            System.out.println(respuesta.body().toString());
-            //List<AuthenticationResponse> users = new Gson().fromJson(respuesta.body().toString(), new TypeToken<>() {}.getType());
-            AuthenticationResponse authenticationResponse = g.fromJson(respuesta.body().toString(), AuthenticationResponse.class);
-
-            for (RolUsuarioDto usuarioDTO : authenticationResponse.getRolUsuario()) {
-                System.out.println(usuarioDTO.toString());
+            if (RequesUtils.isEmptyResult(respuesta.statusCode())) {
+                return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
             }
-
+            AuthenticationResponse authenticationResponse = g.fromJson(respuesta.body().toString(), AuthenticationResponse.class);
             AppContext.getInstance().set("token", authenticationResponse);
-
             return new Respuesta(true, "", "", "data", authenticationResponse);
-
         } catch (Exception ex) {
             Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
@@ -118,7 +109,7 @@ public class UsuarioService {
     public Respuesta isCedulaRegistrada(String cedula) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.get("usuarios/findByCed/"+cedula);
+            HttpResponse respuesta = requestHTTP.get("usuarios/findByCed/" + cedula);
             if (isError(respuesta.statusCode())) {
                 return new Respuesta(false, "Error al consultar disponibilidad de la cédula", String.valueOf(requestHTTP.getStatus()));
             }
@@ -126,7 +117,7 @@ public class UsuarioService {
                 return new Respuesta(true, "", "", "data", true);
             }
 
-            return new Respuesta(true, "", "", "data",false);
+            return new Respuesta(true, "", "", "data", false);
 
         } catch (Exception ex) {
             Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
