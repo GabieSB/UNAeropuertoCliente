@@ -27,6 +27,7 @@ import org.una.unaeropuertoclient.model.TipoReparacionDto;
 import org.una.unaeropuertoclient.service.ReporteService;
 import org.una.unaeropuertoclient.service.TipoReparacionService;
 import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -57,6 +58,8 @@ public class DepartamentoReportController extends Controller implements Initiali
 
     @Override
     public void initialize() {
+        FlowController.changeSuperiorTittle("Reporte Mantenimiento");
+        FlowController.changeCodeScreenTittle("MR300");
         cargarServiciosMantenimiento();
     }
 
@@ -75,6 +78,11 @@ public class DepartamentoReportController extends Controller implements Initiali
         mensaje.show(Alert.AlertType.WARNING, "Informacion Incompleta", "Se debe se completar la información de todos los campos");
     }
 
+    private void crearMensajeConnexionFallida() {
+        Mensaje mensaje = new Mensaje();
+        mensaje.show(Alert.AlertType.WARNING, "Informacion Incompleta", "Problemas con la conexión");
+    }
+
     public void crearReporte() {
         ButtonWaitUtils.aModoEspera(btnGenerar);
         Thread th = new Thread(() -> {
@@ -83,7 +91,7 @@ public class DepartamentoReportController extends Controller implements Initiali
             Platform.runLater(() -> {
                 if (resp.getEstado()) {
                     try {
-                        ButtonWaitUtils.salirModoEspera(btnGenerar,"Generar");
+                        ButtonWaitUtils.salirModoEspera(btnGenerar, "Generar");
                         String r = (String) resp.getResultado("data");
                         byte[] base64 = Base64.getDecoder().decode(r);
                         InputStream in = new ByteArrayInputStream(base64);
@@ -96,7 +104,10 @@ public class DepartamentoReportController extends Controller implements Initiali
                         j.show();
                     } catch (Exception e) {
                         System.err.println(e);
+                        crearMensajeConnexionFallida();
                     }
+                } else {
+                    crearMensajeConnexionFallida();
                 }
             });
         });
@@ -105,16 +116,20 @@ public class DepartamentoReportController extends Controller implements Initiali
 
     public void cargarServiciosMantenimiento() {
         cbxMantenimiento.getItems().clear();
-        List<TipoReparacionDto> listTipoServicio = new ArrayList<>();
-        Respuesta resp = new Respuesta();
-        TipoReparacionService tpr = new TipoReparacionService();
-        resp = tpr.getAll();
-        if (resp.getEstado()) {
-            listTipoServicio = (List<TipoReparacionDto>) resp.getResultado("data");
-            for (TipoReparacionDto tp : listTipoServicio) {
-                cbxMantenimiento.getItems().add(tp.getNombre());
-            }
+        Thread th = new Thread(() -> {
 
-        }
+            TipoReparacionService tpr = new TipoReparacionService();
+            Respuesta respuesta = tpr.getAll();
+            Platform.runLater(() -> {
+                if (respuesta.getEstado()) {
+                    List<TipoReparacionDto> listTipoServicio = new ArrayList<>();
+                    listTipoServicio = (List<TipoReparacionDto>) respuesta.getResultado("data");
+                    for (TipoReparacionDto tp : listTipoServicio) {
+                        cbxMantenimiento.getItems().add(tp.getNombre());
+                    }
+                }
+            });
+        });
+        th.start();
     }
 }

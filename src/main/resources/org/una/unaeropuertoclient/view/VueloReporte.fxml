@@ -13,12 +13,11 @@
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Reporte Vuelo" />
             <HBox alignment="CENTER" prefHeight="249.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
                <children>
                   <VBox alignment="CENTER" prefHeight="363.0" prefWidth="425.0">
                      <children>
-                        <HBox prefHeight="267.0" prefWidth="316.0" styleClass="air-glass-efect-color">
+                        <HBox prefHeight="337.0" prefWidth="425.0" styleClass="air-glass-efect-color">
                            <children>
                               <VBox alignment="CENTER" prefHeight="267.0" prefWidth="483.0" HBox.hgrow="SOMETIMES">
                                  <children>
@@ -46,7 +45,7 @@
                                     </HBox>
                                     <HBox alignment="BOTTOM_RIGHT" prefHeight="60.0" prefWidth="425.0">
                                        <children>
-                                          <JFXButton fx:id="btnGenerar" onAction="#generarReporte" text="Generar" />
+                                          <JFXButton fx:id="btnGenerar" minWidth="63.0" onAction="#generarReporte" text="Generar" />
                                        </children>
                                        <opaqueInsets>
                                           <Insets />

@@ -41,7 +41,7 @@ public class NotificacionService {
             HttpResponse respuesta = requestHTTP.get(url);
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Parece que has tenido problemas con obtener las notificaciones", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
@@ -61,7 +61,7 @@ public class NotificacionService {
             HttpResponse respuesta = requestHTTP.get(url);
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Parece que has  tenido problemas al consultar por estado de la area.", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }

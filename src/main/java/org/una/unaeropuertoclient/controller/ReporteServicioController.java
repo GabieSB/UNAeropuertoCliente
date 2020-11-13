@@ -35,6 +35,7 @@ import org.una.unaeropuertoclient.service.ReporteService;
 import org.una.unaeropuertoclient.service.TipoReparacionService;
 import org.una.unaeropuertoclient.service.TipoServicioService;
 import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
+import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -66,6 +67,8 @@ public class ReporteServicioController extends Controller implements Initializab
 
     @Override
     public void initialize() {
+        FlowController.changeSuperiorTittle("Reportes Servicios");
+        FlowController.changeCodeScreenTittle("SR300");
         listaServicios();
     }
 
@@ -84,6 +87,11 @@ public class ReporteServicioController extends Controller implements Initializab
         mensaje.show(Alert.AlertType.WARNING, "Informacion Incompleta", "Se debe se completar la información de todos los campos");
     }
 
+    private void crearMensajeConnexionFallida() {
+        Mensaje mensaje = new Mensaje();
+        mensaje.show(Alert.AlertType.WARNING, "Informacion Incompleta", "Problemas con la conexión");
+    }
+
     private void generarReporte() {
         ButtonWaitUtils.aModoEspera(btnGenerar);
         Thread th = new Thread(() -> {
@@ -91,9 +99,9 @@ public class ReporteServicioController extends Controller implements Initializab
             ReporteService reporteService = new ReporteService();
             Respuesta resp = reporteService.getReporteServicio(dtpFechaInicio.getValue(), dtpFechaFinal.getValue(), cbxServicio.getValue());
             Platform.runLater(() -> {
-            if (resp.getEstado()) {
+                if (resp.getEstado()) {
                     try {
-                         ButtonWaitUtils.salirModoEspera(btnGenerar,"Generar");
+                        ButtonWaitUtils.salirModoEspera(btnGenerar, "Generar");
                         String r = (String) resp.getResultado("data");
                         byte[] base64 = Base64.getDecoder().decode(r);
                         InputStream in = new ByteArrayInputStream(base64);
@@ -105,8 +113,10 @@ public class ReporteServicioController extends Controller implements Initializab
                         j.setVisible(true);
                         j.show();
                     } catch (Exception e) {
-                        System.err.println(e);
+                        crearMensajeConnexionFallida();
                     }
+                } else {
+                    crearMensajeConnexionFallida();
                 }
             });
         });
@@ -116,15 +126,18 @@ public class ReporteServicioController extends Controller implements Initializab
     void listaServicios() {
         tps.clear();
         cbxServicio.getItems().clear();
-        TipoServicioService tipoServicioService = new TipoServicioService();
-        Respuesta resp = tipoServicioService.getAll();
-        if (resp.getEstado()) {
-
-            tps = (List<TipoServicioDto>) resp.getResultado("data");
-            for (TipoServicioDto t : tps) {
-                cbxServicio.getItems().add(t.getNombre());
-            }
-        }
-
+        Thread th = new Thread(() -> {
+            TipoServicioService tipoServicioService = new TipoServicioService();
+            Respuesta resp = tipoServicioService.getAll();
+            Platform.runLater(() -> {
+                if (resp.getEstado()) {
+                    tps = (List<TipoServicioDto>) resp.getResultado("data");
+                    for (TipoServicioDto t : tps) {
+                        cbxServicio.getItems().add(t.getNombre());
+                    }
+                }
+            });
+        });
+        th.start();
     }
 }

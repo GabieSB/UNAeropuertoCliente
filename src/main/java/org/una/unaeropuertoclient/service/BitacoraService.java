@@ -64,7 +64,7 @@ public class BitacoraService {
             }.getType());
             return new Respuesta(true, "", "", "data", bitacoraDto);
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, " logIn() ->", ex);
+            Logger.getLogger(UsuarioService.class.getName()).log(Level.SEVERE, "Tipo De Cambio ->", ex);
             System.out.println("ha ocurrido un error");
             return new Respuesta(false, "Ha ocurrido un error al establecer comunicación con el servidor.", ex.getMessage());
         }

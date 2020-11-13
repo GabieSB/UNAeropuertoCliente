@@ -13,12 +13,11 @@
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label text="Reporte Departamento" />
             <HBox alignment="CENTER" prefHeight="475.0" prefWidth="657.0">
                <children>
                   <VBox alignment="CENTER" prefHeight="468.0" prefWidth="572.0">
                      <children>
-                        <HBox alignment="CENTER" prefHeight="348.0" prefWidth="572.0" spacing="25.0" styleClass="air-glass-efect-color">
+                        <HBox alignment="CENTER" prefHeight="415.0" prefWidth="572.0" spacing="25.0" styleClass="air-glass-efect-color">
                            <children>
                               <VBox alignment="CENTER" prefHeight="348.0" prefWidth="421.0">
                                  <children>
@@ -36,7 +35,7 @@
                                     </HBox>
                                     <HBox alignment="CENTER_RIGHT" prefHeight="57.0" prefWidth="421.0">
                                        <children>
-                                          <JFXButton fx:id="btnGenerar" onAction="#generarReporte" prefWidth="63.0" text="Generar" />
+                                          <JFXButton fx:id="btnGenerar" minWidth="63.0" onAction="#generarReporte" text="Generar" />
                                        </children>
                                     </HBox>
                                  </children>
