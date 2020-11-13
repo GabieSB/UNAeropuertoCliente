@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.una.unaeropuertoclient.model.*;
-import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
 import org.una.unaeropuertoclient.utils.Respuesta;
 

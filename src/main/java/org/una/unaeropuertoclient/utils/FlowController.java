@@ -326,4 +326,9 @@ public class FlowController {
             java.util.logging.Logger.getLogger(FlowController.class.getName()).log(Level.SEVERE, "Error al cargar ''" + viewName + "'' dentro de otro nodo.", ex);
         }
     }
+    
+    public void reset(){
+        viewed.clear();
+        loaders.clear();
+    }
 }
