@@ -87,7 +87,6 @@ public class AutorizarNotificacionesController extends Controller implements Ini
     @Override
     public void initialize() {
         accesMode = (int) AppContext.getInstance().get("mode");
-        accesMode = (accesMode != 3) ? accesMode : 2;
         AuthenticationResponse aux = (AuthenticationResponse) AppContext.getInstance().get("token");
         numeroArea = aux.getUsuario().getAreasId().getId();
         FlowController.changeSuperiorTittle("Notificaciones (peticiones de inhabilitación)");
@@ -100,12 +99,14 @@ public class AutorizarNotificacionesController extends Controller implements Ini
 
     @FXML
     private void toggBuscar(ActionEvent event) {
-        if (accesMode == 2) {
+        if (accesMode < 3) {
             if (togNotificacion.isSelected()) {
                 cargarDatos(true);
             } else {
                 cargarDatos(false);
             }
+        }else{
+            tbvNotificaciones.setPlaceholder(new Label("No es posible cargar estos datos si eres administrador"));
         }
     }
 
@@ -205,7 +206,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                 public JFXButton acceptar = new JFXButton("Acceptar");
 
                 {
-                    acceptar.setDisable(accesMode != 2);
+                    acceptar.setDisable(accesMode != 1);
                     acceptar.setOnAction((ActionEvent event) -> {
                         RecolectorInfoNotas recolectorInfoNotas = getTableView().getItems().get(getIndex());
                         if (recolectorInfoNotas.isEstado()) {
@@ -220,7 +221,7 @@ public class AutorizarNotificacionesController extends Controller implements Ini
                 public JFXButton denegar = new JFXButton("Denegar");
 
                 {
-                    denegar.setDisable(accesMode != 2);
+                    denegar.setDisable(accesMode != 1);
                     denegar.setId("dangerous-button-efect");
                     denegar.setOnAction((ActionEvent event) -> {
                         RecolectorInfoNotas recolectorInfoNotas = getTableView().getItems().get(getIndex());
