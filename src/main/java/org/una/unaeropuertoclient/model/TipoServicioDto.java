@@ -13,7 +13,12 @@ public class TipoServicioDto {
     private String nombre;
     private String descripcion;
     private Boolean activo;
-   // private List<ServicioMantenimientoDto> servicioMantenimientoList;
+
+    public TipoServicioDto(String nombre, String descripcion) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.activo = true;
+    }
 
 
     public Long getId() {

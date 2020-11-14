@@ -22,6 +22,19 @@ public class TipoReparacionDto {
         this.gastoReparList = gastoReparList;
     }
 
+    public TipoReparacionDto(Long id, String text) {
+        this.id = id;
+        this.nombre = text;
+        this.activo = true;
+        gastoReparList = null;
+    }
+
+    public TipoReparacionDto(String text) {
+        this.nombre = text;
+        this.activo = true;
+        this.gastoReparList = null;
+    }
+
     public Long getId() {
         return id;
     }

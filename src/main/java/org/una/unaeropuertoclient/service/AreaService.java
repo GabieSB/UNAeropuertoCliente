@@ -32,18 +32,13 @@ public class AreaService {
             HttpResponse respuesta = requestHTTP.get("areas");
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Ha ocurrido un error para obtener las areas.", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
             System.out.println(respuesta.body().toString());
             List<AreaDto> tipoAreaDto = new Gson().fromJson(respuesta.body().toString(), new TypeToken<List<AreaDto>>() {
             }.getType());
-
-//            for (AreaDto usuarioDTO : tipoServicioDtos) {
-//                System.out.println(usuarioDTO.toString());
-//            }
-
             return new Respuesta(true, "", "", "data", tipoAreaDto);
 
         } catch (Exception ex) {

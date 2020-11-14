@@ -5,29 +5,26 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="690.0" prefWidth="1000.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.MenuPrincipalController">
+<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="1000.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.MenuPrincipalController">
    <children>
-      <FlowPane fx:id="flow" hgap="5.0" layoutX="118.0" layoutY="85.0" prefHeight="200.0" prefWidth="691.0" vgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <FlowPane fx:id="flow" hgap="5.0" layoutX="26.0" layoutY="14.0" maxWidth="700.0" prefWidth="1000.0" vgap="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <padding>
             <Insets bottom="40.0" left="40.0" right="40.0" top="80.0" />
          </padding>
          <children>
-            <JFXButton fx:id="btnRegistrarUsuario" onAction="#goRegistrarUsuario" prefHeight="70.0" prefWidth="137.0" text="Registrar Usuario" />
-            <JFXButton onAction="#goParametros" prefHeight="70.0" prefWidth="139.0" text="Parametros Sistema" />
-            <JFXButton fx:id="btnNotificaciones" onAction="#goNotificaciones" prefHeight="70.0" prefWidth="139.0" text="Notificaciones" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton onAction="#OnClickAirModule" prefHeight="70.0" prefWidth="139.0" text="Control de vuelos" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton onAction="#btnconsultarServicios" prefHeight="70.0" prefWidth="139.0" text="Gestor Servicios" />
-            <JFXButton onAction="#btnconsultarGastos" prefHeight="70.0" prefWidth="139.0" text="Gestor Gastos" />
-            <JFXButton onAction="#btnConsultarBitacoras" prefHeight="70.0" prefWidth="139.0" text="Consultar Bitacoras" />
-            <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton id="registration" fx:id="btnRegistrarUsuario" minWidth="250.0" onAction="#goRegistrarUsuario" prefHeight="70.0" text="Registrar Usuario" />
+            <JFXButton id="paramSistem" minWidth="250.0" onAction="#goParametros" prefHeight="70.0" text="Parámetros Sistema" />
+            <JFXButton id="notificaciones" fx:id="btnNotificaciones" minWidth="250.0" onAction="#goNotificaciones" prefHeight="70.0" text="Notificaciones" />
+            <JFXButton id="registration" minWidth="250.0" onAction="#goModificarUsuario" prefHeight="70.0" text="Modificar Usuario" />
+            <JFXButton id="flightCotrol" minWidth="250.0" onAction="#OnClickAirModule" prefHeight="70.0" text="Control de vuelos" />
+            <JFXButton id="servicios" minWidth="250.0" onAction="#btnconsultarServicios" prefHeight="70.0" text="Gestor Servicios" />
+            <JFXButton id="reparacionesYGastos" minWidth="250.0" onAction="#btnconsultarGastos" prefHeight="70.0" text="Gestor Gastos" />
+            <JFXButton id="bitacoras" minWidth="250.0" onAction="#btnConsultarBitacoras" prefHeight="70.0" text="Consultar Bitácoras" />
+            <JFXButton id="reportes" onAction="#btnReporteServicio" prefHeight="70.0" text="Reporte Servicio" />
+            <JFXButton id="reportes" minWidth="250.0" onAction="#goReporteMantenimiento" prefHeight="70.0" text="Reporte Mantenimiento" />
+            <JFXButton id="reportes" minWidth="250.0" onAction="#goReporteVuelo" prefHeight="70.0" text="Reporte Vuelo" />
             <JFXButton onAction="#btnRegistrarGastos" prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
-            <JFXButton prefHeight="70.0" prefWidth="139.0" />
+            <JFXButton fx:id="btnGestorServicios" onAction="#goGestorServicio" prefHeight="70.0" prefWidth="139.0" />
          </children>
          <opaqueInsets>
             <Insets />

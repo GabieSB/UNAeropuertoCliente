@@ -9,7 +9,7 @@ import java.util.logging.Level;
 public class AppContext {
 
     private static AppContext INSTANCE = null;
-    private static HashMap<String, Object> context = new HashMap<>();
+    private static final HashMap<String, Object> context = new HashMap<>();
 
     private AppContext() {
         cargarPropiedades();
@@ -81,6 +81,10 @@ public class AppContext {
 
     public void delete(String parameter) {
         context.put(parameter, null);
+    }
+    
+    public void reset(){
+        context.clear();
     }
 
 }

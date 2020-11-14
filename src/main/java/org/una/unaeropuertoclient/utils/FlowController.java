@@ -21,8 +21,8 @@ import org.una.unaeropuertoclient.App;
 import org.una.unaeropuertoclient.controller.Controller;
 import java.util.Stack;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import org.una.unaeropuertoclient.controller.MenuSuperiorController;
 
 /**
@@ -112,7 +112,7 @@ public class FlowController {
             this.mainStage.show();
             this.mainStage.setHeight(690);
             this.mainStage.setWidth(1000);
-            //this.mainStage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
+            this.mainStage.getIcons().add(new Image(App.class.getResource("pics/Logo.png").toString()));
             this.mainStage.setTitle("UNAeropuerto");
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(FlowController.class.getName()).log(Level.SEVERE, "Error inicializando la vista base.", ex);
@@ -191,7 +191,7 @@ public class FlowController {
         Controller controller = loader.getController();
         controller.initialize();
         Stage stage = new Stage();
-        //stage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
+        stage.getIcons().add(new Image(App.class.getResource("pics/Logo.png").toString()));
         stage.setTitle("UNAeropuerto");
         stage.setOnHidden((WindowEvent event) -> {
             controller.getStage().getScene().setRoot(new Pane());
@@ -212,7 +212,7 @@ public class FlowController {
         controller.initialize();
         Stage stage = new Stage();
         //stage.setMaximized(true);
-        //stage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
+        stage.getIcons().add(new Image(App.class.getResource("pics/Logo.png").toString()));
         stage.setTitle("UNAeropuerto");
         stage.setResizable(resizable);
         stage.setOnHidden((WindowEvent event) -> {
@@ -232,7 +232,7 @@ public class FlowController {
         Controller controller = loader.getController();
         controller.initialize();
         Stage stage = new Stage();
-        //stage.getIcons().add(new Image("clinicauna/resources/logo01.png"));
+        stage.getIcons().add(new Image(App.class.getResource("pics/Logo.png").toString()));
         stage.setTitle("UNAeropuerto");
         stage.setResizable(resizable);
         stage.setOnHidden((WindowEvent event) -> {
@@ -306,6 +306,10 @@ public class FlowController {
         ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeUserNameTitle(name);
     }
 
+    public static void changeCodeScreenTittle(String name) {
+        ((MenuSuperiorController) AppContext.getInstance().get("MenuSuperior")).changeScreenCode(name);
+    }
+
     public <RootTipe extends Node> void chargeOn(Pane chargeHere, String viewName) {
         try {
             FXMLLoader loader = getLoader(viewName);
@@ -321,5 +325,10 @@ public class FlowController {
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(FlowController.class.getName()).log(Level.SEVERE, "Error al cargar ''" + viewName + "'' dentro de otro nodo.", ex);
         }
+    }
+    
+    public void reset(){
+        viewed.clear();
+        loaders.clear();
     }
 }

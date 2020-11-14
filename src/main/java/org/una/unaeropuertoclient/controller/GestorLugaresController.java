@@ -10,19 +10,25 @@ import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.LugarDto;
 import org.una.unaeropuertoclient.service.LugarService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.FlowController;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -43,6 +49,11 @@ public class GestorLugaresController extends Controller implements Initializable
     public TableColumn<LugarDto, String> clEstado;
     @FXML
     private TableColumn<LugarDto, Void> clAcciones;
+    @FXML
+    private HBox controlsContainer;
+    @FXML
+    private JFXButton btnBuscar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -53,30 +64,49 @@ public class GestorLugaresController extends Controller implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         prepareTable();
+        txtFormat();
     }
 
     @Override
     public void initialize() {
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnBuscar.setDisable(accesMode > 2);
         clearScreen();
     }
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
-        Respuesta resp = new LugarService().findByNombre(txtNombre.getText());
-        if (resp.getEstado()) {
-            tbAerolineas.getItems().clear();
-            tbAerolineas.getItems().addAll((List) resp.getResultado("data"));
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        aModoEspera(btnBuscar);
+        controlsContainer.setDisable(true);
+        buscar();
+    }
+
+    private void buscar() {
+        Thread th = new Thread(() -> {
+            Respuesta resp = new LugarService().findByNombre(txtNombre.getText());
+            Platform.runLater(() -> {
+                salirModoEspera(btnBuscar, "Buscar");
+                controlsContainer.setDisable(false);
+                if (resp.getEstado()) {
+                    tbAerolineas.getItems().clear();
+                    tbAerolineas.getItems().addAll((List) resp.getResultado("data"));
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     @FXML
+
     public void OnClickNuevo(ActionEvent event) {
         FlowController.getInstance().goViewInWindowModal("EditorLugares", FlowController.getInstance().getStage(), false);
     }
 
     private void prepareTable() {
+        tbAerolineas.setPlaceholder(new Label("No hay lugares para mostrar por el momento"));
         activateResponsiveConfig();
         clNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombre()));
         clEstado.setCellValueFactory(x -> new SimpleStringProperty((x.getValue().getActivo()) ? "Destino activo" : "Inactivado"));
@@ -122,5 +152,9 @@ public class GestorLugaresController extends Controller implements Initializable
     private void clearScreen() {
         tbAerolineas.getItems().clear();
         txtNombre.setText("");
+    }
+
+    private void txtFormat() {
+        txtNombre.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 }

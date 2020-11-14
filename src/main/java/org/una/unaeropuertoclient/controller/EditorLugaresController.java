@@ -5,6 +5,7 @@
  */
 package org.una.unaeropuertoclient.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -13,12 +14,17 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.HBox;
 import org.una.unaeropuertoclient.model.LugarDto;
 import org.una.unaeropuertoclient.service.LugarService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 //
+
 /**
  * FXML Controller class
  *
@@ -30,6 +36,11 @@ public class EditorLugaresController extends Controller implements Initializable
     public JFXTextField txtNombre;
     private boolean editionMode;
     private LugarDto lugar;
+    @FXML
+    private HBox controlContainer;
+    @FXML
+    private JFXButton btnGuardar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -39,19 +50,26 @@ public class EditorLugaresController extends Controller implements Initializable
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        txtFormat();
     }
 
     @Override
     public void initialize() {
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnGuardar.setDisable(accesMode != 1);
         txtNombre.setText("");
-        tryActivEditionMode();
+        if (accesMode < 3) {
+            tryActivEditionMode();
+        }
         cargarFuncionalidadesVentana();
     }
 
     @FXML
     public void OnClickSave(ActionEvent event) {
         if (!txtNombre.getText().isBlank()) {
+            aModoEspera(btnGuardar);
+            controlContainer.setDisable(true);
             saveChanges();
         } else {
             new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "Quizá has dejado algún espacio sin rellenar.");
@@ -94,19 +112,26 @@ public class EditorLugaresController extends Controller implements Initializable
     }
 
     private void saveChanges() {
-        Respuesta resp;
-        LugarService serv = new LugarService();
-        chargeData();
-        resp = editionMode ? serv.update(lugar) : serv.create(lugar);
-        if (resp.getEstado()) {
-            new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
-            lugar = (LugarDto) resp.getResultado("data");
-            unChargeData();
-            editionMode = true;
-            refreshBack();
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        Thread th = new Thread(() -> {
+            Respuesta resp;
+            LugarService serv = new LugarService();
+            chargeData();
+            resp = editionMode ? serv.update(lugar) : serv.create(lugar);
+            Platform.runLater(() -> {
+                salirModoEspera(btnGuardar, "Guardar cambios");
+                controlContainer.setDisable(false);
+                if (resp.getEstado()) {
+                    new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
+                    lugar = (LugarDto) resp.getResultado("data");
+                    unChargeData();
+                    editionMode = true;
+                    refreshBack();
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     private void chargeData() {
@@ -122,6 +147,10 @@ public class EditorLugaresController extends Controller implements Initializable
             });
         });
         th.start();
+    }
+
+    private void txtFormat() {
+        txtNombre.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(60));
     }
 
 }

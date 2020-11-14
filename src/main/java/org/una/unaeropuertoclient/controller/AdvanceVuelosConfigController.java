@@ -51,6 +51,7 @@ public class AdvanceVuelosConfigController extends Controller implements Initial
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Opciones avanzadas de control aéreo");
+        FlowController.changeCodeScreenTittle("VA300");
     }
 
     private void cargarPantallas() {

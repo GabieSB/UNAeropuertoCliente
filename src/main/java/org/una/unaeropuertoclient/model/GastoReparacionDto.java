@@ -8,9 +8,10 @@ package org.una.unaeropuertoclient.model;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.List;
 
 public class GastoReparacionDto {
 
@@ -25,12 +26,13 @@ public class GastoReparacionDto {
     private AreaDto areasId;
     private TipoReparacionDto tiposId;
     private ProvedorDto provedoresId;
+    private Float monto;
 
     public GastoReparacionDto() {
 
     }
 
-    public GastoReparacionDto(LocalDate fechaRegistro, Boolean estadoPago, Long numeroContrato, Integer duracion, Integer periodicidad, String observaciones, AreaDto areasId, TipoReparacionDto tiposId) {
+    public GastoReparacionDto(LocalDate fechaRegistro, Boolean estadoPago, Long numeroContrato, Integer duracion, Integer periodicidad, String observaciones, AreaDto areasId, TipoReparacionDto tiposId, ProvedorDto proveedor, Float monto) {
         this.fechaRegistro = Date.from(fechaRegistro.atStartOfDay(ZoneId.systemDefault()).toInstant());
         this.estadoPago = estadoPago;
         this.numeroContrato = numeroContrato;
@@ -39,8 +41,13 @@ public class GastoReparacionDto {
         this.observaciones = observaciones;
         this.areasId = areasId;
         this.tiposId = tiposId;
-        this.provedoresId  = null;
+        this.provedoresId  = proveedor;
         this.activo = true;
+        this.monto = monto;
+    }
+
+    public String getProvedorNombre() {
+        return provedoresId!=null? provedoresId.getNombre():"No registrado";
     }
 
     public Long getId() {
@@ -55,18 +62,17 @@ public class GastoReparacionDto {
         return fechaRegistro;
     }
 
-    public String getFechaServicioFormateada(){
+    public String getFechaServicioFormateada() {
         DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
         String strDate = dateFormat.format(fechaRegistro);
         return strDate;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
-
     public Boolean getEstadoPago() {
         return estadoPago;
+    }
+    public String getEstadoPagoPalabra() {
+        return estadoPago?"Pagado":"Pendiente";
     }
 
     public void setEstadoPago(Boolean estadoPago) {
@@ -77,9 +83,6 @@ public class GastoReparacionDto {
         return numeroContrato;
     }
 
-    public void setNumeroContrato(Long numeroContrato) {
-        this.numeroContrato = numeroContrato;
-    }
 
     public Integer getDuracion() {
         return duracion;
@@ -109,6 +112,12 @@ public class GastoReparacionDto {
         return activo;
     }
 
+    public String getActivoPalabra() {
+        return activo?"Activo":"Inactivo";
+    }
+
+
+
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
@@ -127,5 +136,24 @@ public class GastoReparacionDto {
 
     public void setTiposId(TipoReparacionDto tiposId) {
         this.tiposId = tiposId;
+    }
+
+    public Float getMonto() {
+
+        return  monto;
+    }
+
+    public String toCompresionHumana() {
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd-MM-uuuu");
+        LocalDateTime ldt = LocalDateTime.ofInstant(fechaRegistro.toInstant(), ZoneId.systemDefault());
+        LocalDate dia = ldt.toLocalDate();
+        String diasText = dia.format(formatters);
+        String ret = diasText + " a la" + (ldt.getHour() != 1 ? "s" : "");
+        ret += " " + ldt.toLocalTime().toString();
+        return ret;
+    }
+
+    public ProvedorDto getProvedoresId() {
+        return provedoresId;
     }
 }

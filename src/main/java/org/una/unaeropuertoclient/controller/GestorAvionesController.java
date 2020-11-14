@@ -10,19 +10,25 @@ import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.service.AvionService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.FlowController;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -45,6 +51,11 @@ public class GestorAvionesController extends Controller implements Initializable
     public TableColumn<AvionDto, String> clAerolinea;
     @FXML
     private TableColumn<AvionDto, Void> clAcciones;
+    @FXML
+    private HBox controlContainer;
+    @FXML
+    private JFXButton btnBuscar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -54,23 +65,40 @@ public class GestorAvionesController extends Controller implements Initializable
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtFormat();
         prepareTable();
     }
 
     @Override
     public void initialize() {
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnBuscar.setDisable(accesMode > 2);
         clearScreen();
     }
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
-        Respuesta resp = new AvionService().filter(txtMatricula.getText(), txtAerolinea.getText());
-        if (resp.getEstado()) {
-            tbAerolineas.getItems().clear();
-            tbAerolineas.getItems().addAll((List) resp.getResultado("data"));
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        aModoEspera(btnBuscar);
+        controlContainer.setDisable(true);
+        buscar();
+    }
+
+    private void buscar() {
+        Thread th = new Thread(() -> {
+            Respuesta resp = new AvionService().filter(txtMatricula.getText(), txtAerolinea.getText());
+            Platform.runLater(() -> {
+                salirModoEspera(btnBuscar, "Buscar");
+                controlContainer.setDisable(false);
+                if (resp.getEstado()) {
+                    tbAerolineas.getItems().clear();
+                    tbAerolineas.getItems().addAll((List) resp.getResultado("data"));
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     @FXML
@@ -84,6 +112,7 @@ public class GestorAvionesController extends Controller implements Initializable
     }
 
     private void prepareTable() {
+        tbAerolineas.setPlaceholder(new Label("No hay aviones para mostrar por el momento"));
         activateResponsiveConfig();
         clAerolinea.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAerolineasId().getNombre()));
         clMatricula.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getMatricula()));
@@ -130,6 +159,11 @@ public class GestorAvionesController extends Controller implements Initializable
         tbAerolineas.getItems().clear();
         txtAerolinea.setText("");
         txtMatricula.setText("");
+    }
+
+    private void txtFormat() {
+        txtAerolinea.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtMatricula.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }

@@ -3,6 +3,8 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -11,19 +13,19 @@
 
 <AnchorPane prefHeight="561.0" prefWidth="691.0" styleClass="air-module-fondo" stylesheets="@style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.una.unaeropuertoclient.controller.BuscarAvionController">
    <children>
-      <VBox alignment="CENTER" prefHeight="561.0" prefWidth="691.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <VBox alignment="CENTER" prefHeight="561.0" prefWidth="691.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox prefHeight="34.0" prefWidth="691.0" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
                   <JFXComboBox fx:id="comboBusqueda" prefHeight="32.0" prefWidth="186.0" promptText="Categoría" />
                   <JFXTextField fx:id="txtValofBusqueda" prefHeight="32.0" prefWidth="318.0" promptText="Valor" />
-                  <JFXButton fx:id="btnBuscar" alignment="CENTER" onAction="#buscarAvion" prefHeight="26.0" prefWidth="74.0" stylesheets="@style.css" text="Buscar" />
+                  <JFXButton fx:id="btnBuscar" alignment="CENTER" onAction="#buscarAvion" prefHeight="34.0" prefWidth="98.0" stylesheets="@style.css" text="Buscar" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="426.0" prefWidth="691.0">
+            <HBox alignment="CENTER" prefHeight="380.0" prefWidth="691.0">
                <children>
-                  <TableView fx:id="tableResultados" onMouseClicked="#avionSelected" prefHeight="358.0" prefWidth="506.0">
+                  <TableView fx:id="tableResultados" onMouseClicked="#avionSelected" prefHeight="355.0" prefWidth="506.0">
                     <columns>
                       <TableColumn fx:id="columId" prefWidth="77.5999984741211" text="ID" />
                       <TableColumn fx:id="columMatricula" minWidth="8.0" prefWidth="195.99993896484375" text="Matrícula" />
@@ -31,6 +33,14 @@
                     </columns>
                   </TableView>
                </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="691.0">
+               <children>
+                  <Label alignment="CENTER" text="Código: SA300" />
+               </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </HBox>
          </children>
       </VBox>

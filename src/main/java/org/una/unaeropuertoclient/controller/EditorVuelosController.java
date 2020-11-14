@@ -5,12 +5,12 @@
  */
 package org.una.unaeropuertoclient.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -21,20 +21,29 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.util.Pair;
 import org.una.unaeropuertoclient.model.AerolineaDto;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.model.LugarDto;
+import org.una.unaeropuertoclient.model.ParamSistemaDto;
 import org.una.unaeropuertoclient.model.PistaDto;
+import org.una.unaeropuertoclient.model.TipoVueloDto;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.service.AerolineaService;
 import org.una.unaeropuertoclient.service.AvionService;
 import org.una.unaeropuertoclient.service.LugarService;
+import org.una.unaeropuertoclient.service.ParamSistemaServicio;
 import org.una.unaeropuertoclient.service.PistaService;
+import org.una.unaeropuertoclient.service.TipoVueloService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
+import static org.una.unaeropuertoclient.utils.VuelosUtilis.*;
 
 /**
  * FXML Controller class
@@ -68,12 +77,25 @@ public class EditorVuelosController extends Controller implements Initializable 
     @FXML
     public JFXComboBox<String> cbMinutosLlegada;
     @FXML
+    private JFXComboBox<TipoVueloDto> cbTipoVuelo;
+    @FXML
     private JFXComboBox<PistaDto> cbPistaAterrisage;
+    @FXML
+    private VBox vbSalidaYLlegada;
     private boolean editionMode;
     private VueloDto vuelo;
     private List<ComboBox> cbList;
     private String oldFlyName;
     private AerolineaDto oldAerline;
+    private ParamSistemaDto paramSistem;
+    private boolean isDangerous = false;
+    @FXML
+    private HBox controlContainer1;
+    @FXML
+    private HBox controlContainer2;
+    @FXML
+    private JFXButton btnGuardar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -85,33 +107,42 @@ public class EditorVuelosController extends Controller implements Initializable 
     public void initialize(URL url, ResourceBundle rb) {
         cbList = Arrays.asList(cbAerolinea, cbAvion, cbPistaAterrisage,
                 cbSitioLlegada, cbSitioSalida, cbEsadoVuelo, cbMinutosSalida,
-                cbHoraSalida, cbMinutosLlegada, cbHoraLlegada);
+                cbHoraSalida, cbMinutosLlegada, cbHoraLlegada, cbTipoVuelo);
         cargarFuncionalidadesVentana();
     }
 
     @Override
     public void initialize() {
-        cbAerolinea.setPromptText("Cargando...");
-        cbAvion.setPromptText("Aviones(Vacío)");
-        cbAvion.setDisable(true);
-        cbPistaAterrisage.setPromptText("Cargando...");
-        cbSitioSalida.setPromptText("Cargando...");
-        cbSitioLlegada.setPromptText("Cargando...");
-        chargeExternalData();
-        tryActivEditionMode();
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnGuardar.setDisable(accesMode != 1);
+        vbSalidaYLlegada.setDisable(true);
+        if (accesMode < 3) {
+            cbAerolinea.setPromptText("Cargando...");
+            cbAvion.setPromptText("Aviones(Vacío)");
+            cbAvion.setDisable(true);
+            cbPistaAterrisage.setPromptText("Cargando...");
+            cbSitioSalida.setPromptText("Cargando...");
+            cbSitioLlegada.setPromptText("Cargando...");
+            cbTipoVuelo.setPromptText("Cargando...");
+            chargeExternalData();
+            tryActivEditionMode();
+        }
     }
 
     @FXML
     public void onActionCancel(ActionEvent event) {
         FlowController.getInstance().eliminarDeCache("EditorVuelos");
         clearContextData();
+        paramSistem = null;
         this.getStage().close();
     }
 
     @FXML
     public void OnActionClear(ActionEvent event) {
         cbList.forEach(cb -> cb.setValue(null));
-        clearContextData();
+        vuelo = null;
+        AppContext.getInstance().delete("EditVuelo");
         tryActivEditionMode();
         lblNombreVuelo.setText("Nombre de vuelo:");
         dpFechaLlegada.setValue(null);
@@ -121,8 +152,16 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     @FXML
     public void OnClickSave(ActionEvent event) {
-        if (isValidData()) {
-            saveChanges();
+        if (isAllFull()) {
+            if (sonCorrectosLugaresDeSalidaYLlegada()) {
+                if (sonFechasCorrectas() && esDuracionCorrecta()) {
+                    if (validarContratiemposVuelo()) {
+                        aModoEspera(btnGuardar);
+                        controlContainer2.setDisable(true);
+                        saveChanges();
+                    }
+                }
+            }
         } else {
             new Mensaje().showModal(Alert.AlertType.WARNING, "Observa con atención", this.getStage(), "Quizá has dejado algún espacio sin rellenar.");
         }
@@ -133,6 +172,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         Platform.runLater(() -> {
             this.getStage().setOnCloseRequest(event -> {
                 clearContextData();
+                paramSistem = null;
                 FlowController.getInstance().eliminarDeCache("EditorVuelos");
             });
         });
@@ -147,19 +187,23 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void chargeExternalData() {
-        Thread th = new Thread(() -> chargePistas());
-        th.start();
+        Thread th1 = new Thread(() -> chargePistas());
+        th1.start();
         Thread th2 = new Thread(() -> chargeLugares());
         th2.start();
         Thread th3 = new Thread(() -> chargeAerolinas());
         th3.start();
+        Thread th4 = new Thread(() -> chargeParamSistema());
+        th4.start();
+        Thread th5 = new Thread(() -> chargeTiposVuelos());
+        th5.start();
     }
 
     private void chargePistas() {
         Respuesta resp = new PistaService().findAll();
         Platform.runLater(() -> {
             if (resp.getEstado()) {
-                List<PistaDto> pList = (List<PistaDto>) resp.getResultado("data");
+                List<PistaDto> pList = (List) resp.getResultado("data");
                 pList.removeIf(elemnt -> elemnt.equals(cbPistaAterrisage.getValue()));
                 cbPistaAterrisage.getItems().addAll(pList);
                 cbPistaAterrisage.setPromptText("Pistas");
@@ -169,11 +213,25 @@ public class EditorVuelosController extends Controller implements Initializable 
         });
     }
 
+    private void chargeParamSistema() {
+        Respuesta resp = new ParamSistemaServicio().getById();
+        Platform.runLater(() -> {
+            if (resp.getEstado()) {
+                paramSistem = (ParamSistemaDto) resp.getResultado("data");
+                vbSalidaYLlegada.setDisable(false);
+            } else {
+                new Mensaje().showModal(Alert.AlertType.ERROR, "Error", this.getStage(), "No ha sido "
+                        + "posible cargar los datos del aeropuerto, tal como hora de apertura y de "
+                        + "cierre, debido a esto se ha cancelado la posibilidad de crear o modificar vuelos.");
+            }
+        });
+    }
+
     private void chargeLugares() {
         Respuesta resp = new LugarService().findByEstado(true);
         Platform.runLater(() -> {
             if (resp.getEstado()) {
-                List<LugarDto> pList = (List<LugarDto>) resp.getResultado("data");
+                List<LugarDto> pList = (List) resp.getResultado("data");
                 pList.removeIf(elemnt -> elemnt.equals(cbSitioSalida.getValue()));
                 cbSitioSalida.getItems().addAll(pList);
                 cbSitioSalida.setPromptText("Lugar de salida");
@@ -194,7 +252,7 @@ public class EditorVuelosController extends Controller implements Initializable 
         Respuesta resp = new AerolineaService().findByEstado(true);
         Platform.runLater(() -> {
             if (resp.getEstado()) {
-                List<AerolineaDto> aeroList = (List<AerolineaDto>) resp.getResultado("data");
+                List<AerolineaDto> aeroList = (List) resp.getResultado("data");
                 aeroList.removeIf(elemnt -> elemnt.equals(cbAerolinea.getValue()));
                 cbAerolinea.setPromptText("Aerolinas");
                 cbAerolinea.getItems().addAll(aeroList);
@@ -204,7 +262,21 @@ public class EditorVuelosController extends Controller implements Initializable 
         });
     }
 
-    public void chargeAviones(boolean clearItems) {
+    private void chargeTiposVuelos() {
+        Respuesta resp = new TipoVueloService().findByEstado(true);
+        Platform.runLater(() -> {
+            if (resp.getEstado()) {
+                List<TipoVueloDto> tvList = (List) resp.getResultado("data");
+                tvList.removeIf(elemnt -> elemnt.equals(cbTipoVuelo.getValue()));
+                cbTipoVuelo.getItems().addAll(tvList);
+                cbTipoVuelo.setPromptText("Tipos de vuelos");
+            } else {
+                cbTipoVuelo.setPromptText(resp.getMensaje());
+            }
+        });
+    }
+
+    private void chargeAviones(boolean clearItems) {
         Thread th = new Thread(() -> {
             Platform.runLater(() -> {
                 cbAvion.setDisable(false);
@@ -246,6 +318,7 @@ public class EditorVuelosController extends Controller implements Initializable 
             cbSitioLlegada.getItems().add(vuelo.getLugarLlegada());
             cbSitioSalida.getItems().add(vuelo.getLugarSalida());
             cbPistaAterrisage.getItems().add(vuelo.getPistasId());
+            cbTipoVuelo.getItems().add(vuelo.getTipoVuelo());
             copyUnmodificableFlyData();
             chargeData();
             chargeAviones(false);
@@ -269,17 +342,18 @@ public class EditorVuelosController extends Controller implements Initializable 
         vuelo.setLugarSalida(cbSitioSalida.getValue());
         vuelo.setPistasId(cbPistaAterrisage.getValue());
         vuelo.setStateAsWord(cbEsadoVuelo.getValue());
+        vuelo.setTipoVuelo(cbTipoVuelo.getValue());
         vuelo.setHoraLlegada(toDate(dpFechaLlegada, cbHoraLlegada.getValue(), cbMinutosLlegada.getValue()));
         vuelo.setHoraSalida(toDate(dpFechaSalida, cbHoraSalida.getValue(), cbMinutosSalida.getValue()));
     }
 
-    private boolean isValidData() {
+    private boolean isAllFull() {
         if (dpFechaLlegada.getValue() != null && dpFechaLlegada.getValue() != null) {
             if (cbAerolinea.getValue() != null && cbAvion != null) {
                 if (cbMinutosLlegada.getValue() != null && cbHoraLlegada.getValue() != null) {
                     if (cbMinutosSalida.getValue() != null && cbHoraSalida.getValue() != null) {
                         if (cbEsadoVuelo.getValue() != null && cbPistaAterrisage.getValue() != null) {
-                            return true;
+                            return cbTipoVuelo.getValue() != null;
                         }
                     }
                 }
@@ -289,23 +363,31 @@ public class EditorVuelosController extends Controller implements Initializable 
     }
 
     private void saveChanges() {
-        Respuesta resp;
-        VueloService serv = new VueloService();
-        unChargeData();
-        resp = editionMode ? serv.update(vuelo) : serv.create(vuelo);
-        if (resp.getEstado()) {
-            new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
-            vuelo = (VueloDto) resp.getResultado("data");
-            copyUnmodificableFlyData();
-            chargeData();
-            editionMode = true;
-            refreshBack();
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        Thread th = new Thread(() -> {
+            Respuesta resp;
+            VueloService serv = new VueloService();
+            unChargeData();
+            resp = editionMode ? serv.update(vuelo) : serv.create(vuelo);
+            Platform.runLater(() -> {
+                salirModoEspera(btnGuardar, "Guardar");
+                controlContainer2.setDisable(false);
+                if (resp.getEstado()) {
+                    new Mensaje().show(Alert.AlertType.INFORMATION, "Todo bien por ahora", " Cambios se han registrado con éxito, puedes editar los datos guardados si deseas.");
+                    vuelo = (VueloDto) resp.getResultado("data");
+                    copyUnmodificableFlyData();
+                    chargeData();
+                    editionMode = true;
+                    refreshBack();
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     private void chargeData() {
+        cbTipoVuelo.getSelectionModel().select(vuelo.getTipoVuelo());
         cbAerolinea.getSelectionModel().select(vuelo.getAvionesId().getAerolineasId());
         cbAvion.getSelectionModel().select(vuelo.getAvionesId());
         lblNombreVuelo.setText("Vuelo: " + vuelo.getNombreVuelo());
@@ -325,7 +407,7 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     private void refreshBack() {
         if (AppContext.getInstance().get("GVuelo") != null) {
-            ((GestorVuelosController) AppContext.getInstance().get("GVuelo")).onActionBuscar(new ActionEvent());
+            ((GestorVuelosController) AppContext.getInstance().get("GVuelo")).onActionLimpiar(new ActionEvent());
         }
     }
 
@@ -333,15 +415,6 @@ public class EditorVuelosController extends Controller implements Initializable 
         vuelo = null;
         AppContext.getInstance().delete("EditVuelo");
         AppContext.getInstance().delete("GVuelo");
-    }
-
-    private Date toDate(DatePicker dp, String hours, String minuts) {
-        LocalDateTime locaDT = dp.getValue().atTime(Integer.valueOf(hours), Integer.valueOf(minuts));
-        return Date.from(locaDT.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    public LocalDateTime toLocalDateTime(Date dateToConvert) {
-        return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     public void createNombreVuelo() {
@@ -372,4 +445,62 @@ public class EditorVuelosController extends Controller implements Initializable 
         oldFlyName = vuelo.getNombreVuelo();
     }
 
+    public boolean validarContratiemposVuelo() {
+        LocalDateTime start = dpFechaSalida.getValue().atTime(Integer.valueOf(cbHoraSalida.getValue()),
+                Integer.valueOf(cbMinutosSalida.getValue()));
+        LocalDateTime end = dpFechaLlegada.getValue().atTime(Integer.valueOf(cbHoraLlegada.getValue()),
+                Integer.valueOf(cbMinutosLlegada.getValue()));
+        LocalDateTime exeDateTime = LocalDateTime.now();
+        if (cbSitioLlegada.getValue().equals(paramSistem.getUbicacion())) {
+            exeDateTime = dpFechaLlegada.getValue().atTime(Integer.valueOf(cbHoraLlegada.getValue()),
+                    Integer.valueOf(cbMinutosLlegada.getValue()));
+        } else {
+            exeDateTime = dpFechaSalida.getValue().atTime(Integer.valueOf(cbHoraSalida.getValue()),
+                    Integer.valueOf(cbMinutosSalida.getValue()));
+        }
+        Respuesta resp = new AvionService().validarContratiemposVuelo(start, end, vuelo.getId(), cbAvion.getValue().getId(), exeDateTime);
+        if (resp.getEstado()) {
+            Pair<String, String> pair = (Pair) resp.getResultado("data");
+            if ("NoCorrect".equals(pair.getKey())) {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), pair.getValue());
+                return false;
+            } else if ("Dangerous".equals(pair.getKey())) {
+                isDangerous = true;
+                return new Mensaje().showConfirmation("Peligro", this.getStage(), pair.getValue(), "¿Desea permitir este vuelo igualmente?");
+            }
+            return true;
+        }
+        new Mensaje().showModal(Alert.AlertType.ERROR, "Error", this.getStage(), resp.getMensaje());
+        return false;
+    }
+
+    public boolean sonCorrectosLugaresDeSalidaYLlegada() {
+        if (cbSitioSalida.getValue().equals(cbSitioLlegada.getValue())) {
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "El sitio de salida y de llegada no pueden ser los iguales");
+            return false;
+        } else if (!(cbSitioSalida.getValue().equals(paramSistem.getUbicacion()) || cbSitioLlegada.getValue().equals(paramSistem.getUbicacion()))) {
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "Este vuelo parece no despegar ni aterrizar en este aeropuerto. Revisa de nuevo el sitio de salida y el de llegada.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean sonFechasCorrectas() {
+        if (dpFechaSalida.getValue().isBefore(LocalDate.now().minusDays(1))
+                || dpFechaLlegada.getValue().isBefore(LocalDate.now().minusDays(1))) {
+            return new Mensaje().showConfirmation("Fecha confusa", this.getStage(), "La fecha de "
+                    + "este vuelo es de antes de ayer, lo que podría ser un error al selecciona la fecha.",
+                    "¿Desea guardar los cambios a pesar de todo?");
+        }
+        return true;
+    }
+
+    public boolean esDuracionCorrecta() {
+        if (Math.abs(dpFechaSalida.getValue().until(dpFechaLlegada.getValue()).getDays()) > 1) {
+            return new Mensaje().showConfirmation("Duración de vuelo", this.getStage(), "Este vuelo tiene una "
+                    + "duración de más de 24 horas, lo cual podría deberse a un error al digitar las fechas.",
+                    "¿Desea guardar los cambios a pesar de todo?");
+        }
+        return true;
+    }
 }

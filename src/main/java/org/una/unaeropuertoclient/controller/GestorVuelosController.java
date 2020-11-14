@@ -20,9 +20,11 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.AreaDto;
@@ -32,7 +34,9 @@ import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.service.NotificacionService;
 import org.una.unaeropuertoclient.service.VueloService;
 import org.una.unaeropuertoclient.utils.AppContext;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
 import org.una.unaeropuertoclient.utils.FlowController;
+import org.una.unaeropuertoclient.utils.Formato;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
 
@@ -73,6 +77,17 @@ public class GestorVuelosController extends Controller implements Initializable 
     public TableColumn<VueloDto, String> clEstado;
     @FXML
     public TableColumn<VueloDto, Void> clAcciones;
+    @FXML
+    private TableColumn<VueloDto, String> clTipoVuelo;
+    @FXML
+    private AnchorPane controlsContainer;
+    @FXML
+    private JFXButton btnAvanzado;
+    @FXML
+    private JFXButton btnBuscar;
+    @FXML
+    private JFXButton btnLimpiar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -82,13 +97,22 @@ public class GestorVuelosController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtFormat();
         prepareTable();
     }
 
     @Override
     public void initialize() {
         FlowController.changeSuperiorTittle("Módulo de vuelos");
-        clearScreen();
+        FlowController.changeCodeScreenTittle("VG200");
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnBuscar.setDisable(accesMode > 2);
+        btnLimpiar.setDisable(accesMode > 2);
+        tbVuelos.getItems().clear();
+        if (accesMode < 3) {
+            onActionLimpiar(new ActionEvent());
+        }
     }
 
     @FXML
@@ -98,35 +122,48 @@ public class GestorVuelosController extends Controller implements Initializable 
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
+        controlsContainer.setDisable(true);
+
+        aModoEspera(btnBuscar);
+
         Thread th = new Thread(() -> {
-            Respuesta resp = new VueloService().filter(txtAerolinea.getText(),
-                    txtFlyName.getText(), txtMatriculaAvion.getText(), txtLlegada.getText(),
-                    txtSalida.getText(), dpDesde.getValue(), dpHasta.getValue());
-            Platform.runLater(() -> {
-                if (resp.getEstado()) {
-                    tbVuelos.getItems().clear();
-                    tbVuelos.getItems().addAll((List) resp.getResultado("data"));
-                } else {
-                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-                }
-            });
+            buscar();
         });
         th.start();
     }
 
+    private void buscar() {
+        Respuesta resp = new VueloService().filter(txtAerolinea.getText(),
+                txtFlyName.getText(), txtMatriculaAvion.getText(), txtLlegada.getText(),
+                txtSalida.getText(), dpDesde.getValue(), dpHasta.getValue());
+        Platform.runLater(() -> {
+            salirModoEspera(btnBuscar, "Buscar");
+            controlsContainer.setDisable(false);
+            if (resp.getEstado()) {
+                tbVuelos.getItems().clear();
+                tbVuelos.getItems().addAll((List) resp.getResultado("data"));
+            } else {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+            }
+        });
+    }
+
     @FXML
     public void onActionLimpiar(ActionEvent event) {
+        controlsContainer.setDisable(true);
+        aModoEspera(btnLimpiar);
         clearScreen();
     }
 
     private void activateResponsiveConfig() {
-        clSalida.prefWidthProperty().bind(tbVuelos.widthProperty().divide(5));
-        clLlegada.prefWidthProperty().bind(tbVuelos.widthProperty().divide(5));
-        clAerolinea.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));
-        clAvion.prefWidthProperty().bind(tbVuelos.widthProperty().divide(11));
-        clNombre.prefWidthProperty().bind(tbVuelos.widthProperty().divide(9));
-        clEstado.prefWidthProperty().bind(tbVuelos.widthProperty().divide(13));
+        clSalida.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4.4));
+        clLlegada.prefWidthProperty().bind(tbVuelos.widthProperty().divide(4.4));
+        clAerolinea.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
+        clAvion.prefWidthProperty().bind(tbVuelos.widthProperty().divide(12));
+        clNombre.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
+        clEstado.prefWidthProperty().bind(tbVuelos.widthProperty().divide(18));
         clAcciones.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
+        clTipoVuelo.prefWidthProperty().bind(tbVuelos.widthProperty().divide(10));
     }
 
     private void configureDataRepresentation() {
@@ -136,12 +173,15 @@ public class GestorVuelosController extends Controller implements Initializable 
         clAvion.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAvionesId().getMatricula()));
         clNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNombreVuelo()));
         clEstado.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getStateAsWord()));
+        clTipoVuelo.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getTipoVuelo().getNombre()));
     }
 
     private void chargeTodayData() {
         Thread th = new Thread(() -> {
             Respuesta resp = new VueloService().findVuelosDelDia();
             Platform.runLater(() -> {
+                controlsContainer.setDisable(false);
+                salirModoEspera(btnLimpiar, "Limpiar");
                 if (resp.getEstado()) {
                     tbVuelos.getItems().clear();
                     tbVuelos.getItems().addAll((List) resp.getResultado("data"));
@@ -157,6 +197,7 @@ public class GestorVuelosController extends Controller implements Initializable 
     }
 
     private void prepareTable() {
+        tbVuelos.setPlaceholder(new Label("No hay vuelos para mostrar por el momento"));
         activateResponsiveConfig();
         configureDataRepresentation();
         addTableAcction();
@@ -191,12 +232,13 @@ public class GestorVuelosController extends Controller implements Initializable 
                 private final JFXButton delete = new JFXButton("Inactivar");
 
                 {
+                    delete.setDisable(accesMode != 1);
                     delete.setId("dangerous-button-efect");
                     delete.setOnAction((ActionEvent event) -> {
                         AuthenticationResponse aut = (AuthenticationResponse) AppContext.getInstance().get("token");
                         AreaDto actual = aut.getUsuario().getAreasId();
                         NotificacionDto notifDelete = new NotificacionDto(true, getTableView().getItems().get(getIndex())
-                                .getId().intValue(), Timestamp.valueOf(LocalDateTime.now()), actual);
+                                .getId(), Timestamp.valueOf(LocalDateTime.now()), actual);
                         createNewDeleteNotification(notifDelete);
                     });
                 }
@@ -232,6 +274,14 @@ public class GestorVuelosController extends Controller implements Initializable 
                 new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
             }
         }
+    }
+
+    private void txtFormat() {
+        txtAerolinea.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtFlyName.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtLlegada.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtSalida.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+        txtMatriculaAvion.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }

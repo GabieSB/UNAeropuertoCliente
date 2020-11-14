@@ -10,14 +10,17 @@ import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import org.una.unaeropuertoclient.model.PistaDto;
 import org.una.unaeropuertoclient.service.PistaService;
@@ -25,6 +28,8 @@ import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
+import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.*;
+import org.una.unaeropuertoclient.utils.Formato;
 
 /**
  * FXML Controller class
@@ -45,6 +50,11 @@ public class GestorPistasController extends Controller implements Initializable 
     public TableColumn<PistaDto, String> clLongitud;
     @FXML
     public TableColumn<PistaDto, Void> clAcciones;
+    @FXML
+    private HBox controlsContainer;
+    @FXML
+    private JFXButton btnBuscar;
+    private int accesMode;
 
     /**
      * Initializes the controller class.
@@ -54,23 +64,40 @@ public class GestorPistasController extends Controller implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtFormat();
         prepareTable();
     }
 
     @Override
     public void initialize() {
+        accesMode = (int) AppContext.getInstance().get("mode");
+        accesMode = (accesMode != 3) ? accesMode : 2;
+        btnBuscar.setDisable(accesMode > 2);
         clearScreen();
     }
 
     @FXML
     public void onActionBuscar(ActionEvent event) {
-        Respuesta resp = new PistaService().filter(txtNumeroPista.getText(), txtLongitud.getText());
-        if (resp.getEstado()) {
-            tbPistas.getItems().clear();
-            tbPistas.getItems().addAll((List) resp.getResultado("data"));
-        } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
-        }
+        aModoEspera(btnBuscar);
+        controlsContainer.setDisable(true);
+        buscar();
+    }
+
+    private void buscar() {
+        Thread th = new Thread(() -> {
+            Respuesta resp = new PistaService().filter(txtNumeroPista.getText(), txtLongitud.getText());
+            Platform.runLater(() -> {
+                salirModoEspera(btnBuscar, "Buscar");
+                controlsContainer.setDisable(false);
+                if (resp.getEstado()) {
+                    tbPistas.getItems().clear();
+                    tbPistas.getItems().addAll((List) resp.getResultado("data"));
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     @FXML
@@ -85,6 +112,7 @@ public class GestorPistasController extends Controller implements Initializable 
     }
 
     private void prepareTable() {
+        tbPistas.setPlaceholder(new Label("No hay pistas para mostrar por el momento"));
         activateResponsiveConfig();
         clNombre.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getNumeroPista()));
         clLongitud.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getLongitud().toString() + "m"));
@@ -125,6 +153,11 @@ public class GestorPistasController extends Controller implements Initializable 
             return cell;
         };
         clAcciones.setCellFactory(cellFactory);
+    }
+
+    private void txtFormat() {
+        txtLongitud.setTextFormatter(Formato.getInstance().integerFormat());
+        txtNumeroPista.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
     }
 
 }

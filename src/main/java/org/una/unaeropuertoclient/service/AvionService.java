@@ -7,23 +7,24 @@ import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.utils.RequestHTTP;
 import org.una.unaeropuertoclient.utils.Respuesta;
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.una.unaeropuertoclient.model.LugarDto;
+import javafx.util.Pair;
 import org.una.unaeropuertoclient.utils.RequesUtils;
 import static org.una.unaeropuertoclient.utils.RequesUtils.isEmptyResult;
 import static org.una.unaeropuertoclient.utils.RequesUtils.isError;
 
 public class AvionService {
 
-    Gson g = new GsonBuilder()
-            .setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
+    Gson g = new GsonBuilder().setDateFormat("yyy-MM-dd'T'HH:mm:ss.SSSX").create();
 
-    public Respuesta getByMatricula(String id) {
+    @SuppressWarnings("UseSpecificCatch")
+    public Respuesta getByMatricula(String matric) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
-            HttpResponse respuesta = requestHTTP.get("aviones/getByMatricula/" + id);
+            HttpResponse respuesta = requestHTTP.get("aviones/getByMatricula/" + matric);
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
                     return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
@@ -39,6 +40,7 @@ public class AvionService {
         }
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     public Respuesta getById(String id) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
@@ -58,6 +60,7 @@ public class AvionService {
         }
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     public Respuesta getByMatriculaLike(String id) {
         try {
             RequestHTTP requestHTTP = new RequestHTTP();
@@ -78,15 +81,14 @@ public class AvionService {
         }
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     public Respuesta getByAerolinaNombre(String id) {
         try {
-            System.out.println(id);
             RequestHTTP requestHTTP = new RequestHTTP();
             HttpResponse respuesta = requestHTTP.get("aviones/findByAerolineaNombre/" + id);
-            System.out.println(respuesta.body().toString());
             if (requestHTTP.getStatus() != 200) {
                 if (respuesta.statusCode() == 500) {
-                    return new Respuesta(false, "Parece que has introducido mal tus credenciales de acceso.", String.valueOf(requestHTTP.getStatus()));
+                    return new Respuesta(false, "Parece que a ocurrido un error interno al intentar consultar los aviones", String.valueOf(requestHTTP.getStatus()));
                 }
                 return new Respuesta(false, "Parece que algo ha salido mal. Si el problema persiste solicita ayuda del encargado del sistema.", String.valueOf(requestHTTP.getStatus()));
             }
@@ -120,23 +122,56 @@ public class AvionService {
     }
 
     public Respuesta update(AvionDto avion) {
-        HttpResponse resp = new RequestHTTP().put("aviones/update", g.toJson(avion));
-        if (isError(resp.statusCode())) {
-            return new Respuesta(false, "Error al crear modificar datos, considera reportar este problema", "");
+        try {
+            HttpResponse resp = new RequestHTTP().put("aviones/update", g.toJson(avion));
+            if (isError(resp.statusCode())) {
+                return new Respuesta(false, "Error al crear modificar datos, considera reportar este problema", "");
+            }
+            if (isEmptyResult(resp.statusCode())) {
+                return new Respuesta(false, "No ha sido posible hallar el avión que se desea modificar", "");
+            }
+            registrarNuevaBitacora("Modificó un avión, Id de avion:" + avion.getId());
+            return new Respuesta(true, "", "", "data", RequesUtils.<AvionDto>asObject(resp, AvionDto.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
-        if (isEmptyResult(resp.statusCode())) {
-            return new Respuesta(false, "No ha sido posible hallar el avión que se desea modificar", "");
-        }
-        return new Respuesta(true, "", "", "data", RequesUtils.<AvionDto>asObject(resp, AvionDto.class));
+
     }
 
     public Respuesta create(AvionDto avion) {
-        avion.setActivo(true);
-        HttpResponse resp = new RequestHTTP().post("aviones/create", g.toJson(avion));
-        if (isError(resp.statusCode())) {
-            return new Respuesta(false, "Error al registrar nuevo avión en el sistema, considera reportar este problema", "");
+        try {
+            avion.setActivo(true);
+            HttpResponse resp = new RequestHTTP().post("aviones/create", g.toJson(avion));
+            if (isError(resp.statusCode())) {
+                return new Respuesta(false, "Error al registrar nuevo avión en el sistema, considera reportar este problema", "");
+            }
+            AvionDto av = RequesUtils.<AvionDto>asObject(resp, AvionDto.class);
+            registrarNuevaBitacora("Registró un nuevo avión con id " + av.getId());
+            return new Respuesta(true, "", "", "data", av);
+        } catch (Exception ex) {
+            return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
         }
-        return new Respuesta(true, "", "", "data", RequesUtils.<AvionDto>asObject(resp, AvionDto.class));
+
+    }
+
+    public Respuesta validarContratiemposVuelo(LocalDateTime start, LocalDateTime end, Long idVuelo, long idAvion, LocalDateTime executionTime) {
+        try {
+            idVuelo = idVuelo != null ? idVuelo : 0;
+            HttpResponse resp = new RequestHTTP().get("vuelos/validarContratiemposVuelo/" + start.toString() + "/" + end.toString() + "/" + executionTime.toString() + "/" + idVuelo + "/" + idAvion);
+            if (isError(resp.statusCode())) {
+                return new Respuesta(false, "Error al consultar datos de avión y vuelos programados, averiguar saber si es posible reaizar este vuelo.", "");
+            }
+            return new Respuesta(true, "", "", "data", RequesUtils.<Pair>asObject(resp, Pair.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Error en conexión, imposible averiguar si se puede reaizar este vuelo.", "");
+        }
+    }
+
+    private void registrarNuevaBitacora(String descripcion) {
+        Thread th = new Thread(() -> {
+            new BitacoraService().create(descripcion);
+        });
+        th.start();
     }
 
 }

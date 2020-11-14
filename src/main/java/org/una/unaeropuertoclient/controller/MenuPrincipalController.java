@@ -17,7 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 import org.una.unaeropuertoclient.model.AuthenticationResponse;
-import org.una.unaeropuertoclient.model.RolDto;
 import org.una.unaeropuertoclient.model.RolUsuarioDto;
 import org.una.unaeropuertoclient.utils.AppContext;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -36,7 +35,7 @@ public class MenuPrincipalController extends Controller implements Initializable
     @FXML
     public JFXButton btnNotificaciones;
     @FXML
-    private FlowPane flow;
+    public FlowPane flow;
 
     /**
      * Initializes the controller class.
@@ -54,6 +53,7 @@ public class MenuPrincipalController extends Controller implements Initializable
     public void initialize() {
         extraerOpcionesProhibidas();
         FlowController.changeSuperiorTittle("Menú principal");
+        FlowController.changeCodeScreenTittle("GG200");
     }
 
     @FXML
@@ -110,36 +110,57 @@ public class MenuPrincipalController extends Controller implements Initializable
         rList.forEach(rolU -> {
             switch (rolU.getRolesId().getNombre()) {
                 case "ADMINISTRADOR":
+                    AppContext.getInstance().set("mode", 3);
                     flow.getChildren().add(getButtonFromList("Registrar Usuario", flowChildrenList));
-                    flow.getChildren().add(getButtonFromList("Parametros Sistema", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Parámetros Sistema", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Modificar Usuario", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Gestor Servicios", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Consultar Bitácoras", flowChildrenList));
                     break;
                 case "GESTOR_CONTROL_VUELOS":
+                    AppContext.getInstance().set("mode", 1);
                     flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
                     break;
                 case "GESTOR_SERVICIOS_AERONAVES":
+                    AppContext.getInstance().set("mode", 1);
                     flow.getChildren().add(getButtonFromList("Gestor Servicios", flowChildrenList));
                     break;
                 case "GESTOR_MANTENIMIENTO_AEROPUERTO":
+                    AppContext.getInstance().set("mode", 1);
                     flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
                     break;
                 case "GERENTE_SERVICIOS_AERONAVES":
-                    flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
-                    break;
                 case "GERENTE_MANTENIMIENTO_AEROPUERTO":
-                    flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
-                    break;
                 case "GERENTE_CONTROL_VUELO":
+                    AppContext.getInstance().set("mode", 1);
                     flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
                     break;
-//                case "GERENTE_CONTROL_VUELO":
-//                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
-//                    break;
-//                case "GERENTE_CONTROL_VUELO":
-//                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
-//                    break;
-//                case "GERENTE_CONTROL_VUELO":
-//                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
-//                    break; ---> TODO
+                case "AUDITOR_CONTROL_VUELOS":
+                    AppContext.getInstance().set("mode", 2);
+                    flow.getChildren().add(getButtonFromList("Reporte Vuelo", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Consultar Bitácoras", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Control de vuelos", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
+                    break;
+                case "AUDITOR_MANTENIMIENTO_AEROPUERTO":
+                    AppContext.getInstance().set("auditMode", true);
+                    AppContext.getInstance().set("mode", 2);
+                    flow.getChildren().add(getButtonFromList("Reporte Mantenimiento", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Gestor Gastos", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Consultar Bitácoras", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
+                    break;
+                case "AUDITOR_SERVICIOS_AERONAVES":
+                    AppContext.getInstance().set("mode", 2);
+                    AppContext.getInstance().set("auditMode", true);
+                    flow.getChildren().add(getButtonFromList("Reporte Servicio", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Gestor Servicios", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Consultar Bitácoras", flowChildrenList));
+                    flow.getChildren().add(getButtonFromList("Notificaciones", flowChildrenList));
+                    break;
             }
         });
     }
@@ -151,5 +172,25 @@ public class MenuPrincipalController extends Controller implements Initializable
             }
         }
         return null;
+    }
+
+    @FXML
+    public void goModificarUsuario(ActionEvent actionEvent) {
+        FlowController.getInstance().goView("BuscarUsuario");
+    }
+
+    @FXML
+    public void btnReporteServicio(ActionEvent event) {
+        FlowController.getInstance().goView("ReporteServicio");
+    }
+
+    @FXML
+    public void goReporteMantenimiento(ActionEvent event) {
+        FlowController.getInstance().goView("DepartamentoReport");
+    }
+
+    @FXML
+    private void goReporteVuelo(ActionEvent event) {
+        FlowController.getInstance().goView("VueloReporte");
     }
 }

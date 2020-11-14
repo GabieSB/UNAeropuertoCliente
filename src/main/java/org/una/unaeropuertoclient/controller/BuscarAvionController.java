@@ -4,6 +4,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXTreeTableView;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,15 +17,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import org.una.unaeropuertoclient.model.AvionDto;
 import org.una.unaeropuertoclient.service.AvionService;
-import org.una.unaeropuertoclient.utils.AppContext;
-import org.una.unaeropuertoclient.utils.FlowController;
-import org.una.unaeropuertoclient.utils.Mensaje;
-import org.una.unaeropuertoclient.utils.Respuesta;
+import org.una.unaeropuertoclient.utils.*;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.scene.control.Label;
 
 public class BuscarAvionController extends Controller implements Initializable {
 
@@ -42,6 +41,8 @@ public class BuscarAvionController extends Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         carcarComponentes();
+        FlowController.changeSuperiorTittle("Buscar Avión para Servicio");
+        FlowController.changeCodeScreenTittle("SA200");
 
     }
 
@@ -51,7 +52,6 @@ public class BuscarAvionController extends Controller implements Initializable {
         items.addAll("ID", "NÚMERO MATRÍCULA", "NOMBRE AEROLÍNEA");
         comboBusqueda.getItems().addAll(items);
 
-        // CARGAR TABLA
         columId.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getId().toString()));
         columMatricula.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getMatricula()));
         columAerolinea.setCellValueFactory(x -> new SimpleStringProperty(x.getValue().getAerolineasId().getNombre()));
@@ -60,7 +60,8 @@ public class BuscarAvionController extends Controller implements Initializable {
 
     @Override
     public void initialize() {
-
+        FlowController.changeSuperiorTittle("Buscar Avión para Servicio");
+        tableResultados.setPlaceholder(new Label("Realice una consulta para mostrar resultados"));
     }
 
     public void llenarTabla(){
@@ -73,32 +74,45 @@ public class BuscarAvionController extends Controller implements Initializable {
         int categoria = comboBusqueda.getSelectionModel().getSelectedIndex();
         AvionService avionService = new AvionService();
 
-        Respuesta respuesta = null;
+        Respuesta respuesta = getRespuesta(categoria, avionService);
 
-        if(categoria == 0){
-            respuesta = avionService.getById(txtValofBusqueda.getText());
-        }else if(categoria == 1){
-            respuesta= avionService.getByMatriculaLike(txtValofBusqueda.getText());
-        }else if(categoria == 2){
-            respuesta = avionService.getByAerolinaNombre(txtValofBusqueda.getText());
-        }
+        Platform.runLater(()->{
+            if(respuesta != null && respuesta.getEstado()){
+                if(categoria == 0) avionesResultado.add((AvionDto) respuesta.getResultado("data"));
+                else avionesResultado = (List<AvionDto>) respuesta.getResultado("data");
 
-        if(respuesta != null && respuesta.getEstado()){
-            if(categoria == 0) avionesResultado.add((AvionDto) respuesta.getResultado("data"));
-            else avionesResultado = (List<AvionDto>) respuesta.getResultado("data");
+                if(avionesResultado.size() == 0) new Mensaje().show(Alert.AlertType.INFORMATION, "Informacion", "No hubo resulatos");
+                else llenarTabla();
 
-            if(avionesResultado.size() == 0) new Mensaje().show(Alert.AlertType.INFORMATION, "Informacion", "No hubo resulatos");
-            else llenarTabla();
+            }else{
+                new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al realizar la búsqueda", this.getStage(), respuesta.getMensaje());
 
-        }else{
-            new Mensaje().showModal(Alert.AlertType.ERROR, "Falla al realizar la búsqueda", this.getStage(), respuesta.getMensaje());
+            }
+            ButtonWaitUtils.salirModoEspera(btnBuscar, "Buscar");
+        });
 
-        }
 
     }
 
+    private Respuesta getRespuesta(int categoria, AvionService avionService)
+    {
+        Respuesta respuesta = null;
+        if(categoria == 0){
+            respuesta = avionService.getById(txtValofBusqueda.getText());
+        }else if(categoria == 1){
+            respuesta = avionService.getByMatriculaLike(txtValofBusqueda.getText());
+        }else if(categoria == 2){
+            respuesta = avionService.getByAerolinaNombre(txtValofBusqueda.getText());
+        }
+        return respuesta;
+    }
+
     public void buscarAvion(ActionEvent actionEvent) {
-        busquedaSegunCategoria();
+
+        ButtonWaitUtils.aModoEspera(btnBuscar);
+        Thread t = new Thread(this::busquedaSegunCategoria);
+        t.start();
+
     }
 
     public void avionSelected(MouseEvent mouseEvent) {
