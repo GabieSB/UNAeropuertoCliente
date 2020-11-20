@@ -407,7 +407,7 @@ public class EditorVuelosController extends Controller implements Initializable 
 
     private void refreshBack() {
         if (AppContext.getInstance().get("GVuelo") != null) {
-            ((GestorVuelosController) AppContext.getInstance().get("GVuelo")).onActionLimpiar(new ActionEvent());
+            ((GestorVuelosController) AppContext.getInstance().get("GVuelo")).onActionBuscar(new ActionEvent());
         }
     }
 

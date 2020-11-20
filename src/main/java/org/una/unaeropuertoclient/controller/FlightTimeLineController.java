@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,9 +26,15 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.una.unaeropuertoclient.model.ParamSistemaDto;
+import org.una.unaeropuertoclient.model.VueloDto;
+import org.una.unaeropuertoclient.service.ParamSistemaServicio;
+import org.una.unaeropuertoclient.service.VueloService;
+import org.una.unaeropuertoclient.utils.ButtonWaitUtils;
 import org.una.unaeropuertoclient.utils.FlightDayVisor;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
+import org.una.unaeropuertoclient.utils.Respuesta;
 
 /**
  * FXML Controller class
@@ -62,6 +72,10 @@ public class FlightTimeLineController extends Controller implements Initializabl
     @FXML
     private VBox vbPlanificador;
     private final List<Label> flagsDateLabels = new ArrayList();
+    private List<FlightDayVisor> visorsList;
+    private ParamSistemaDto paramSist;
+    @FXML
+    private HBox hbBarraBusqueda;
 
     /**
      * Initializes the controller class.
@@ -72,7 +86,7 @@ public class FlightTimeLineController extends Controller implements Initializabl
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         flagsDateLabels.addAll(Arrays.asList(lblLunes, lblMartes, lblMiercoles, lblJueves,
-                lblJueves, lblViernes, lblSabado, lblDomingo));
+                lblViernes, lblSabado, lblDomingo));
     }
 
     @Override
@@ -81,10 +95,14 @@ public class FlightTimeLineController extends Controller implements Initializabl
         FlowController.changeCodeScreenTittle("VE000");
         clearAll();
         dpFecha.setValue(LocalDate.now());
-        buscar(new ActionEvent());
+        chargeInitialData();
     }
 
     private void clearAll() {
+        hbBarraBusqueda.setDisable(true);
+        vbPlanificador.setDisable(true);
+        btnSave.setDisable(true);
+        vbPlanificador.getChildren().removeIf(node -> !(node instanceof HBox));
         vbPortaVuelos.getChildren().removeIf(obj -> !(obj instanceof Label));
         vbPortaVuelos.setAlignment(Pos.CENTER);
         lblPortavuelosTittle.setText("Coloca uno o varios\nvuelos aquí para\nmoverlos a otras\nsemanas");
@@ -92,20 +110,79 @@ public class FlightTimeLineController extends Controller implements Initializabl
 
     @FXML
     private void buscar(ActionEvent event) {
-        if (dpFecha.getValue() != null) {
-            vbPlanificador.getChildren().removeIf(node -> !(node instanceof HBox));
-            for (int i = 0; i < 7; i++) {
-                FlightDayVisor visor = new FlightDayVisor(i, dpFecha.getValue().with((DayOfWeek.MONDAY)));
-                flagsDateLabels.get(i).setText(String.valueOf(visor.getFecha().getDayOfMonth()));
-                vbPlanificador.getChildren().add(visor);
+        if (paramSist != null) {
+            if (dpFecha.getValue() != null) {
+                vbPlanificador.getChildren().removeIf(node -> !(node instanceof HBox));
+                visorsList = new ArrayList();
+                for (int i = 0; i < 7; i++) {
+                    FlightDayVisor visor = new FlightDayVisor(i, dpFecha.getValue().with(DayOfWeek.MONDAY));
+                    flagsDateLabels.get(i).setText(String.valueOf(visor.getFecha().getDayOfMonth()));
+                    visorsList.add(visor);
+                    vbPlanificador.getChildren().add(visor);
+                }
+                getVuelosEntreFechas();
+            } else {
+                new Mensaje().show(Alert.AlertType.WARNING, "Atención", "Antes debes escoger una fecha");
             }
         } else {
-            new Mensaje().show(Alert.AlertType.WARNING, "Atención", "Antes debes escoger una fecha");
+            new Mensaje().show(Alert.AlertType.ERROR, "Error", "No se puede realizar la búsqueda, no se cuenta con la ubicación de aeropuerto");
         }
+    }
+
+    public void getVuelosEntreFechas() {
+        ButtonWaitUtils.aModoEspera(btnBuscar);
+        Thread th = new Thread(() -> {
+            Respuesta resp = new VueloService().findEntreFechas(dpFecha.getValue().with(DayOfWeek.MONDAY), dpFecha.getValue().with(DayOfWeek.SUNDAY));
+            Platform.runLater(() -> {
+                ButtonWaitUtils.salirModoEspera(btnBuscar, "Buscar");
+                if (resp.getEstado()) {
+                    List<VueloDto> results = (List) resp.getResultado("data");
+                    visorsList.forEach(visor -> {
+                        visor.tomarVuelosCorrespondientes(results, paramSist.getUbicacion(), paramSist.getVuelosHora());
+                    });
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
+                }
+            });
+        });
+        th.start();
     }
 
     @FXML
     private void onClickSaveChanges(ActionEvent event) {
+    }
+
+    private void getParamSistema() {
+        Respuesta resp = new ParamSistemaServicio().getById();
+        Platform.runLater(() -> {
+            if (resp.getEstado()) {
+                hbBarraBusqueda.setDisable(false);
+                vbPlanificador.setDisable(false);
+                btnSave.setDisable(false);
+                this.paramSist = (ParamSistemaDto) resp.getResultado("data");
+            } else {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), "No ha sido "
+                        + "posible cargar la ubicación del aeropuerto, por lo que se puede utilizar esta pantalla."
+                        + " Si el problema persiste considere contactar con el el encargado del sistema.");
+            }
+        });
+    }
+
+    public void chargeInitialData() {
+        Thread th = new Thread(() -> {
+            getParamSistema();
+            visorsList = new ArrayList();
+            Platform.runLater(() -> {
+                for (int i = 0; i < 7; i++) {
+                    FlightDayVisor visor = new FlightDayVisor(i, dpFecha.getValue().with(DayOfWeek.MONDAY));
+                    flagsDateLabels.get(i).setText(String.valueOf(visor.getFecha().getDayOfMonth()));
+                    visorsList.add(visor);
+                    vbPlanificador.getChildren().add(visor);
+                }
+                getVuelosEntreFechas();
+            });
+        });
+        th.start();
     }
 
 }

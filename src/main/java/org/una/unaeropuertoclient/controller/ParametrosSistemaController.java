@@ -23,7 +23,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.HBox;
 import org.una.unaeropuertoclient.model.ParamSistemaDto;
 import org.una.unaeropuertoclient.service.ParamSistemaServicio;
-import org.una.unaeropuertoclient.utils.AppContext;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.aModoEspera;
 import static org.una.unaeropuertoclient.utils.ButtonWaitUtils.salirModoEspera;
 import org.una.unaeropuertoclient.utils.FlowController;
@@ -186,7 +185,7 @@ public class ParametrosSistemaController extends Controller implements Initializ
     
     public void cargarDatosComboBox() {
         cbxTiempoInactivo.getItems().addAll(5, 10, 20, 25, 30);
-        Short timeList[] = {1, 2, 3, 4, 5, 6, 10, 12};
+        Short timeList[] = {4, 5, 6, 10, 12};
         cbxVuelos.getItems().addAll(timeList);
     }
     
