@@ -80,8 +80,22 @@ public class FlightDayVisor extends AnchorPane {
         result += 505 * executionTime.getHour() + 1;                       //250 es el resultado de dividir 6000px en 24 partes.
         result += (505 / 60) * executionTime.getMinute();                  //'250/60' (si 250 se refiere a horas '250/60' se refiere a minutos).
         result -= (505 / vuelosHora) / 2;                                  //Centra el recuadro                      
-        result -= executionTime.getHour() * 3;
+        result -= executionTime.getHour() * 3;                             //Los viewers se desalineaban con cada hora que pasaba
         return result;
     }
 
+    public List<SingleFlightViewer> getVuelosDelDía() {
+        return vuelosDelDía;
+    }
+
+    public boolean isValiadCoordenade(double x) {
+        if (x > 0d && x < 12000d) {
+            for (SingleFlightViewer viewer : vuelosDelDía) {
+                double margen = viewer.getWidth() / 4;
+                return (viewer.getLayoutX() + margen) > x || (viewer.getLayoutX() + margen * 3) < x;
+            }
+            return true;
+        }
+        return false;
+    }
 }

@@ -6,6 +6,7 @@
 package org.una.unaeropuertoclient.controller;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTooltip;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -14,9 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,8 +22,17 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
+import org.una.unaeropuertoclient.App;
 import org.una.unaeropuertoclient.model.ParamSistemaDto;
 import org.una.unaeropuertoclient.model.VueloDto;
 import org.una.unaeropuertoclient.service.ParamSistemaServicio;
@@ -35,6 +42,7 @@ import org.una.unaeropuertoclient.utils.FlightDayVisor;
 import org.una.unaeropuertoclient.utils.FlowController;
 import org.una.unaeropuertoclient.utils.Mensaje;
 import org.una.unaeropuertoclient.utils.Respuesta;
+import org.una.unaeropuertoclient.utils.SingleFlightViewer;
 
 /**
  * FXML Controller class
@@ -76,6 +84,8 @@ public class FlightTimeLineController extends Controller implements Initializabl
     private ParamSistemaDto paramSist;
     @FXML
     private HBox hbBarraBusqueda;
+    private FlightDayVisor vueloFrom;
+    private VueloDto movedFlight;
 
     /**
      * Initializes the controller class.
@@ -85,6 +95,7 @@ public class FlightTimeLineController extends Controller implements Initializabl
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        this.btnSave.setVisible(false);
         flagsDateLabels.addAll(Arrays.asList(lblLunes, lblMartes, lblMiercoles, lblJueves,
                 lblViernes, lblSabado, lblDomingo));
     }
@@ -105,7 +116,7 @@ public class FlightTimeLineController extends Controller implements Initializabl
         vbPlanificador.getChildren().removeIf(node -> !(node instanceof HBox));
         vbPortaVuelos.getChildren().removeIf(obj -> !(obj instanceof Label));
         vbPortaVuelos.setAlignment(Pos.CENTER);
-        lblPortavuelosTittle.setText("Coloca uno o varios\nvuelos aquí para\nmoverlos a otras\nsemanas");
+        lblPortavuelosTittle.setText("Porta vuelos\n(Próximamente)");
     }
 
     @FXML
@@ -120,6 +131,7 @@ public class FlightTimeLineController extends Controller implements Initializabl
                     visorsList.add(visor);
                     vbPlanificador.getChildren().add(visor);
                 }
+                //activarDragOver();
                 getVuelosEntreFechas();
             } else {
                 new Mensaje().show(Alert.AlertType.WARNING, "Atención", "Antes debes escoger una fecha");
@@ -143,6 +155,8 @@ public class FlightTimeLineController extends Controller implements Initializabl
                 } else {
                     new Mensaje().showModal(Alert.AlertType.WARNING, "Atención", this.getStage(), resp.getMensaje());
                 }
+                chargeTooltips();
+                activarDragEvent();
             });
         });
         th.start();
@@ -179,10 +193,58 @@ public class FlightTimeLineController extends Controller implements Initializabl
                     visorsList.add(visor);
                     vbPlanificador.getChildren().add(visor);
                 }
+                //activarDragOver();
                 getVuelosEntreFechas();
             });
         });
         th.start();
+    }
+
+    private void activarDragEvent() {
+        visorsList.forEach(visor -> {
+            visor.getVuelosDelDía().forEach((viewer -> {
+                if (viewer.getVuelo().getEstado() == 0) {
+                    viewer.setOnDragDetected(event -> {
+                        Dragboard db = visor.startDragAndDrop(TransferMode.ANY);
+                        ClipboardContent content = new ClipboardContent();
+                        content.put(DataFormat.IMAGE, new Image(App.class.getResource("pics/DragImg.png").toString()));
+                        db.setContent(content);
+                        vueloFrom = visor;
+                        movedFlight = ((SingleFlightViewer) event.getSource()).getVuelo();
+                    });
+                }
+            }));
+        });
+    }
+
+    private void activarDragOver() { //TODO (valiadaciones funcionan de manera errática)
+        visorsList.forEach(visor -> {
+            visor.setOnDragOver(event -> {
+                if (event.getDragboard().hasImage() && ((FlightDayVisor) event.getSource()).isValiadCoordenade(event.getX())) {
+                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+            });
+        });
+    }
+
+    private void chargeTooltips() {
+        visorsList.forEach(visor -> {
+            visor.getVuelosDelDía().forEach(viewer -> {
+                Tooltip tlp = new JFXTooltip("Vuelo: " + viewer.getVuelo().getNombreVuelo() + "\n"
+                        + "Aerlolinea: " + viewer.getVuelo().getAvionesId().getAerolineasId().getNombre() + "\n"
+                        + "Tipo de vuelo: " + viewer.getVuelo().getTipoVuelo() + "\n"
+                        + "Avión: " + viewer.getVuelo().getAvionesId().getMatricula() + "\n"
+                        + "Salida: " + viewer.getVuelo().getSitioYFechaSalida() + "\n"
+                        + "Llegada: " + viewer.getVuelo().getSitioYFechaLLegada() + "\n"
+                        + "Estado de vuelo: " + viewer.getVuelo().getStateAsWord());
+                tlp.setAutoHide(true);
+                tlp.setStyle("-fx-font-size: 11");
+                tlp.setShowDuration(Duration.seconds(7));
+                viewer.setOnMouseClicked(event -> {
+                    tlp.show(viewer, event.getSceneX(), event.getSceneY());
+                });
+            });
+        });
     }
 
 }
