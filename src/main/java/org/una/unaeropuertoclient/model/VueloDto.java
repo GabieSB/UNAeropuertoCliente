@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import org.una.unaeropuertoclient.utils.VuelosUtilis;
 
 public class VueloDto {
 
@@ -160,5 +161,13 @@ public class VueloDto {
     public void setTipoVuelo(TipoVueloDto tipoVuelo) {
         this.tipoVuelo = tipoVuelo;
     }
-    
+
+    public LocalDateTime getExecutionDateTime(LugarDto ubicacionAeroP) {
+        if (this.lugarLlegada.equals(ubicacionAeroP)) {
+            return VuelosUtilis.toLocalDateTime(horaLlegada);
+        } else {
+            return VuelosUtilis.toLocalDateTime(horaSalida);
+        }
+    }
+
 }

@@ -67,6 +67,24 @@ public class VueloService {
         }
     }
 
+    public Respuesta findEntreFechas(LocalDate desde, LocalDate hasta) {
+        try {
+            desde = desde != null ? desde : LocalDate.of(2500, 1, 1);
+            hasta = hasta != null ? hasta : LocalDate.of(2500, 1, 1);
+            RequestHTTP requestHTTP = new RequestHTTP();
+            HttpResponse respuesta = requestHTTP.get("vuelos/findEntreFechas/" + desde + "/" + hasta);
+            if (isError(respuesta.statusCode())) {
+                return new Respuesta(false, "Error interno al consultar vuelos, considera reportar esta falla.", "");
+            }
+            if (isEmptyResult(respuesta.statusCode())) {
+                return new Respuesta(false, "No hay vuelos que coincidan con lo que buscas.", "");
+            }
+            return new Respuesta(true, "", "", "data", RequesUtils.<VueloDto>asList(respuesta, VueloDto.class));
+        } catch (Exception ex) {
+            return new Respuesta(false, "Ha fallado la conexión con el servidor. Verifica que el servicio de internet se encuntre activo.", "");
+        }
+    }
+
     public Respuesta update(VueloDto vuelo) {
         try {
             HttpResponse resp = new RequestHTTP().put("vuelos/update", jsonConv.toJson(vuelo));

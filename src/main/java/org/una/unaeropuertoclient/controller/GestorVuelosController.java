@@ -88,6 +88,8 @@ public class GestorVuelosController extends Controller implements Initializable 
     @FXML
     private JFXButton btnLimpiar;
     private int accesMode;
+    @FXML
+    private JFXButton btnTimeLine;
 
     /**
      * Initializes the controller class.
@@ -123,9 +125,8 @@ public class GestorVuelosController extends Controller implements Initializable 
     @FXML
     public void onActionBuscar(ActionEvent event) {
         controlsContainer.setDisable(true);
-
+        btnTimeLine.setDisable(true);
         aModoEspera(btnBuscar);
-
         Thread th = new Thread(() -> {
             buscar();
         });
@@ -139,6 +140,7 @@ public class GestorVuelosController extends Controller implements Initializable 
         Platform.runLater(() -> {
             salirModoEspera(btnBuscar, "Buscar");
             controlsContainer.setDisable(false);
+            btnTimeLine.setDisable(false);
             if (resp.getEstado()) {
                 tbVuelos.getItems().clear();
                 tbVuelos.getItems().addAll((List) resp.getResultado("data"));
@@ -151,6 +153,7 @@ public class GestorVuelosController extends Controller implements Initializable 
     @FXML
     public void onActionLimpiar(ActionEvent event) {
         controlsContainer.setDisable(true);
+        btnTimeLine.setDisable(true);
         aModoEspera(btnLimpiar);
         clearScreen();
     }
@@ -181,6 +184,7 @@ public class GestorVuelosController extends Controller implements Initializable 
             Respuesta resp = new VueloService().findVuelosDelDia();
             Platform.runLater(() -> {
                 controlsContainer.setDisable(false);
+                btnTimeLine.setDisable(false);
                 salirModoEspera(btnLimpiar, "Limpiar");
                 if (resp.getEstado()) {
                     tbVuelos.getItems().clear();
@@ -282,6 +286,11 @@ public class GestorVuelosController extends Controller implements Initializable 
         txtLlegada.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
         txtSalida.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
         txtMatriculaAvion.setTextFormatter(Formato.getInstance().letrasYNumerosFormat(35));
+    }
+
+    @FXML
+    private void onClickTimeLine(ActionEvent event) {
+        FlowController.getInstance().goView("FlightTimeLine");
     }
 
 }
